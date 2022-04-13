@@ -1,17 +1,22 @@
 import { Card } from 'antd';
 
-const { Meta } = Card;
-
 const Cards = () => {
   return (
     <>
       <Card
-        hoverable
-      style={{ width: 560 }}
-      cover={<img alt="example" src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png" />}
+        style={{
+          margin: '96px',
+          backgroundColor: '#f7f3ec',
+          fontFamily: 'Alegreya Sans SC',
+        }}
+        cover={
+          <img
+            alt="example"
+            src="https://user-images.githubusercontent.com/77420123/163105328-f5640076-dd9a-4f35-bd53-f21b3f0c2055.svg"
+          />
+        }
       >
-        <Meta title="Europe Street beat" href="https://note.com/izuha0" />
-        <a href="https://www.google.com/">Text</a>
+        Dev
       </Card>
     </>
   )
