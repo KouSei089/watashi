@@ -1,16 +1,13 @@
 {
   "files": {
-    "main.css": "/portfolio-izuha/static/css/main.073c9b0a.css",
-    "main.js": "/portfolio-izuha/static/js/main.fd59e3ec.js",
-    "static/js/787.cec8b3b0.chunk.js": "/portfolio-izuha/static/js/787.cec8b3b0.chunk.js",
-    "static/media/logo.svg": "/portfolio-izuha/static/media/logo.0d60e42805580945ab750d37d1f7b0f6.svg",
+    "main.css": "/portfolio-izuha/static/css/main.c6abe470.css",
+    "main.js": "/portfolio-izuha/static/js/main.83941a0d.js",
     "index.html": "/portfolio-izuha/index.html",
-    "main.073c9b0a.css.map": "/portfolio-izuha/static/css/main.073c9b0a.css.map",
-    "main.fd59e3ec.js.map": "/portfolio-izuha/static/js/main.fd59e3ec.js.map",
-    "787.cec8b3b0.chunk.js.map": "/portfolio-izuha/static/js/787.cec8b3b0.chunk.js.map"
+    "main.c6abe470.css.map": "/portfolio-izuha/static/css/main.c6abe470.css.map",
+    "main.83941a0d.js.map": "/portfolio-izuha/static/js/main.83941a0d.js.map"
   },
   "entrypoints": [
-    "static/css/main.073c9b0a.css",
-    "static/js/main.fd59e3ec.js"
+    "static/css/main.c6abe470.css",
+    "static/js/main.83941a0d.js"
   ]
 }
