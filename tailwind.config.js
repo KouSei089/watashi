@@ -11,6 +11,8 @@ module.exports = {
       },
       colors: {
         'natural': '#f7f3ec',
+        'sky-gray': '#D9D9D9',
+        'matte': '#36312c'
       },
     },
   },
