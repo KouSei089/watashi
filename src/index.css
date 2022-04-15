@@ -10,4 +10,6 @@
   @apply font-thin font-ale
 }
 
-
+.dropdown:hover > .dropdown-content {
+	display: block;
+}

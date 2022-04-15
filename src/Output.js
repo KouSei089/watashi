@@ -1,9 +1,9 @@
+import OutputTimeTree from './OutputTimeTree';
 import { Layout } from 'antd';
 import { Card } from 'antd';
 import { SiZenn } from "react-icons/si";
 import { AiOutlineFile } from "react-icons/ai";
 import { AiOutlineGithub } from "react-icons/ai";
-
 import { IconContext } from 'react-icons';
 const { Header } = Layout;
 
@@ -56,6 +56,7 @@ const Output = () => {
           </div>
         </div>
       </Layout>
+      <OutputTimeTree />
     </div>
   )
 }
