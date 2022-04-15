@@ -1,3 +1,4 @@
+import FreeTimeProfile from './FreeTimeProfile';
 import { Layout } from 'antd';
 import { Card } from 'antd';
 import { AiOutlineFile } from "react-icons/ai";
@@ -22,9 +23,7 @@ const Profile = () => {
             Profile
           </Header>
           <Content className="bg-natural font-zen leading-5 pt-6">
-            <p className="px-72">大手アパレルブランドで5年間の実務を経験。プログラミングの独学・読書を通じてテクノロジーでの問題解決を知り、エンジニアになりたいと考え、2021年4月よりプログラミングスクールRUNTEQへ入学。その後『Mikke（ミッケ）習慣ジャーナリング』を個人開発し、リリースする。月間1500PV以上 / UU200人以上を達成しました。
-            現在は、React/TypeScriptを使用したアプリを作成中です。
-            個人活動では、オンラインコミュニティ『DIALogue』を運営おります。</p>
+            <p className="px-72 bg-natural">Worked for a major apparel brand for 5 years. Through self-study and reading of programming, he learned about problem solving through technology and decided to become an engineer, and enrolled in the programming school RUNTEQ in April 2021. He then developed and released "Mikke Custom Journaling" on his own. It achieved more than 1500 PV / 200 UUs per month. Currently, he is creating an app using React/TypeScript. As for personal activities, I am managing an online community "DIALogue".</p>
           </Content>
           <div className="flex justify-center py-24 bg-natural">
             <div>
@@ -69,6 +68,7 @@ const Profile = () => {
           </div>
         </Layout>
       </div>
+      <FreeTimeProfile />
     </>
   );
 }
