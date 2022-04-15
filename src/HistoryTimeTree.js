@@ -22,12 +22,12 @@ const HistoryTimeTree = () => {
         <p>Now in production...</p>
       </Timeline.Item>
       <Timeline.Item color="purple">
-        <p>Create a <a href="https://kousei089.github.io/portfolio-izuha/">"portfolio website."</a> 2022-04-14</p>
+        <p>Create a <a href="https://kousei089.github.io/portfolio-izuha/" target="_blank" rel="noopener noreferrer">"portfolio website."</a> 2022-04-14</p>
         <p>- Technology stacks used -</p>
         <div className="flex justify-end">
           <DiReact className="mr-1" /><DiJsBadge className="mr-1" /><SiTailwindcss className="mr-1" /><SiAntdesign className="mr-1" /><DiGithubBadge className="mr-1" />
         </div>
-        <a href="https://github.com/KouSei089/portfolio-izuha">
+        <a href="https://github.com/KouSei089/portfolio-izuha" target="_blank" rel="noopener noreferrer">
           <div className="flex justify-end">
             <p className="pt-1.5"><RiGitRepositoryFill /></p>
             <p>Repository</p>
@@ -37,12 +37,12 @@ const HistoryTimeTree = () => {
       <Timeline.Item color="purple">I studied mainly Ruby on Rails at "RUNTEQ", a programming school run by Startup Technology Inc. As for personal development, I released "Mikke," a service that digitally realizes "writing," analyzes emotions, and supports users to easily make it a habit. We used AWS for deployment.
       Currently, we are working on an application using React and TypeScript.</Timeline.Item>
       <Timeline.Item color="purple">
-        <p>Released <a href="https://a-mikke.com">"Mikke", a personal development service.</a> 2022-02-14</p>
+        <p>Released <a href="https://a-mikke.com" target="_blank" rel="noopener noreferrer">"Mikke", a personal development service.</a> 2022-02-14</p>
         <p>- Technology stacks used -</p>
         <div className="flex justify-end">
           <DiRubyRough className="mr-1" /><DiRor className="mr-1" /><SiTailwindcss className="mr-1" /><DiJsBadge className="mr-1" /><SiJquery className="mr-1" /><SiAlpinedotjs className="mr-1" /><DiGoogleAnalytics className="mr-1" /><SiPostgresql className="mr-1" /><FaAws className="mr-1" /><DiGithubBadge className="mr-1" />
         </div>
-        <a href="https://github.com/KouSei089/Mikke">
+        <a href="https://github.com/KouSei089/Mikke" target="_blank" rel="noopener noreferrer">
           <div className="flex justify-end">
             <p className="pt-1.5"><RiGitRepositoryFill /></p>
             <p>Repository</p>
