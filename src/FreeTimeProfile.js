@@ -9,10 +9,10 @@ const contentStyle = {
 
 const FreeTimeProfile = () => {
   return (
-    <Carousel autoplay>
+    <Carousel autoplay autoplaySpeed={ 7000 }>
     <div>
       <h3 style={contentStyle} className="font-zen">
-       <p>- Book - Negative Capability / Introduction to Flow Theory / Kamakura Capitalism / The Yankee Chatter etc...</p>
+        <p>- Book - Negative Capability / Introduction to Flow Theory / Kamakura Capitalism / The Yankee Chatter etc...</p>
       </h3>
     </div>
     <div>
