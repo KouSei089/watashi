@@ -10,12 +10,10 @@ const History = () => {
         History
       </Header>
       <Content className="bg-natural font-zen leading-5 pt-6">
-        <p className="px-72"><HistoryTimeTree /></p>
+        <p className="px-36 lg:px-72"><HistoryTimeTree /></p>
       </Content>
     </Layout>
   )
 }
 
 export default History;
-
-

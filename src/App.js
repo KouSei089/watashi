@@ -9,13 +9,13 @@ import Contact from './Contact';
 
 function App() {
   return (
-    <>
+    <div className="bg-natural">
       <Profile />
       <History />
       <Portfolio />
       <Output />
       <Contact />
-    </>
+    </div>
   );
 }
 

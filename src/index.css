@@ -10,6 +10,11 @@
   @apply font-thin font-ale
 }
 
+.card-style {
+  @apply w-44 h-44 mx-28 md:mx-6 lg:mx-12 xl:mx-24 border-natural hover:opacity-50 duration-700
+}
+
 .dropdown:hover > .dropdown-content {
 	display: block;
 }
+
