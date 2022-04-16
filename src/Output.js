@@ -11,11 +11,11 @@ const Output = () => {
   return (
     <div className="bg-natural">
       <Layout>
-        <Header className="bg-natural text-5xl style-ale tracking-wide pl-48">
+        <Header className="bg-natural title-text">
           Output
         </Header>
         <div className="md:flex md:justify-center bg-natural">
-          <div className="flex flex-col md:flex-row py-24 bg-natural">
+          <div className="flex flex-col md:flex-row pt-24 md:pb-12 bg-natural">
             <div className="">
               <a href="https://zenn.dev/kousei_089" target="_blank" rel="noopener noreferrer">
                 <Card className="relative card-style">
@@ -27,7 +27,7 @@ const Output = () => {
                 </IconContext.Provider>
                 </Card>
               </a>
-              <a href="https://zenn.dev/kousei_089" target="_blank" rel="noopener noreferrer"><p className="style-ale ml-24 mt-2 pl-1 hover:opacity-50 duration-700 hover:text-black">Zenn</p></a>
+              <a href="https://zenn.dev/kousei_089" target="_blank" rel="noopener noreferrer"><p className="style-ale card-title">Zenn</p></a>
             </div>
             <div className="">
               <a href="https://github.com/KouSei089" target="_blank" rel="noopener noreferrer">
@@ -40,7 +40,7 @@ const Output = () => {
                 </IconContext.Provider>
                 </Card>
                 </a>
-              <a href="https://github.com/KouSei089" target="_blank" rel="noopener noreferrer"><p className="style-ale ml-24 mt-2 pl-1 hover:opacity-50 duration-700 hover:text-black">Github</p></a>
+              <a href="https://github.com/KouSei089" target="_blank" rel="noopener noreferrer"><p className="style-ale card-title">Github</p></a>
             </div>
             <div className="">
               <a href="https://note.com/izuha0" target="_blank" rel="noopener noreferrer">
@@ -53,7 +53,7 @@ const Output = () => {
                 </IconContext.Provider>
                 </Card>
                 </a>
-              <a href="https://note.com/izuha0" target="_blank" rel="noopener noreferrer"><p className="style-ale ml-24 mt-2 pl-1 hover:opacity-50 duration-700 hover:text-black">note</p></a>
+              <a href="https://note.com/izuha0" target="_blank" rel="noopener noreferrer"><p className="style-ale card-title">note</p></a>
             </div>
           </div>
         </div>

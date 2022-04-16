@@ -11,11 +11,11 @@ const Portfolio = () => {
   return (
     <div className="bg-natural">
       <Layout>
-        <Header className="bg-natural text-5xl style-ale tracking-wide pl-48">
+        <Header className="bg-natural title-text pt-12">
           Portfolio
         </Header>
         <div className="md:flex md:justify-center bg-natural">
-          <div className="flex flex-col md:flex-row py-24 bg-natural">
+          <div className="flex flex-col md:flex-row pt-24 bg-natural">
             <div className="">
               <a href="https://a-mikke.com" target="_blank" rel="noopener noreferrer">
                 <Card className="card-style relative">
@@ -27,7 +27,7 @@ const Portfolio = () => {
                 </IconContext.Provider>
                 </Card>
                 </a>
-              <a href="https://a-mikke.com" target="_blank" rel="noopener noreferrer"><p className="style-ale ml-24 mt-2 pl-1 hover:opacity-50 duration-700 hover:text-black">Personal development Mikke</p></a>
+              <a href="https://a-mikke.com" target="_blank" rel="noopener noreferrer"><p className="style-ale card-title">Personal development Mikke</p></a>
             </div>
             <div className="">
             <a href="https://qiita.com/Izumi_Haruya/items/148bb9fbf5e8723fd8fa" target="_blank" rel="noopener noreferrer">
@@ -40,7 +40,7 @@ const Portfolio = () => {
               </IconContext.Provider>
               </Card>
             </a>
-            <a href="https://qiita.com/Izumi_Haruya/items/148bb9fbf5e8723fd8fa" target="_blank" rel="noopener noreferrer"><p className="style-ale ml-24 mt-2 pl-1 hover:opacity-50 duration-700 hover:text-black">Mikke Qiita</p></a>
+            <a href="https://qiita.com/Izumi_Haruya/items/148bb9fbf5e8723fd8fa" target="_blank" rel="noopener noreferrer"><p className="style-ale card-title">Mikke Qiita</p></a>
             </div>
             <div className="">
               <a href="https://kousei089.github.io/portfolio-izuha/" target="_blank" rel="noopener noreferrer">
@@ -53,11 +53,10 @@ const Portfolio = () => {
                 </IconContext.Provider>
                 </Card>
               </a>
-              <a href="https://kousei089.github.io/portfolio-izuha/" target="_blank" rel="noopener noreferrer"><p className="style-ale ml-24 mt-2 pl-1 hover:opacity-50 duration-700 hover:text-black">My Portfolio</p></a>
+              <a href="https://kousei089.github.io/portfolio-izuha/" target="_blank" rel="noopener noreferrer"><p className="style-ale card-title">My Portfolio</p></a>
             </div>
           </div>
         </div>
-        
       </Layout>
     </div>
   )

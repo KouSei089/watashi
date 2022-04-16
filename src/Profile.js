@@ -25,7 +25,7 @@ const Profile = () => {
             <p className="px-20 lg:px-72 bg-natural">Worked for a major apparel brand for 5 years. Through self-study and reading of programming, he learned about problem solving through technology and decided to become an engineer, and enrolled in the programming school RUNTEQ in April 2021. He then developed and released "Mikke Custom Journaling" on his own. It achieved more than 1500 PV / 200 UUs per month. Currently, he is creating an app using React/TypeScript. As for personal activities, I am managing an online community "DIALogue".</p>
           </Content>
           <div className="md:flex md:justify-center bg-natural">
-            <div className="flex flex-col md:flex-row py-24 bg-natural">
+            <div className="flex flex-col md:flex-row pt-24 bg-natural">
               <div>
                 <a href="https://twitter.com/izuha0" target="_blank" rel="noopener noreferrer">
                 <Card className="card-style relative">
@@ -37,7 +37,7 @@ const Profile = () => {
                 </IconContext.Provider>
                 </Card>
                 </a>
-                <a href="https://twitter.com/izuha0" target="_blank" rel="noopener noreferrer"><p className="style-ale ml-24 mt-2 pl-1 hover:opacity-50 duration-700 hover:text-black">Twitter</p></a>
+                <a href="https://twitter.com/izuha0" target="_blank" rel="noopener noreferrer"><p className="style-ale card-title">Twitter</p></a>
               </div>
               <div className="">
                 <a href="https://www.wantedly.com/id/haruya_izumi" target="_blank" rel="noopener noreferrer">
@@ -50,7 +50,7 @@ const Profile = () => {
                   </IconContext.Provider>
                   </Card>
                 </a>
-                <a href="https://www.wantedly.com/id/haruya_izumi" target="_blank" rel="noopener noreferrer"><p className="style-ale ml-24 mt-2 pl-1 hover:opacity-50 duration-700 hover:text-black">Wantedly</p></a>
+                <a href="https://www.wantedly.com/id/haruya_izumi" target="_blank" rel="noopener noreferrer"><p className="style-ale card-title">Wantedly</p></a>
               </div>
               <div className="">
                 <a href="https://note.com/izuha0" target="_blank" rel="noopener noreferrer">
@@ -63,7 +63,7 @@ const Profile = () => {
                   </IconContext.Provider>
                   </Card>
                 </a>
-                <a href="https://note.com/izuha0" target="_blank" rel="noopener noreferrer"><p className="style-ale ml-24 mt-2 pl-1 hover:opacity-50 duration-700 hover:text-black">note</p></a>
+                <a href="https://note.com/izuha0" target="_blank" rel="noopener noreferrer"><p className="style-ale card-title">note</p></a>
               </div>
             </div>
           </div>

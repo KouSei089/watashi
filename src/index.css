@@ -14,6 +14,14 @@
   @apply w-44 h-44 mx-28 md:mx-6 lg:mx-12 xl:mx-24 border-natural hover:opacity-50 duration-700
 }
 
+.card-title {
+  @apply ml-28 md:ml-6 lg:ml-24 mt-2 mb-12 md:mb-0 pl-1 hover:opacity-50 duration-700 text-sm lg:text-xl hover:text-black
+}
+
+.title-text {
+  @apply  text-5xl style-ale tracking-wide pl-6 lg:pl-48 pt-5
+}
+
 .dropdown:hover > .dropdown-content {
 	display: block;
 }
