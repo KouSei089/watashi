@@ -1,4 +1,5 @@
 import OutputTimeTree from './OutputTimeTree';
+import OutputStudy from './OutputStudy';
 import { Layout } from 'antd';
 import { Card } from 'antd';
 import { SiZenn } from "react-icons/si";
@@ -58,7 +59,10 @@ const Output = () => {
           </div>
         </div>
       </Layout>
-      <OutputTimeTree />
+      <div className="flex flex-col md:flex-row pl-0 lg:pl-16 xl:pl-72">
+        <OutputTimeTree />
+        <OutputStudy />
+      </div>
     </div>
   )
 }

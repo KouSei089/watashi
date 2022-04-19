@@ -3,7 +3,8 @@ import { Timeline } from 'antd';
 
 const OutputTimeTree = () => {
   return (
-    <div className="px-6 md:px-24 lg:px-96 font-zen">
+    <div className="px-6 md:px-24 lg:px-24 font-zen">
+      <p className="text-xl pb-5">Books Outputs</p>
       <Timeline>
         <Timeline.Item color="black">
           <a href="https://zenn.dev/kousei_089/scraps/406f499a57e98f" target="_blank"
