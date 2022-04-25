@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "title": "Software Engineering at Google by O'REILLY",
+    "url": "https://zenn.dev/kousei_089/scraps/406f499a57e98f",
+    "date": "2022/03/16"
+  },
+  {
+    "id": 2,
+    "title": "Master Programmer, 2nd",
+    "url": "https://zenn.dev/kousei_089/scraps/7aec9f6f7e1848",
+    "date": "2022/03/30"
+  },
+  {
+    "id": 3,
+    "title": "Ruby Super-introduction from Zero",
+    "url": "#",
+    "date": "2020/12/20"
+  },
+  {
+    "id": 4,
+    "title": "Ruby Cherry Book",
+    "url": "#",
+    "date": "2021/07/25"
+  },
+  {
+    "id": 5,
+    "title": "RubyonRails for use in the field",
+    "url": "#",
+    "date": "2021/04/10"
+  },
+  {
+    "id": 6,
+    "title": "Perfect Ruby on Rails",
+    "url": "https://zenn.dev/kousei_089/scraps/937d308cc7a871",
+    "date": "2022/04/06"
+  },
+  {
+    "id": 7,
+    "title": "Thorough DB design instruction book to learn from masters",
+    "url": "https://zenn.dev/kousei_089/scraps/101a5cb54cd41f",
+    "date": "2022/03/24"
+  },
+  {
+    "id": 8,
+    "title": "JavaScript 7th by O'REILLY",
+    "url": "https://zenn.dev/kousei_089/scraps/872485e9e8a25b",
+    "date": "2022/04/02"
+  },
+  {
+    "id": 9,
+    "title": "Programming TypeScript by O'REILLY",
+    "url": "https://zenn.dev/kousei_089/scraps/5db748012a1f7b",
+    "date": "2022/04/10"
+  },
+  {
+    "id": 10,
+    "title": "React Hands-on Learning by O'REILLY",
+    "url": "https://zenn.dev/kousei_089/scraps/2fff1bd9e8be68",
+    "date": "2022/04/15"
+  }
+]
