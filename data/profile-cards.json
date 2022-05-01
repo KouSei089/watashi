@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "title": "Twiter",
+    "icon": "{<AiOutlineTwitter />}",
+    "url": "https://twitter.com/izuha0"
+  },
+  {
+    "id": 2,
+    "title": "Wantedly",
+    "icon": "{<BiPlanet />}",
+    "url": "https://www.wantedly.com/id/haruya_izumi"
+  },
+  {
+    "id": 3,
+    "title": "Note",
+    "icon": "{<AiOutlineFile />}",
+    "url": "https://note.com/izuha0"
+  }
+]
