@@ -16,7 +16,9 @@ const Profile = () => {
         <Header className="bg-white"></Header>
         <Content className="bg-white text-7xl text-matte text-center tracking-wider style-ale">Izumi Haruya</Content>
         <Content className="bg-white font-zen leading-5 py-6">
-            <p className="px-20 lg:px-72 pt-20 bg-white">Worked for a major apparel brand for 5 years. Through self-study and reading of programming, he learned about problem solving through technology and decided to become an engineer, and enrolled in the programming school RUNTEQ in April 2021. He then developed and released "Mikke Custom Journaling" on his own. It achieved more than 1500 PV / 200 UUs per month. Currently, he is creating an app using React/TypeScript. As for personal activities, I am managing an online community "DorisN".</p>
+          <div className="px-20 lg:px-72 pt-20 bg-white">
+            <p>Worked for a major apparel brand for 5 years .Through self-study of programming and reading, he learned about problem solving through technology and decided to become an engineer, enrolling in the programming school "RUNTEQ" in April 2021.Currently, he works as a backend engineer at TeamLab.As a personal activity, he is running an online community "DorisN".</p>
+          </div>
         </Content>
         <Footer className="bg-white"></Footer>
       </Layout>
