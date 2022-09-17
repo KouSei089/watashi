@@ -62,7 +62,7 @@ const HistoryTimeTree = () => {
       </Timeline.Item>
       <Timeline.Item color="red"><p className="font-black border-matte border-b-2">G.U. Corporation 2016-02-23</p></Timeline.Item>
       <Timeline.Item>Ohgiya East Japan Co. 2014-04-15</Timeline.Item>
-      <Timeline.Item color="green" className="bg-natural">
+      <Timeline.Item color="green" className="bg-white">
         Fukushima Prefectural Sukagawa High School 2014-3-12
       </Timeline.Item>
     </Timeline>

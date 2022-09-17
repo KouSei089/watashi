@@ -14,7 +14,7 @@ const Contact = () => {
         <Content className="bg-white font-zen leading-5">
           <div className="px-6 md:px-72 pb-12 flex justify-center">
             <p className="mr-5">e-mail</p>
-            <p className="">qq00891829@icloud.com</p>
+            <p className="">izumiharuya@team-lab.com</p>
             <a href="https://github.com/KouSei089" target="_blank" rel="noopener noreferrer"><AiOutlineGithub className="mt-1.5 ml-2" /></a>
             <a href="https://twitter.com/izuha0" target="_blank" rel="noopener noreferrer"><AiOutlineTwitter className="mt-1.5 ml-2" /></a>
           </div>
