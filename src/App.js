@@ -12,8 +12,8 @@ function App() {
     <div className="bg-natural">
       <Profile />
       <History />
-      <Portfolio />
-      <Output />
+      {/* <Portfolio /> */}
+      {/* <Output /> */}
       <Contact />
     </div>
   );
