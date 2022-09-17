@@ -17,9 +17,8 @@ import { RiGitRepositoryFill } from "react-icons/ri";
 const HistoryTimeTree = () => {
   return (
     <Timeline mode="alternate">
-      <Timeline.Item color="purple">
-        <p>We are currently developing an application using React x TypeScript x RailsAPI.</p>
-        <p>Now in production...</p>
+      <Timeline.Item color="gold">
+        <p>TeamLab Backend Engineer. 2022-06-15 Now in ...</p>
       </Timeline.Item>
       <Timeline.Item color="purple">
         <p>Create a <a href="https://kousei089.github.io/portfolio-izuha/" target="_blank" rel="noopener noreferrer">"portfolio website."</a> 2022-04-14</p>
@@ -62,7 +61,7 @@ const HistoryTimeTree = () => {
       </Timeline.Item>
       <Timeline.Item color="red"><p className="font-black border-matte border-b-2">G.U. Corporation 2016-02-23</p></Timeline.Item>
       <Timeline.Item>Ohgiya East Japan Co. 2014-04-15</Timeline.Item>
-      <Timeline.Item color="green" className="bg-natural">
+      <Timeline.Item color="green" className="bg-white">
         Fukushima Prefectural Sukagawa High School 2014-3-12
       </Timeline.Item>
     </Timeline>
