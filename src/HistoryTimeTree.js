@@ -17,9 +17,8 @@ import { RiGitRepositoryFill } from "react-icons/ri";
 const HistoryTimeTree = () => {
   return (
     <Timeline mode="alternate">
-      <Timeline.Item color="purple">
-        <p>We are currently developing an application using React x TypeScript x RailsAPI.</p>
-        <p>Now in production...</p>
+      <Timeline.Item color="gold">
+        <p>TeamLab Backend Engineer. 2022-06-15 Now in ...</p>
       </Timeline.Item>
       <Timeline.Item color="purple">
         <p>Create a <a href="https://kousei089.github.io/portfolio-izuha/" target="_blank" rel="noopener noreferrer">"portfolio website."</a> 2022-04-14</p>
