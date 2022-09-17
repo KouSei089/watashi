@@ -87,7 +87,7 @@ const Profile = () => {
           </div>
         </Layout>
       </div>
-      <div className="pt-20 bg-white">
+      <div className="pt-0 md:pt-20 bg-white">
         <Layout>
           <div className="md:flex md:justify-center bg-white">
             <div className="flex flex-col md:flex-row bg-white">
@@ -152,7 +152,7 @@ const Profile = () => {
           </div>
         </Layout>
       </div>
-      <div className="pt-20 bg-white">
+      <div className="pt-0 md:pt-20 bg-white">
         <Layout>
           <div className="md:flex md:justify-center bg-white">
             <div className="flex flex-col md:flex-row bg-white">

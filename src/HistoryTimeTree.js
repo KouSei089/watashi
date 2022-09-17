@@ -18,7 +18,7 @@ const HistoryTimeTree = () => {
   return (
     <Timeline mode="alternate">
       <Timeline.Item color="gold">
-        <p>TeamLab Backend Engineer. 2022-06-15 Now in ...</p>
+        <p className="font-black border-matte border-b-2">TeamLab Backend Engineer. 2022-06-15 Now in ...</p>
       </Timeline.Item>
       <Timeline.Item color="purple">
         <p>Create a <a href="https://kousei089.github.io/portfolio-izuha/" target="_blank" rel="noopener noreferrer">"portfolio website."</a> 2022-04-14</p>
