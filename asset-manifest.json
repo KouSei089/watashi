@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/portfolio-izuha/static/css/main.198951bd.css",
-    "main.js": "/portfolio-izuha/static/js/main.74f6bd09.js",
+    "main.css": "/portfolio-izuha/static/css/main.1669ff49.css",
+    "main.js": "/portfolio-izuha/static/js/main.cd8b1860.js",
     "index.html": "/portfolio-izuha/index.html",
-    "main.198951bd.css.map": "/portfolio-izuha/static/css/main.198951bd.css.map",
-    "main.74f6bd09.js.map": "/portfolio-izuha/static/js/main.74f6bd09.js.map"
+    "main.1669ff49.css.map": "/portfolio-izuha/static/css/main.1669ff49.css.map",
+    "main.cd8b1860.js.map": "/portfolio-izuha/static/js/main.cd8b1860.js.map"
   },
   "entrypoints": [
-    "static/css/main.198951bd.css",
-    "static/js/main.74f6bd09.js"
+    "static/css/main.1669ff49.css",
+    "static/js/main.cd8b1860.js"
   ]
 }
