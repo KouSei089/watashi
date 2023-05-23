@@ -1,11 +1,8 @@
-import FreeTimeProfile from './FreeTimeProfile';
 import { Layout } from 'antd';
 import { Card } from 'antd';
 import { Image } from 'antd';
-import { AiOutlineFile } from "react-icons/ai";
-import { AiOutlineTwitter } from "react-icons/ai";
-import { BiPlanet } from "react-icons/bi";
 import { IconContext } from 'react-icons';
+import React from 'react';
 
 const { Header, Footer, Content } = Layout;
 

@@ -6,6 +6,7 @@ import { SiZenn } from "react-icons/si";
 import { AiOutlineFile } from "react-icons/ai";
 import { AiOutlineGithub } from "react-icons/ai";
 import { IconContext } from 'react-icons';
+import React from 'react';
 const { Header } = Layout;
 
 const Output = () => {

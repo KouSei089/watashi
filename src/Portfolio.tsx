@@ -4,6 +4,7 @@ import { AiOutlineMedium } from "react-icons/ai";
 import { SiQiita } from "react-icons/si";
 import { GoRocket } from "react-icons/go";
 import { IconContext } from 'react-icons';
+import React from 'react';
 
 const { Header } = Layout;
 

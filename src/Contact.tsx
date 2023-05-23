@@ -1,4 +1,5 @@
 import { Layout } from 'antd';
+import React from 'react';
 import { AiOutlineGithub } from "react-icons/ai";
 import { AiOutlineTwitter } from "react-icons/ai";
 

@@ -1,3 +1,4 @@
+import React from 'react';
 import HistoryTimeTree from './HistoryTimeTree';
 import { Layout } from 'antd';
 
