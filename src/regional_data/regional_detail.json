@@ -1,5 +1,19 @@
 [
-  { "x": 70, "y": 140, "area": "Suiden Terrace, Yamagata", "value": 10, "url": "https://www.example.com/placeA" },
-  { "x": 200, "y": 100, "area": "Place B", "value": 20, "url": "https://www.example.com/placeB" },
-  { "x": 300, "y": 150, "area": "Place C", "value": 30, "url": "https://www.example.com/placeC" }
+  { "lat": 38.74665026204286,
+    "lon": 139.8222692351702,
+    "area": "Suiden Terrace, Yamagata",
+    "url": "https://www.suiden-terrasse.yamagata-design.com/"
+  },
+  {
+    "lat": 35.6895,
+    "lon": 139.6917,
+    "area": "Tokyo",
+    "url": "https://www.example.com/tokyo"
+  },
+  {
+    "lat": 35.66846720019715,
+    "lon": 134.9681032819371,
+    "area": "京都",
+    "url": "https://www.example.com/tokyo"
+  }
 ]
