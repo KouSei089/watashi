@@ -60,13 +60,12 @@ const HistoryTimeTree = () => {
         As acting store manager, created sales floor, inventory control, sales planning, and trained 5 subordinates. 2019-02-23
       </Timeline.Item>
       <Timeline.Item color="#F4F4F2"><p className="font-black border-matte border-b-2">G.U. Corporation 2016-02-23</p></Timeline.Item>
-      <Timeline.Item>Ohgiya East Japan Co. 2014-04-15</Timeline.Item>
+      <Timeline.Item color="#F4F4F2">Ohgiya East Japan Co. 2014-04-15</Timeline.Item>
       <Timeline.Item color="#F4F4F2" className="bg-white">
         Fukushima Prefectural Sukagawa High School 2014-3-12
       </Timeline.Item>
     </Timeline>
   );
 }
-
 
 export default HistoryTimeTree;
