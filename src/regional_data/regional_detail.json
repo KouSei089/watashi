@@ -1,0 +1,5 @@
+[
+  { "x": 70, "y": 140, "area": "Suiden Terrace, Yamagata", "value": 10, "url": "https://www.example.com/placeA" },
+  { "x": 200, "y": 100, "area": "Place B", "value": 20, "url": "https://www.example.com/placeB" },
+  { "x": 300, "y": 150, "area": "Place C", "value": 30, "url": "https://www.example.com/placeC" }
+]
