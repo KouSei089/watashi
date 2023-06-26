@@ -34,6 +34,7 @@
   font-weight: lighter;
 }
 
+
 .pin path {
   cursor: pointer;
   transition: fill 150ms;

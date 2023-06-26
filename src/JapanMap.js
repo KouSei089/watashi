@@ -34,7 +34,8 @@ const JapanMap = () => {
         .attr("xlink:title", (pin) => pin.area)
         .attr("target", "_blank")
         .on("mouseover", onMouseOver)
-        .on("mouseout", onMouseOut);
+        .on("mouseout", onMouseOut)
+        .on("click", onClick); // Add click event listener
 
       link
         .selectAll("path")
@@ -51,7 +52,7 @@ const JapanMap = () => {
       function onMouseOver(event, pin) {
         tooltip.style("opacity", 1);
         tooltip
-          .html(`${pin.area}`)
+        .html(`<img src="${pin.image}" alt="${pin.area}" style="width:200px; height:auto;" /><br />${pin.area}<br />${pin.content}`)
           .style("left", event.pageX + 15 + "px")
           .style("top", event.pageY + "px");
         d3.select(this).style("stroke", "#EA5455");
@@ -60,6 +61,10 @@ const JapanMap = () => {
       function onMouseOut() {
         tooltip.style("opacity", 0);
         d3.select(this).style("stroke", "#EA5455");
+      }
+
+      function onClick(event, pin) {
+        window.open(pin.url, '_blank');
       }
     }
   }, []);

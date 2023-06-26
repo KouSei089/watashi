@@ -2,18 +2,24 @@
   { "lat": 38.74665026204286,
     "lon": 139.8222692351702,
     "area": "Suiden Terrace, Yamagata",
-    "url": "https://www.suiden-terrasse.yamagata-design.com/"
+    "url": "https://www.suiden-terrasse.yamagata-design.com/",
+    "image": "https://github.com/KouSei089/portfolio-izuha/assets/77420123/8c40b22d-550e-43af-8942-e8432930a9e3",
+    "content": "This is a note about Hokkaido. It has beautiful nature and delicious food."
   },
   {
     "lat": 35.6895,
     "lon": 139.6917,
     "area": "Tokyo",
-    "url": "https://www.example.com/tokyo"
+    "url": "https://www.example.com/tokyo",
+    "image": "https://github.com/KouSei089/portfolio-izuha/assets/77420123/8c40b22d-550e-43af-8942-e8432930a9e3",
+    "content": "This is a note about Hokkaido. It has beautiful nature and delicious food."
   },
   {
     "lat": 35.66846720019715,
     "lon": 134.9681032819371,
-    "area": "京都",
-    "url": "https://www.example.com/tokyo"
+    "area": "Yuhigaura, Tango Peninsula, Kyoto",
+    "url": "https://note.com/izuha0/n/n5caf0d858fc6",
+    "image": "https://github.com/KouSei089/portfolio-izuha/assets/77420123/0cb9663c-c8cc-4141-a2bc-0a28333816b1",
+    "content": "I visited Yuhigaura in the Tango Peninsula, Kyoto Prefecture. It takes about three hours by train from Kyoto Station to the nearest Yuhigaura Onsen Station on the Sanin Honsen Line and the Kyoto Tango Railway Miyatoyo Line...."
   }
 ]
