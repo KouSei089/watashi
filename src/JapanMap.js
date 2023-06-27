@@ -70,9 +70,9 @@ const JapanMap = () => {
   }, []);
 
   return (
-    <div style={{ width: "100%", height: "700px" }}>
-      <Japan ref={mapRef} style={{ width: "100%", height: "100%" }} />
-    </div>
+    <div id="map-container" style={{ width: "100%", height: "700px" }}>
+    <Japan ref={mapRef} style={{ width: "100%", height: "100%" }} />
+  </div>
   );
 };
 
