@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
-import { ReactComponent as Japan } from "./regional_data/japanMap.svg";
-import data from "./regional_data/regional_detail.json";
+import { ReactComponent as Japan } from "../regional_data/japanMap.svg";
+import data from "../regional_data/regional_detail.json";
 import * as d3 from "d3";
 
 const JapanMap = () => {
@@ -11,6 +11,7 @@ const JapanMap = () => {
     .scale(1830)
     .translate([500, 426.5]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const createPinPath = (pin) => {
     const [x, y] = projection([pin.lon, pin.lat]);
     return `
@@ -63,16 +64,17 @@ const JapanMap = () => {
         d3.select(this).style("stroke", "#EA5455");
       }
 
+
       function onClick(event, pin) {
         window.open(pin.url, '_blank');
       }
     }
-  }, []);
+  }, [createPinPath]);
 
   return (
-    <div id="map-container" style={{ width: "100%", height: "700px" }}>
-    <Japan ref={mapRef} style={{ width: "100%", height: "100%" }} />
-  </div>
+    <div id="map-container" className="w-full h-xxl mt-20">
+      <Japan ref={mapRef} className="w-full h-full" />
+    </div>
   );
 };
 

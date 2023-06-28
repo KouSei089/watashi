@@ -1,0 +1,11 @@
+.timelineItemLabel {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+.timelineItemContent {
+  font-size: 14px;
+  font-weight: normal;
+  color: #e3e3e3;
+}

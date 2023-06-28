@@ -15,6 +15,13 @@ module.exports = {
         'sky-gray': '#D9D9D9',
         'matte': '#36312c'
       },
+      height: {
+        sm: '8px',
+        md: '16px',
+        lg: '24px',
+        xl: '48px',
+        xxl: '700px'
+      }
     },
   },
   plugins: [
