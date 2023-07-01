@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
-import { ReactComponent as Japan } from "../regional_data/japanMap.svg";
-import data from "../regional_data/regional_detail.json";
+import { ReactComponent as Japan } from "./regional_data/japanMap.svg";
+import data from "./regional_data/regional_detail.json";
 import * as d3 from "d3";
 
 const JapanMap = () => {
@@ -53,7 +53,7 @@ const JapanMap = () => {
       function onMouseOver(event, pin) {
         tooltip.style("opacity", 1);
         tooltip
-        .html(`<img src="${pin.image}" alt="${pin.area}" style="width:200px; height:auto;" /><br />${pin.area}<br />${pin.content}`)
+        .html(`<img src="${pin.image}" alt="${pin.area}" style="width:200px; height:auto;" /><br />${pin.area}<br />${pin.date}`)
           .style("left", event.pageX + 15 + "px")
           .style("top", event.pageY + "px");
         d3.select(this).style("stroke", "#EA5455");
@@ -72,7 +72,7 @@ const JapanMap = () => {
   }, [createPinPath]);
 
   return (
-    <div id="map-container" className="w-full h-xxl mt-20">
+    <div id="map-container" className="w-full h-xxl mt-5 lg:mt-20">
       <Japan ref={mapRef} className="w-full h-full" />
     </div>
   );

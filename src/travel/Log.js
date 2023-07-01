@@ -6,8 +6,9 @@ import {
   faSubway,
   faShip,
   faPlane,
+  faCar
 } from "@fortawesome/free-solid-svg-icons";
-import travelLogs from "../regional_data/travel_log.json";
+import travelLogs from "./regional_data/travel_log.json";
 
 const iconMapping = {
   faMountain: faMountain,
@@ -15,6 +16,7 @@ const iconMapping = {
   faSubway: faSubway,
   faShip: faShip,
   faPlane: faPlane,
+  faCar: faCar
 };
 
 const Log = () => {
@@ -33,7 +35,13 @@ const Log = () => {
               />
             }
           >
-            <span className="timeline-item-content">{item.title}</span>
+            <a
+              href={item.url}
+              className="timeline-item-content transform transition-all duration-300 hover:opacity-50"
+              style={{ textDecoration: 'none', color: 'inherit' }}
+            >
+              {item.title}
+            </a>
           </Timeline.Item>
         ))}
       </Timeline>

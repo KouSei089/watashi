@@ -11,15 +11,15 @@ module.exports = {
       },
       colors: {
         'natural': '#f7f3ec',
-        'light-gray': '#dadada',
-        'sky-gray': '#D9D9D9',
-        'matte': '#36312c'
+        'light-gray': '#BBBFCA',
+        'sky-gray': '#495464',
+        'matte': '#36312c',
       },
       height: {
         sm: '8px',
         md: '16px',
         lg: '24px',
-        xl: '48px',
+        xl: '400px',
         xxl: '700px'
       }
     },
