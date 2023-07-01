@@ -14,22 +14,22 @@ const items = [
   {
     label: 'Top',
     key: 'Top',
-    to: '/',
+    to: '/portfolio-izuha',
   },
   {
     label: 'About',
     key: 'About',
-    to: '/about',
+    to: '/portfolio-izuha/about',
   },
   {
     label: 'Book',
     key: 'Book',
-    to: '/book',
+    to: '/portfolio-izuha/book',
   },
   {
     label: 'Travel',
     key: 'travel',
-    to: '/travel',
+    to: '/portfolio-izuha/travel',
   }
 ];
 
@@ -56,10 +56,10 @@ function App() {
           </ul>
         </div>
         <Switch>
-          <Route exact path="/" component={Top} />
-          <Route path="/about" component={About} />
-          <Route path="/book" component={Book} />
-          <Route path="/travel" component={Travel} />
+          <Route exact path="/portfolio-izuha" component={Top} />
+          <Route path="/portfolio-izuha/about" component={About} />
+          <Route path="/portfolio-izuha/book" component={Book} />
+          <Route path="/portfolio-izuha/travel" component={Travel} />
         </Switch>
       </Router>
       <Contact />
