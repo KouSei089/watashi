@@ -21,7 +21,7 @@ const iconMapping = {
 
 const Log = () => {
   return (
-    <>
+    <div className="px-6 md:px-24 lg:px-72">
       <Timeline mode={"left"}>
         {travelLogs.map((item) => (
           <Timeline.Item
@@ -45,7 +45,7 @@ const Log = () => {
           </Timeline.Item>
         ))}
       </Timeline>
-    </>
+    </div>
   );
 };
 
