@@ -38,7 +38,7 @@ function App() {
     <div className="bg-white style-ale">
       <Router>
         <div className="custom-navbar flex items-center justify-between">
-          <Link to="/">
+          <Link to="/portfolio-izuha">
             <Avatar
               className="ml-1 w-16 h-16"
               src="https://github.com/KouSei089/portfolio-izuha/assets/77420123/99032382-79be-4aff-8de7-8da88a043188"
