@@ -1,0 +1,25 @@
+/* カスタムナビゲーションスタイル */
+.custom-navbar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  background-color: white;
+  padding: 16px 36px;
+}
+
+.custom-navbar .nav-item {
+  list-style-type: none;
+  margin-left: 24px;
+  font-size: 16px;
+}
+
+.custom-navbar a {
+  text-decoration: none;
+  color: #333;
+}
+
+.custom-navbar a:hover,
+.custom-navbar a.active {
+  opacity: 0.5;
+  transition: opacity 0.6s ease;
+}

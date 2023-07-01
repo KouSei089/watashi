@@ -1,0 +1,28 @@
+[
+  { "lat": 38.74665026204286,
+    "lon": 139.8222692351702,
+    "area": "山形県 スイデンテラス",
+    "url": "https://www.suiden-terrasse.yamagata-design.com/",
+    "image": "https://github.com/KouSei089/portfolio-izuha/assets/77420123/09e6df24-94cb-4b0c-8c38-7d87e01b9209",
+    "content": "---.",
+    "date": "2021.12.27"
+  },
+  {
+    "lat": 35.66846720019715,
+    "lon": 134.9681032819371,
+    "area": "京都府 丹後半島 夕日ヶ浦",
+    "url": "https://note.com/izuha0/n/n5caf0d858fc6",
+    "image": "https://github.com/KouSei089/portfolio-izuha/assets/77420123/0cb9663c-c8cc-4141-a2bc-0a28333816b1",
+    "content": "---",
+    "date": "2023.06.18"
+  },
+  {
+    "lat": 35.2999728610301,
+    "lon": 139.48174443332127,
+    "area": "神奈川県 湘南海岸 江ノ島",
+    "url": "https://note.com/izuha0/n/nd55bf0d76d3c",
+    "image": "https://assets.st-note.com/production/uploads/images/100090511/rectangle_large_type_2_978a3017cc90801fa1f7293b74da896d.png?fit=bounds&quality=85&width=1280",
+    "content": "---",
+    "date": "2023.03.11"
+  }
+]
