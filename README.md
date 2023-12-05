@@ -5,4 +5,4 @@
 4. 時間が少しかかるがその後表示される。
 
 # サイトURL
-https://kousei089.github.io/portfolio-izuha/
+https://kousei089.github.io/watashi/
