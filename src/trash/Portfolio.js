@@ -43,7 +43,7 @@ const Portfolio = () => {
             <a href="https://qiita.com/Izumi_Haruya/items/148bb9fbf5e8723fd8fa" target="_blank" rel="noopener noreferrer"><p className="style-ale card-title">Mikke Qiita</p></a>
             </div>
             <div className="">
-              <a href="https://kousei089.github.io/portfolio-izuha/" target="_blank" rel="noopener noreferrer">
+              <a href="https://kousei089.github.io/watashi/" target="_blank" rel="noopener noreferrer">
                 <Card className="card-style relative">
                 <div className="absolute top-0 left-0 animate-ping h-1 w-1 bg-matte rounded-full z-50"></div>
                 <IconContext.Provider value={{ color: '#36312c', size: '60px'}}>
@@ -53,7 +53,7 @@ const Portfolio = () => {
                 </IconContext.Provider>
                 </Card>
               </a>
-              <a href="https://kousei089.github.io/portfolio-izuha/" target="_blank" rel="noopener noreferrer"><p className="style-ale card-title">My Portfolio</p></a>
+              <a href="https://kousei089.github.io/watashi/" target="_blank" rel="noopener noreferrer"><p className="style-ale card-title">My Portfolio</p></a>
             </div>
           </div>
         </div>
