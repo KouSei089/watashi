@@ -33,7 +33,7 @@ const Profile = () => {
                     width={173}
                     height={173}
                     src="error"
-                    fallback="https://github.com/KouSei089/portfolio-izuha/assets/77420123/b89f4854-0fb0-43b9-96c8-f47268c4c3f4"
+                    fallback="https://github.com/KouSei089/watashi/assets/77420123/b89f4854-0fb0-43b9-96c8-f47268c4c3f4"
                   />
                   </div>
                 </IconContext.Provider>
@@ -52,7 +52,7 @@ const Profile = () => {
                         width={173}
                         height={173}
                         src="error"
-                        fallback="https://github.com/KouSei089/portfolio-izuha/assets/77420123/b89f4854-0fb0-43b9-96c8-f47268c4c3f4"
+                        fallback="https://github.com/KouSei089/watashi/assets/77420123/b89f4854-0fb0-43b9-96c8-f47268c4c3f4"
                       />
                     </div>
                   </IconContext.Provider>
@@ -71,7 +71,7 @@ const Profile = () => {
                       width={173}
                       height={173}
                       src="error"
-                      fallback="https://github.com/KouSei089/portfolio-izuha/assets/77420123/b89f4854-0fb0-43b9-96c8-f47268c4c3f4"
+                      fallback="https://github.com/KouSei089/watashi/assets/77420123/b89f4854-0fb0-43b9-96c8-f47268c4c3f4"
                     />
                     </div>
                   </IconContext.Provider>

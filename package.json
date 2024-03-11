@@ -1,7 +1,7 @@
 {
-  "name": "portfolio-izuha0",
+  "name": "watashi",
   "version": "0.1.0",
-  "homepage": "http://KouSei089.github.io/portfolio-izuha",
+  "homepage": "http://KouSei089.github.io/watashi",
   "proxy": "http://localhost:3000/",
   "secure": false,
   "private": true,
@@ -22,7 +22,7 @@
     "react-intersection-observer": "^9.5.2",
     "react-paginate": "^8.2.0",
     "react-router-dom": "^5.3.4",
-    "react-scripts": "5.0.0",
+    "react-scripts": "^5.0.0",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

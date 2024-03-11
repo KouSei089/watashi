@@ -14,22 +14,22 @@ const items = [
   {
     label: 'Top',
     key: 'Top',
-    to: '/portfolio-izuha',
+    to: '/watashi',
   },
   {
     label: 'About',
     key: 'About',
-    to: '/portfolio-izuha/about',
+    to: '/watashi/about',
   },
   {
     label: 'Book',
     key: 'Book',
-    to: '/portfolio-izuha/book',
+    to: '/watashi/book',
   },
   {
     label: 'Travel',
     key: 'travel',
-    to: '/portfolio-izuha/travel',
+    to: '/watashi/travel',
   }
 ];
 
@@ -38,10 +38,10 @@ function App() {
     <div className="bg-white style-ale">
       <Router>
         <div className="custom-navbar flex items-center justify-between">
-          <Link to="/portfolio-izuha">
+          <Link to="/watashi">
             <Avatar
               className="ml-1 w-16 h-16"
-              src="https://github.com/KouSei089/portfolio-izuha/assets/77420123/99032382-79be-4aff-8de7-8da88a043188"
+              src="https://github.com/KouSei089/watashi/assets/77420123/99032382-79be-4aff-8de7-8da88a043188"
             />
             <h3 className='mt-2'>Izumi Haruya</h3>
           </Link>
@@ -56,10 +56,10 @@ function App() {
           </ul>
         </div>
         <Switch>
-          <Route exact path="/portfolio-izuha" component={Top} />
-          <Route path="/portfolio-izuha/about" component={About} />
-          <Route path="/portfolio-izuha/book" component={Book} />
-          <Route path="/portfolio-izuha/travel" component={Travel} />
+          <Route exact path="/watashi" component={Top} />
+          <Route path="/watashi/about" component={About} />
+          <Route path="/watashi/book" component={Book} />
+          <Route path="/watashi/travel" component={Travel} />
         </Switch>
       </Router>
       <Contact />

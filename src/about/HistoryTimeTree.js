@@ -21,12 +21,12 @@ const HistoryTimeTree = () => {
         <p className="font-black border-matte border-b-2">TeamLab Backend Engineer. 2022-06-15 Now in ...</p>
       </Timeline.Item>
       <Timeline.Item color="#F4F4F2">
-        <p>Create a <a href="https://kousei089.github.io/portfolio-izuha/" target="_blank" rel="noopener noreferrer">"portfolio website."</a> 2022-04-14</p>
+        <p>Create a <a href="https://kousei089.github.io/watashi/" target="_blank" rel="noopener noreferrer">"portfolio website."</a> 2022-04-14</p>
         <p>- Technology stacks used -</p>
         <div className="flex justify-end">
           <DiReact className="mr-1" /><DiJsBadge className="mr-1" /><SiTailwindcss className="mr-1" /><SiAntdesign className="mr-1" /><DiGithubBadge className="mr-1" />
         </div>
-        <a href="https://github.com/KouSei089/portfolio-izuha" target="_blank" rel="noopener noreferrer">
+        <a href="https://github.com/KouSei089/watashi" target="_blank" rel="noopener noreferrer">
           <div className="flex justify-end">
             <p className="pt-1.5"><RiGitRepositoryFill /></p>
             <p>Repository</p>

@@ -10,7 +10,7 @@ const Top = () => (
         <div className="px-6 md:px-72 pb-12 flex justify-center">
           <img
             className="w-screen lg:w-full h-xl lg:h-full object-cover"
-            src="https://github.com/KouSei089/portfolio-izuha/assets/77420123/d32f15ff-a725-40a4-b58f-8c79d67f8eb6"
+            src="https://github.com/KouSei089/watashi/assets/77420123/d32f15ff-a725-40a4-b58f-8c79d67f8eb6"
             alt="main-img"
           />
         </div>
