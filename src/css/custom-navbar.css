@@ -5,12 +5,13 @@
   align-items: center;
   background-color: white;
   padding: 16px 36px;
+  font-size: 32px;
 }
 
 .custom-navbar .nav-item {
   list-style-type: none;
   margin-left: 24px;
-  font-size: 16px;
+  font-size: 24px;
 }
 
 .custom-navbar a {

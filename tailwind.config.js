@@ -7,7 +7,8 @@ module.exports = {
       fontFamily: {
         body: ['Noto Serif JP', 'serif'],
         ale: ['Alegreya Sans SC', 'sans-serif'],
-        zen: ['Zen Kurenaido', 'sans-serif']
+        zen: ['Zen Kurenaido', 'sans-serif'],
+        jp: ['Zen Kaku Gothic New', 'sans-serif']
       },
       colors: {
         'natural': '#f7f3ec',

@@ -1,90 +1,83 @@
-import { Layout } from 'antd';
-import { Card } from 'antd';
-import { Image } from 'antd';
-import { IconContext } from 'react-icons';
+import React from 'react';
 
-const { Header, Footer, Content } = Layout;
-
-const Profile = () => {
-  return (
-    <>
-      <Layout>
-        <Header className="bg-white"></Header>
-        <Content className="bg-white text-7xl text-matte text-center tracking-wider style-ale">Izumi Haruya</Content>
-        <Content className="bg-white font-zen leading-5 py-6">
-          <div className="px-20 lg:px-72 pt-20 bg-white">
-            <p>Worked for a major apparel brand for 5 years .Through self-study of programming and reading, he learned about problem solving through technology and decided to become an engineer, enrolling in the programming school "RUNTEQ" in April 2021.Currently, he works as a backend engineer at TeamLab.As a personal activity, he is running an online community "DorisN".</p>
-          </div>
-        </Content>
-        <Footer className="bg-white"></Footer>
-      </Layout>
-      <div>
-        <Layout>
-          <div className="md:flex md:justify-center bg-white">
-            <div className="flex flex-col md:flex-row bg-white">
-              {/* Twitter */}
-              <div>
-                <a href="https://twitter.com/izuha0" target="_blank" rel="noopener noreferrer">
-                <Card className="card-style relative border-none">
-                <div className="absolute top-0 left-0 animate-ping h-1 w-1 delay-700 rounded-full z-50"></div>
-                <IconContext.Provider value={{ color: '#36312c', size: '60px'}}>
-                  <div className="absolute top-0.5 left-0">
-                  <Image
-                    width={173}
-                    height={173}
-                    src="error"
-                    fallback="https://github.com/KouSei089/watashi/assets/77420123/b89f4854-0fb0-43b9-96c8-f47268c4c3f4"
-                  />
-                  </div>
-                </IconContext.Provider>
-                </Card>
-                </a>
-                <a href="https://twitter.com/izuha0" target="_blank" rel="noopener noreferrer"><p className="style-ale card-title">Twitter</p></a>
-              </div>
-              {/* note */}
-              <div className="">
-                <a href="https://note.com/izuha0" target="_blank" rel="noopener noreferrer">
-                  <Card className="card-style relative border-none">
-                  <div className="absolute top-0 left-0 animate-ping h-1 w-1 rounded-full z-50"></div>
-                  <IconContext.Provider value={{ color: '#36312c', size: '60px'}}>
-                    <div className="absolute top-0.5 left-0">
-                      <Image
-                        width={173}
-                        height={173}
-                        src="error"
-                        fallback="https://github.com/KouSei089/watashi/assets/77420123/b89f4854-0fb0-43b9-96c8-f47268c4c3f4"
-                      />
-                    </div>
-                  </IconContext.Provider>
-                  </Card>
-                </a>
-                <a href="https://note.com/izuha0" target="_blank" rel="noopener noreferrer"><p className="style-ale card-title">Note</p></a>
-              </div>
-              {/* Github */}
-              <div>
-                <a href="https://github.com/KouSei089" target="_blank" rel="noopener noreferrer">
-                  <Card className="card-style relative border-none">
-                  <div className="absolute top-0 left-0 animate-ping h-1 w-1 delay-700 rounded-full z-50"></div>
-                  <IconContext.Provider value={{ color: '#36312c', size: '60px'}}>
-                    <div className="absolute top-0.5 left-0">
-                    <Image
-                      width={173}
-                      height={173}
-                      src="error"
-                      fallback="https://github.com/KouSei089/watashi/assets/77420123/b89f4854-0fb0-43b9-96c8-f47268c4c3f4"
-                    />
-                    </div>
-                  </IconContext.Provider>
-                  </Card>
-                </a>
-                <a href="https://github.com/KouSei089" target="_blank" rel="noopener noreferrer"><p className="style-ale card-title">Github</p></a>
-              </div>
-            </div>
-          </div>
-        </Layout>
+const Profile = ({ scrollIconRef }) => (
+  <section className="relative max-w-5xl mx-auto px-4 sm:px-8 py-24 bg-white font-jp text-base md:text-lg leading-7">
+    <h1 id="profile" className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-jp text-matte tracking-wider mb-6 mt-0">
+      わたし
+    </h1>
+    {/* 画像をここに挿入（上部余白を半分、下部余白は元のまま） */}
+    <div className="flex flex-col items-center">
+      <div style={{ height: '1rem' }} />
+      <div style={{ position: 'relative', width: '100%', maxWidth: 400 }}>
+        <img
+          className="w-full max-w-md h-auto object-cover rounded"
+          src="https://github.com/KouSei089/watashi/assets/77420123/d32f15ff-a725-40a4-b58f-8c79d67f8eb6"
+          alt="main-img"
+          style={{
+            filter: 'blur(8px) brightness(0.95) contrast(1.05)',
+            boxShadow: '0 4px 24px 0 rgba(0,0,0,0.06)',
+            display: 'block',
+            transition: 'none',
+            pointerEvents: 'auto',
+            userSelect: 'none',
+            cursor: 'pointer',
+          }}
+          draggable={false}
+        />
       </div>
-    </>
-  );
-}
+      <div style={{ height: '2rem' }} />
+    </div>
+    <p>
+      なまえは、いずみはるや（泉春称）と申します。アパレルからエンジニアを経験し、現在は島根県隠岐諸島海士町にあるホテルEntôで働いています。<br />
+      まくらふたつで眠ります。<br />
+      本が好きです。詩やエッセイ、デザインや哲学、そしてときどき臨床医学まで。
+    </p>
+    <div className="mt-3">
+      <a href="https://note.com/izuha0" target="_blank" rel="noopener noreferrer" className="wavy-underline text-xl mr-4">
+        note <span className="text-xs">↗</span>
+      </a>
+      <a href="https://reads.jp/u/izuha" target="_blank" rel="noopener noreferrer" className="wavy-underline text-xl">
+        reads(@izuha) <span className="text-xs">↗︎</span>
+      </a>
+    </div>
+    {/* スクロールインジケーターにrefを渡す */}
+    <div className="scroll_down" ref={scrollIconRef} style={{ position: 'static', marginTop: 32 }}>
+      <span className="mouse-modern">
+        <span className="mouse-dot" />
+      </span>
+      <style>{`
+        .scroll_down {
+          text-align: center;
+        }
+        .mouse-modern {
+          display: inline-block;
+          width: 28px;
+          height: 44px;
+          border: 2px solid #222;
+          border-radius: 16px;
+          position: relative;
+          box-sizing: border-box;
+        }
+        .mouse-dot {
+          position: absolute;
+          left: 50%;
+          top: 12px;
+          width: 6px;
+          height: 6px;
+          margin-left: -3px;
+          background: #222;
+          border-radius: 50%;
+          animation: mouse-dot-move 1.6s cubic-bezier(.4,2,.3,1) infinite;
+        }
+        @keyframes mouse-dot-move {
+          0% { opacity: 0; transform: translateY(0); }
+          30% { opacity: 1; transform: translateY(8px);}
+          60% { opacity: 1; transform: translateY(16px);}
+          100% { opacity: 0; transform: translateY(24px);}
+        }
+      `}</style>
+    </div>
+  </section>
+);
 
 export default Profile;
