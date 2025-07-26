@@ -10,16 +10,22 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
 const baseTimeline = [
-  { title: "GU/ジーユー 入社", date: "2016年2月" },
-  { title: "本を読みはじめる", date: "2016年2月" },
-  { title: "環境問題に興味を持ちはじめる", date: "2016年2月" },
-  { title: "RUNTEQでのWeb開発学習", date: "2021年4月" },
-  { title: "GU/ジーユー 退職", date: "2021年11月" },
-  { title: "Mikke 開発・リリース", date: "2022年2月" },
-  { title: "ポートフォリオサイト制作", date: "2022年4月" },
-  { title: "チームラボ/teamLab 入社", date: "2022年6月" },
-  { title: "チームラボ/teamLab 退職", date: "2025年4月" },
-  { title: "株式会社海士", date: "2025年6月" },
+  { title: "GU/ジーユー 入社", date: "2016" },
+  { title: "本を読みはじめる", date: "2016" },
+  { title: "環境問題に興味を持ちはじめる", date: "2019" },
+  { title: "RUNTEQでのWeb開発学習", date: "2021" },
+  { title: "GU/ジーユー 退職", date: "2021" },
+  { title: "Mikke 開発・リリース", date: "2022" },
+  { title: "チームラボ/teamLab エンジニアとして入社", date: "2022" },
+  { title: "不動産業界 保守開発 BEエンジニア", date: "2022" },
+  { title: "不動産業界 新規開発 BEエンジニア", date: "2023-2024" },
+  { title: "ECサイト 認証基盤 開発責任者", date: "2024" },
+  { title: "チームラボ/teamLab カタリストチームへ移籍", date: "2024" },
+  { title: "飲食デリバリーサイト プロジェクトマネージャ", date: "2024-2025" },
+  { title: "チームラボ/teamLab 退職", date: "2025" },
+  { title: "watashi 制作", date: "2025" },
+  { title: "島根県隠岐諸島海士町へ移住", date: "2025" },
+  { title: "株式会社海士 入社", date: "2025" },
 ];
 // 最後に「現在…」を追加（title, dateは空）
 const timeline = [

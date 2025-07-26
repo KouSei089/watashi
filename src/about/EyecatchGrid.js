@@ -654,40 +654,60 @@ const LOAD_MORE_COUNT = 6;
 const EyecatchGrid = () => {
   const grouped = groupByYear(eyecatchData);
 
+  // 年ごとの表示数を管理
   const [visibleCount, setVisibleCount] = useState(
     Object.fromEntries(grouped.map(({ year }) => [year, INITIAL_COUNT]))
   );
-  const [loadMoreInfo, setLoadMoreInfo] = useState({ year: null, from: 0, to: 0 });
+  const [loadMoreInfo, setLoadMoreInfo] = useState({}); // {year: {from, to}, ...}
 
-  const handleLoadMore = (year) => {
-    const prev = visibleCount[year] ?? INITIAL_COUNT;
-    const next = prev + LOAD_MORE_COUNT;
-    setVisibleCount(v => ({ ...v, [year]: next }));
-    setLoadMoreInfo({ year, from: prev, to: next });
+  // どの年も「Load more」で増やす
+  const handleLoadMore = () => {
+    setVisibleCount(prev => {
+      const next = { ...prev };
+      grouped.forEach(({ year, items }) => {
+        const prevCount = prev[year] ?? INITIAL_COUNT;
+        const newCount = Math.min(prevCount + LOAD_MORE_COUNT, items.length);
+        next[year] = newCount;
+      });
+      return next;
+    });
+
+    // アニメーション用
+    setLoadMoreInfo(prev => {
+      const next = {};
+      grouped.forEach(({ year, items }) => {
+        const prevCount = visibleCount[year] ?? INITIAL_COUNT;
+        const newCount = Math.min(prevCount + LOAD_MORE_COUNT, items.length);
+        next[year] = { from: prevCount, to: newCount };
+      });
+      return next;
+    });
   };
 
-  const gridItems = [];
+  // 全ての年のアイテムをまとめて1つの配列に
+  let allItems = [];
   grouped.forEach(({ year, items }) => {
-    gridItems.push({ type: 'year', year, key: `year-${year}` });
     const count = visibleCount[year] ?? INITIAL_COUNT;
     const visibleItems = items.slice(0, count);
     visibleItems.forEach((item, idx) => {
       let animate = false;
       let animateIdx = 0;
       if (
-        loadMoreInfo.year === year &&
-        idx >= loadMoreInfo.from &&
-        idx < loadMoreInfo.to
+        loadMoreInfo[year] &&
+        idx >= loadMoreInfo[year].from &&
+        idx < loadMoreInfo[year].to
       ) {
         animate = true;
-        animateIdx = idx - loadMoreInfo.from;
+        animateIdx = idx - loadMoreInfo[year].from;
       }
-      gridItems.push({ type: 'item', ...item, key: item.noteUrl, animate, animateIdx });
+      allItems.push({ ...item, key: item.noteUrl, animate, animateIdx });
     });
-    if (count < items.length) {
-      gridItems.push({ type: 'loadmore', year, key: `loadmore-${year}` });
-    }
   });
+
+  // どれかの年でまだ残りがある場合のみLoad moreを表示
+  const hasMore = grouped.some(
+    ({ year, items }) => (visibleCount[year] ?? INITIAL_COUNT) < items.length
+  );
 
   const CARD_HEIGHT = 80;
   const CARD_MAX_HEIGHT = 80;
@@ -719,151 +739,112 @@ const EyecatchGrid = () => {
           "
           style={{ width: '100%' }}
         >
-          {gridItems.map((item) => {
-            if (item.type === 'year') {
-              return (
-                <div
-                  key={item.key}
-                  className="
-                    flex items-center justify-center
-                    aspect-[4/3]
-                    w-full
-                    border border-transparent
-                    bg-white
-                    text-base md:text-lg font-bold text-black
-                    font-jp
-                    select-none
-                    tracking-widest
-                  "
-                  style={{
-                    minWidth: 0,
-                    minHeight: 0,
-                    borderRadius: 0,
-                    height: `${CARD_HEIGHT}px`,
-                    maxHeight: `${CARD_MAX_HEIGHT}px`,
-                    pointerEvents: 'none',
-                    boxShadow: 'none',
-                    background: 'white',
-                    letterSpacing: '0.08em',
-                  }}
-                  aria-label={item.year}
-                >
-                  {item.year}
-                </div>
-              );
-            }
-            if (item.type === 'loadmore') {
-              return (
-                <button
-                  key={item.key}
-                  onClick={() => handleLoadMore(item.year)}
-                  className="
-                    flex flex-col items-center justify-center
-                    aspect-[4/3]
-                    w-full
-                    border border-transparent
-                    bg-white
-                    text-xs md:text-sm text-gray-400
-                    font-jp
-                    transition
-                    cursor-pointer
-                    group
-                  "
-                  style={{
-                    minWidth: 0,
-                    minHeight: 0,
-                    borderRadius: 0,
-                    height: `${CARD_HEIGHT}px`,
-                    maxHeight: `${CARD_MAX_HEIGHT}px`,
-                  }}
-                  aria-label="Load more"
-                >
-                  <span
-                    className="
-                      inline-flex items-center gap-1 pb-0.5
-                      wavy-underline group-hover:wavy-underline
-                      text-gray-400 group-hover:text-black
-                    "
-                    style={{
-                      transition: 'text-decoration-color 0.2s',
-                    }}
-                  >
-                    <svg width="13" height="13" fill="none" viewBox="0 0 20 20" className="inline-block align-middle" aria-hidden="true">
-                      <path d="M10 4v8m0 0l-3-3m3 3l3-3" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                    Load more…
-                  </span>
-                </button>
-              );
-            }
-            // 通常の写真カード
-            return (
-              <a
-                key={item.key}
-                href={item.noteUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`group block relative${item.animate ? " fade-in" : ""}`}
+          {allItems.map((item) => (
+            <a
+              key={item.key}
+              href={item.noteUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`group block relative${item.animate ? " fade-in" : ""}`}
+              style={{
+                textDecoration: 'none',
+                animationDelay: item.animate ? `${item.animateIdx * 440}ms` : undefined,
+              }}
+            >
+              <div
+                className="
+                  aspect-[4/3]
+                  w-full
+                  overflow-hidden
+                  border border-gray-200
+                  group-hover:border-black
+                  transition-all duration-200
+                  bg-gray-100
+                  rounded-none
+                "
                 style={{
-                  textDecoration: 'none',
-                  animationDelay: item.animate ? `${item.animateIdx * 440}ms` : undefined, // さらに遅く
+                  minWidth: 0,
+                  minHeight: 0,
+                  borderRadius: 0,
+                  height: `${CARD_HEIGHT}px`,
+                  maxHeight: `${CARD_MAX_HEIGHT}px`,
                 }}
               >
-                <div
-                  className="
-                    aspect-[4/3]
-                    w-full
-                    overflow-hidden
-                    border border-gray-200
-                    group-hover:border-black
-                    transition-all duration-200
-                    bg-gray-100
-                    rounded-none
-                  "
+                <img
+                  src={item.eyecatch}
+                  alt={item.name}
+                  className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
+                  loading="lazy"
                   style={{
-                    minWidth: 0,
-                    minHeight: 0,
                     borderRadius: 0,
-                    height: `${CARD_HEIGHT}px`,
-                    maxHeight: `${CARD_MAX_HEIGHT}px`,
+                    height: '100%',
+                    width: '100%',
+                    aspectRatio: '4/3',
                   }}
-                >
-                  <img
-                    src={item.eyecatch}
-                    alt={item.name}
-                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
-                    loading="lazy"
-                    style={{
-                      borderRadius: 0,
-                      height: '100%',
-                      width: '100%',
-                      aspectRatio: '4/3',
-                    }}
-                  />
-                  {/* ホバー時に日付・タイトルをオーバーレイ表示 */}
-                  <div className="absolute inset-0 flex flex-col justify-end bg-black/0 group-hover:bg-black/40 transition-all duration-200">
-                    <div className="opacity-0 group-hover:opacity-100 px-1 pb-1 transition-opacity duration-200">
-                      <div className="text-[10px] md:text-xs text-gray-100 font-jp">{item.created_at}</div>
-                      <div className="text-xs md:text-sm text-white font-jp truncate">{item.name}</div>
-                    </div>
+                />
+                {/* ホバー時に日付・タイトルをオーバーレイ表示 */}
+                <div className="absolute inset-0 flex flex-col justify-end bg-black/0 group-hover:bg-black/40 transition-all duration-200">
+                  <div className="opacity-0 group-hover:opacity-100 px-1 pb-1 transition-opacity duration-200">
+                    <div className="text-[10px] md:text-xs text-gray-100 font-jp">{item.created_at}</div>
+                    <div className="text-xs md:text-sm text-white font-jp truncate">{item.name}</div>
                   </div>
                 </div>
-              </a>
-            );
-          })}
+              </div>
+            </a>
+          ))}
+          {hasMore && (
+            <button
+              onClick={handleLoadMore}
+              className="
+                flex flex-col items-center justify-center
+                aspect-[4/3]
+                w-full
+                border border-transparent
+                bg-white
+                text-xs md:text-sm text-gray-400
+                font-jp
+                transition
+                cursor-pointer
+                group
+              "
+              style={{
+                minWidth: 0,
+                minHeight: 0,
+                borderRadius: 0,
+                height: `${CARD_HEIGHT}px`,
+                maxHeight: `${CARD_MAX_HEIGHT}px`,
+                gridColumn: 'span 1',
+              }}
+              aria-label="Load more"
+            >
+              <span
+                className="
+                  inline-flex items-center gap-1 pb-0.5
+                  wavy-underline group-hover:wavy-underline
+                  text-gray-400 group-hover:text-black
+                "
+                style={{
+                  transition: 'text-decoration-color 0.2s',
+                }}
+              >
+                <svg width="13" height="13" fill="none" viewBox="0 0 20 20" className="inline-block align-middle" aria-hidden="true">
+                  <path d="M10 4v8m0 0l-3-3m3 3l3-3" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                Load more…
+              </span>
+            </button>
+          )}
         </div>
       </div>
       {/* アニメーション用CSS */}
       <style>{`
         .fade-in {
           opacity: 0;
-          /* transform: translateY(32px) scale(0.98); ← 段差を消すため削除 */
           animation: fadeInUp 2.4s cubic-bezier(.4,2,.3,1) forwards;
         }
         @keyframes fadeInUp {
           to {
             opacity: 1;
-            /* transform: none; ← 段差を消すため削除 */
           }
         }
       `}</style>
