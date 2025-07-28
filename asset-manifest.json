@@ -1,14 +1,14 @@
 {
   "files": {
-    "main.css": "/watashi/static/css/main.0dd4ea94.css",
-    "main.js": "/watashi/static/js/main.ec3fc381.js",
+    "main.css": "/watashi/static/css/main.e30437cc.css",
+    "main.js": "/watashi/static/js/main.80c1bf34.js",
     "static/media/japanMap.svg": "/watashi/static/media/japanMap.82f6d28b68ddcd9bb5bbf7143e3385ca.svg",
     "index.html": "/watashi/index.html",
-    "main.0dd4ea94.css.map": "/watashi/static/css/main.0dd4ea94.css.map",
-    "main.ec3fc381.js.map": "/watashi/static/js/main.ec3fc381.js.map"
+    "main.e30437cc.css.map": "/watashi/static/css/main.e30437cc.css.map",
+    "main.80c1bf34.js.map": "/watashi/static/js/main.80c1bf34.js.map"
   },
   "entrypoints": [
-    "static/css/main.0dd4ea94.css",
-    "static/js/main.ec3fc381.js"
+    "static/css/main.e30437cc.css",
+    "static/js/main.80c1bf34.js"
   ]
 }
