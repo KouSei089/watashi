@@ -5,7 +5,6 @@ const Profile = ({ scrollIconRef }) => (
     <h1 id="profile" className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-jp text-matte tracking-wider mb-6 mt-0">
       わたし
     </h1>
-    {/* 画像をここに挿入（上部余白を半分、下部余白は元のまま） */}
     <div className="flex flex-col items-center">
       <div style={{ height: '1rem' }} />
       <div style={{ position: 'relative', width: '100%', maxWidth: 400 }}>
@@ -27,11 +26,17 @@ const Profile = ({ scrollIconRef }) => (
       </div>
       <div style={{ height: '2rem' }} />
     </div>
-    <p>
-      なまえは、いずみはるやです。<br/>
-      アパレルからエンジニアを経験し、現在は島根県隠岐諸島海士町にあるホテルEntôで働いています。<br />
-      まくらふたつで眠ります。<br />
-      本が好きです。詩やエッセイ、デザインや哲学、そしてときどき臨床医学まで。
+    <p className="text-xs md:text-sm">
+      <strong>なまえは、いずみはるや（Izumi Haruya）です。</strong><br/>
+      アパレル業界を経てエンジニアとしての経験を積み、現在は島根県隠岐諸島・海士町にあるホテルEntôで働いています。<br/>
+      主目的から逸脱しながら目標や利益を達成することを目標として活動してます。<br/>
+      ここからは、すきなものを並べてみます。<br/>
+      まくらがすきです。まくらふたつで眠ります。<br/>
+      本がすきです。詩やエッセイ、デザイン、哲学、そしてときどき臨床医学まで読みます。<br/>
+      音がすきです。坂本龍一、haruka nakamura、ずっと真夜中でいいのに。、そして環境音をよく聴きます。<br/>
+      シャッターを押すのがすきです。ひかりとかげ、忘れられたもの、個人的すぎるものを撮りたくなります。<br/>
+      映画もすきです。ノーラン、フィンチャー、奥山由之の作品がすきです。<br/>
+      移動もすきです。電車から自転車まで。飛行機は緊張するけれど、それもふくめてわくわくします。
     </p>
     <div className="mt-3">
       <a href="https://note.com/izuha0" target="_blank" rel="noopener noreferrer" className="wavy-underline text-xl mr-4">

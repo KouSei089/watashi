@@ -719,11 +719,11 @@ const EyecatchGrid = () => {
         <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-jp text-matte tracking-wider mb-6 mt-0">
           読書の日記
         </h2>
-        <div className="w-fit mx-0 text-base md:text-lg text-gray-500 leading-7 font-jp mb-2">
-          <p>
-            日々の読書やエッセイ、日記を通して、さまざまな本と出会ってきました。<br />
-            ここに並ぶのは、わたしの思考や感性を形作ってきた本たちの記録です。<br />
-            写真をクリックすると、noteの記事に移動します。
+        <div className="w-fit mx-0 text-base md:text-lg leading-7 font-jp mb-2">
+          <p className="text-xs md:text-sm">
+            日々の読書を記録しています。ときどき、読書とは関係のない日記も書きます。<br />
+            日記という形式がすきです。日付という箱にじぶんのすきを並べられるのが心地よいです。<br />
+            ここに並ぶのは、わたしの思考や感性をかたちづくってきた本たちの記録です。
           </p>
         </div>
       </div>

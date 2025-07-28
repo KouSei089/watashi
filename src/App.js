@@ -222,7 +222,7 @@ function App() {
                 margin: 0,
               }}
             >
-              wahashi - izumi haruya
+              watashi - izumi haruya
             </h3>
           </Link>
           <div className="flex items-center mr-2 sm:mr-4 mt-5">
