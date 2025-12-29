@@ -18,7 +18,6 @@ const Navbar: React.FC = () => {
 
   const handleLinkClick = () => setMenuOpen(false);
 
-  // 外部リンク用のアイコンコンポーネント
   const ExternalIcon = () => (
     <svg 
       width="10" 
@@ -38,10 +37,11 @@ const Navbar: React.FC = () => {
     </svg>
   );
 
+  // --- 「旅の記録」をコメントアウトしました ---
   const menuItems = [
     { name: 'わたし', path: '/watashi/about' },
     { name: 'これまでのわたし', path: '/watashi/about#history' },
-    { name: '旅の記録', path: '/watashi/travel' },
+    // { name: '旅の記録', path: '/watashi/travel' }, 
     { name: '読書の日記', path: '/watashi/about#book-diary' },
   ];
 
