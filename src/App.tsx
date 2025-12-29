@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch, useLocation } from 'react-router-dom';
 
 // CSS
 import './css/App.css';
@@ -16,52 +16,49 @@ import About from './pages/About';
 import Book from './pages/Book';
 import Travel from './pages/Travel';
 
-const App: React.FC = () => {
-  // 元の App.js にあった Contact 表示制御用の状態
-  // About ページからのコールバック等で利用する場合に保持しておきます
-  const [showContact, setShowContact] = useState(true);
+// フッターの表示制御を分離するための内部コンポーネント
+const AppContent: React.FC = () => {
+  const location = useLocation();
+  const [showContact, setShowContact] = useState(false); // 初期値は false
 
   const handleAboutScrollEnd = (atEnd: boolean) => {
     setShowContact(atEnd);
   };
 
+  // Topページかどうかを判定
+  const isTopPage = location.pathname === '/watashi' || location.pathname === '/watashi/';
+
+  return (
+    <div className="bg-white min-h-screen flex flex-col">
+      <Cursor />
+      <Navbar />
+      
+      <main className="flex-grow">
+        <Switch>
+          <Route exact path="/watashi" component={Top} />
+          <Route 
+            path="/watashi/about" 
+            render={() => <About onScrollEnd={handleAboutScrollEnd} />} 
+          />
+          <Route path="/watashi/book" component={Book} />
+          <Route path="/watashi/travel" component={Travel} />
+          <Route render={() => <Top />} />
+        </Switch>
+      </main>
+
+      {/* 1. Topページではない 
+        2. かつ showContact が true（Aboutで末尾まで到達）
+        の時だけ Footer を表示
+      */}
+      {!isTopPage && showContact && <Footer />}
+    </div>
+  );
+};
+
+const App: React.FC = () => {
   return (
     <Router>
-      <div className="bg-white min-h-screen flex flex-col">
-        {/* 共通のカーソル演出 */}
-        <Cursor />
-        
-        {/* ナビゲーションバー */}
-        <Navbar />
-        
-        {/* メインコンテンツエリア */}
-        <main className="flex-grow">
-          <Switch>
-            {/* About ページにはスクロール検知の props を渡す必要があるため
-                render 属性を使用してコンポーネントを呼び出します
-            */}
-            <Route exact path="/watashi" component={Top} />
-            
-            <Route 
-              path="/watashi/about" 
-              render={() => <About onScrollEnd={handleAboutScrollEnd} />} 
-            />
-            
-            <Route path="/watashi/book" component={Book} />
-            
-            <Route path="/watashi/travel" component={Travel} />
-            
-            {/* 404など該当がない場合のフォールバック（任意） */}
-            <Route render={() => <Top />} />
-          </Switch>
-        </main>
-
-        {/* ページ下部に共通のフッターを配置。
-           もし About ページなどで特定の条件（showContact）によって
-           Footer を隠したい場合は {showContact && <Footer />} とします。
-        */}
-        <Footer />
-      </div>
+      <AppContent />
     </Router>
   );
 }
