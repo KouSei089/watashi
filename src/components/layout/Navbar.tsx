@@ -6,87 +6,125 @@ const Navbar: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
 
-  // スクロール検知
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // メニュー開いた時のスクロールロック
+  // メニュー開閉時にスクロールをロック
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : '';
   }, [menuOpen]);
 
-  // ブラー・透過スタイル
-  const blurClass = scrolled ? 'backdrop-blur-sm bg-white/70' : 'bg-transparent';
+  // ページ遷移やリンククリック時にメニューを閉じる
+  const handleLinkClick = () => {
+    setMenuOpen(false);
+  };
 
   const menuItems = [
     { name: 'わたし', path: '/watashi/about' },
     { name: 'これまでのわたし', path: '/watashi/about#history' },
+    { name: '旅の記録', path: '/watashi/travel' },
     { name: '読書の日記', path: '/watashi/about#book-diary' },
   ];
 
   return (
     <>
-      <header
-        className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 flex items-center justify-between px-4 sm:px-8 font-jp ${blurClass}`}
-        style={{ height: scrolled ? '3rem' : '5rem' }}
+      <nav
+        className={`fixed top-0 left-0 w-full z-[100] transition-all duration-300 flex items-center justify-between px-6 md:px-12 font-jp ${
+          scrolled || menuOpen ? 'backdrop-blur-md bg-white/80' : 'bg-transparent'
+        } ${scrolled ? 'border-b border-gray-100' : ''}`}
+        style={{ height: scrolled ? '3.5rem' : '5rem' }}
       >
         {/* ロゴ */}
-        <Link to="/watashi" className="no-underline">
-          <h1 className={`text-black transition-all duration-300 font-normal m-0 ${scrolled ? 'text-base opacity-60' : 'text-lg opacity-100'}`}>
+        <Link to="/watashi" className="no-underline z-[110]" onClick={handleLinkClick}>
+          <h1 className={`text-black transition-all duration-300 font-normal m-0 tracking-tight ${
+            scrolled ? 'text-sm opacity-70' : 'text-base opacity-100'
+          }`}>
             watashi - izumi haruya
           </h1>
         </Link>
 
         {/* デスクトップメニュー */}
-        <nav className="hidden sm:block">
-          <ul className="flex space-x-8 items-center list-none m-0 p-0">
+        <div className="hidden md:flex items-center">
+          <ul className="flex space-x-8 list-none m-0 p-0 items-center">
             {menuItems.map((item) => (
               <li key={item.path}>
-                <a
-                  href={item.path}
-                  className={`text-black no-underline wavy-underline transition-all duration-300 ${scrolled ? 'text-sm' : 'text-base'}`}
-                >
-                  {item.name}
-                </a>
+                {item.path.includes('#') ? (
+                  <a
+                    href={item.path}
+                    className={`text-black no-underline wavy-underline transition-all duration-300 ${scrolled ? 'text-xs' : 'text-sm'}`}
+                  >
+                    {item.name}
+                  </a>
+                ) : (
+                  <Link
+                    to={item.path}
+                    className={`text-black no-underline wavy-underline transition-all duration-300 ${scrolled ? 'text-xs' : 'text-sm'}`}
+                  >
+                    {item.name}
+                  </Link>
+                )}
               </li>
             ))}
-            <li className="flex flex-col items-center relative group min-w-max">
-               <a href="https://note.com/izuha0" target="_blank" rel="noopener noreferrer" className="text-black no-underline wavy-underline text-base">note ↗︎</a>
-            </li>
           </ul>
-        </nav>
+        </div>
 
-        {/* モバイルハンバーガーボタン */}
+        {/* モバイルハンバーガーボタン (バツ印の修正) */}
         <button
-          className="sm:hidden flex flex-col justify-center items-center w-10 h-10 relative z-50"
+          className="md:hidden flex flex-col justify-center items-center w-10 h-10 relative z-[110] focus:outline-none"
           onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Menu"
+          aria-label={menuOpen ? "メニューを閉じる" : "メニューを開く"}
         >
-          <span className={`block w-6 h-0.5 bg-black transition-all duration-300 ${menuOpen ? 'rotate-45 translate-y-0' : '-translate-y-1.5'}`} />
-          <span className={`block w-6 h-0.5 bg-black transition-all duration-300 my-1 ${menuOpen ? 'opacity-0' : 'opacity-100'}`} />
-          <span className={`block w-6 h-0.5 bg-black transition-all duration-300 ${menuOpen ? '-rotate-45 -translate-y-1' : 'translate-y-1.5'}`} />
+          <div className="relative w-5 h-4">
+            <span className={`absolute block w-5 h-[1.5px] bg-black transition-all duration-300 ease-in-out ${
+              menuOpen ? 'top-2 rotate-45' : 'top-0'
+            }`} />
+            <span className={`absolute block w-5 h-[1.5px] bg-black transition-all duration-300 ease-in-out top-2 ${
+              menuOpen ? 'opacity-0' : 'opacity-100'
+            }`} />
+            <span className={`absolute block w-5 h-[1.5px] bg-black transition-all duration-300 ease-in-out ${
+              menuOpen ? 'top-2 -rotate-45' : 'top-4'
+            }`} />
+          </div>
         </button>
-      </header>
+      </nav>
 
       {/* モバイルメニューオーバーレイ */}
-      <div className={`fixed inset-0 z-40 bg-white transition-transform duration-500 flex flex-col items-center justify-center sm:hidden ${menuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-        <nav>
-          <ul className="flex flex-col space-y-8 text-xl font-jp list-none p-0 text-center">
-            {menuItems.map((item) => (
-              <li key={item.path}>
-                <a href={item.path} onClick={() => setMenuOpen(false)} className="text-black no-underline">{item.name}</a>
-              </li>
-            ))}
-            <li><a href="https://note.com/izuha0" target="_blank" rel="noopener noreferrer" className="text-black no-underline">note ↗︎</a></li>
-          </ul>
-        </nav>
+      <div className={`fixed inset-0 z-[90] bg-white transition-all duration-500 ease-in-out md:hidden ${
+        menuOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-4'
+      }`}>
+        <div className="flex flex-col items-center justify-center h-full space-y-12 font-jp">
+          {menuItems.map((item) => (
+            <a
+              key={item.path}
+              href={item.path}
+              onClick={handleLinkClick}
+              className="text-2xl text-black no-underline tracking-[0.2em] transition-transform active:scale-95"
+            >
+              {item.name}
+            </a>
+          ))}
+          <a 
+            href="https://note.com/izuha0" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="text-sm text-gray-400 no-underline pt-8"
+            onClick={handleLinkClick}
+          >
+            note ↗
+          </a>
+          
+          {/* 閉じるための補助ボタン（戻る方法を分かりやすく） */}
+          <button 
+            onClick={handleLinkClick}
+            className="text-xs text-gray-300 uppercase tracking-widest pt-12"
+          >
+            Close
+          </button>
+        </div>
       </div>
-
-      {/* ヘッダー分のスペーサー */}
-      <div className="transition-all duration-300" style={{ height: scrolled ? '3rem' : '5rem' }} />
     </>
   );
 };
