@@ -1,7 +1,8 @@
-import React, { RefObject } from 'react';
+import React from 'react';
 
+// Propsの型定義：nullを許容するように React.RefObject<HTMLDivElement | null> とします
 interface ProfileProps {
-  scrollIconRef: RefObject<HTMLDivElement>;
+  scrollIconRef: React.RefObject<HTMLDivElement | null>;
 }
 
 const Profile: React.FC<ProfileProps> = ({ scrollIconRef }) => (
@@ -11,7 +12,7 @@ const Profile: React.FC<ProfileProps> = ({ scrollIconRef }) => (
     </h1>
     
     <div className="flex flex-col items-center">
-      <div className="h-4" /> {/* spacing */}
+      <div className="h-4" />
       <div className="relative w-full max-w-[400px]">
         <img
           className="w-full h-auto object-cover rounded shadow-sm cursor-pointer select-none pointer-events-auto"
@@ -23,7 +24,7 @@ const Profile: React.FC<ProfileProps> = ({ scrollIconRef }) => (
           draggable={false}
         />
       </div>
-      <div className="h-8" /> {/* spacing */}
+      <div className="h-8" />
     </div>
 
     <p className="text-xs md:text-sm">
@@ -48,14 +49,13 @@ const Profile: React.FC<ProfileProps> = ({ scrollIconRef }) => (
       </a>
     </div>
 
-    {/* スクロールインジケーター */}
+    {/* スクロールインジケーターに ref を渡す */}
     <div className="text-center mt-8" ref={scrollIconRef}>
       <div className="inline-block w-7 h-11 border-2 border-gray-900 rounded-2xl relative box-border">
         <div className="absolute left-1/2 -ml-[3px] top-3 w-1.5 h-1.5 bg-gray-900 rounded-full animate-mouse-move" />
       </div>
     </div>
 
-    {/* アニメーション用のCSS */}
     <style dangerouslySetInnerHTML={{ __html: `
       @keyframes mouse-move {
         0% { opacity: 0; transform: translateY(0); }
