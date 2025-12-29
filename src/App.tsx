@@ -1,32 +1,66 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Switch, useLocation } from 'react-router-dom';
+import Lenis from '@studio-freight/lenis';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-// CSS
 import './css/App.css';
 import './css/index.css';
 
-// Layout / Common
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import Cursor from './components/common/Cursor';
 
-// Pages
 import Top from './pages/Top';
 import About from './pages/About';
 import Book from './pages/Book';
 import Travel from './pages/Travel';
 
-// フッターの表示制御を分離するための内部コンポーネント
 const AppContent: React.FC = () => {
   const location = useLocation();
-  const [showContact, setShowContact] = useState(false); // 初期値は false
+  const [showFooter, setShowFooter] = useState(false);
 
-  const handleAboutScrollEnd = (atEnd: boolean) => {
-    setShowContact(atEnd);
+  useEffect(() => {
+    // 1. Lenis初期化
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+    });
+
+    // 2. GSAP Tickerと同期
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add((time) => {
+      lenis.raf(time * 1000);
+    });
+    gsap.ticker.lagSmoothing(0);
+
+    // 3. 高さが変わった時にLenisに通知する
+    const resizeObserver = new ResizeObserver(() => {
+      lenis.resize();
+      ScrollTrigger.refresh();
+    });
+    resizeObserver.observe(document.body);
+
+    return () => {
+      lenis.destroy();
+      gsap.ticker.remove(lenis.raf);
+      resizeObserver.disconnect();
+    };
+  }, []);
+
+  // ページ遷移時にFooterを隠し、一番上へ戻る
+  useEffect(() => {
+    setShowFooter(false);
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
+  const handleScrollEnd = (atEnd: boolean) => {
+    setShowFooter(atEnd);
   };
 
-  // Topページかどうかを判定
   const isTopPage = location.pathname === '/watashi' || location.pathname === '/watashi/';
+  const isAboutPage = location.pathname === '/watashi/about';
 
   return (
     <div className="bg-white min-h-screen flex flex-col">
@@ -36,31 +70,25 @@ const AppContent: React.FC = () => {
       <main className="flex-grow">
         <Switch>
           <Route exact path="/watashi" component={Top} />
-          <Route 
-            path="/watashi/about" 
-            render={() => <About onScrollEnd={handleAboutScrollEnd} />} 
-          />
+          <Route path="/watashi/about" render={() => <About onScrollEnd={handleScrollEnd} />} />
           <Route path="/watashi/book" component={Book} />
           <Route path="/watashi/travel" component={Travel} />
           <Route render={() => <Top />} />
         </Switch>
       </main>
 
-      {/* 1. Topページではない 
-        2. かつ showContact が true（Aboutで末尾まで到達）
-        の時だけ Footer を表示
-      */}
-      {!isTopPage && showContact && <Footer />}
+      {/* Aboutではフラグが必要。それ以外(Book/Travel)では常に出す設定 */}
+      {!isTopPage && (
+        (isAboutPage ? showFooter : true) && <Footer />
+      )}
     </div>
   );
 };
 
-const App: React.FC = () => {
-  return (
-    <Router>
-      <AppContent />
-    </Router>
-  );
-}
+const App: React.FC = () => (
+  <Router>
+    <AppContent />
+  </Router>
+);
 
 export default App;

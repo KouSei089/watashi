@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
-const CIRCLE_ANIMATION_DURATION = 1800;
 const RIPPLE_ANIMATION_DURATION = 4.0;
-const NUM_RIPPLES = 4; // 数を絞って密度を下げる
+const NUM_RIPPLES = 4;
 const IMAGE_URL = "https://github.com/KouSei089/watashi/assets/77420123/d32f15ff-a725-40a4-b58f-8c79d67f8eb6";
 
 const Top: React.FC = () => {
@@ -11,29 +11,15 @@ const Top: React.FC = () => {
   const [hovered, setHovered] = useState(false);
   const [fadeOut, setFadeOut] = useState(false);
   const [showBtnCircle, setShowBtnCircle] = useState(false);
-  const [dotVisible, setDotVisible] = useState(false);
-  const [dotOpacity, setDotOpacity] = useState(0);
 
   const dotTimeout = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (hovered) {
       setShowBtnCircle(true);
-      dotTimeout.current = setTimeout(() => {
-        setDotVisible(true);
-        setTimeout(() => setDotOpacity(1), 50);
-      }, 400); // 描画開始を早める
     } else {
-      setDotOpacity(0);
-      setTimeout(() => {
-        setDotVisible(false);
-        setShowBtnCircle(false);
-      }, 500);
-      if (dotTimeout.current) clearTimeout(dotTimeout.current);
+      setTimeout(() => setShowBtnCircle(false), 500);
     }
-    return () => {
-      if (dotTimeout.current) clearTimeout(dotTimeout.current);
-    };
   }, [hovered]);
 
   const handleClick = (e: React.MouseEvent) => {
@@ -50,19 +36,36 @@ const Top: React.FC = () => {
   `);
 
   return (
-    <div className={`fixed inset-0 w-full h-full bg-white z-[60] transition-opacity duration-[1600ms] flex flex-col items-center justify-center ${fadeOut ? "opacity-0" : "opacity-100"}`}>
+    <motion.div 
+      // ページ全体のフェードイン
+      initial={{ opacity: 0 }}
+      animate={{ opacity: fadeOut ? 0 : 1 }}
+      transition={{ duration: 1.6, ease: "easeInOut" }}
+      className="fixed inset-0 w-full h-full bg-white z-[60] flex flex-col items-center justify-center overflow-hidden"
+    >
       <div className="flex flex-col items-center w-full max-w-2xl px-8">
-        {/* メインビジュアル: より淡く、空間に溶け込むように */}
-        <div className="w-full mb-20 flex justify-center overflow-hidden">
+        
+        {/* メインビジュアル: 少し下から、ゆっくりと浮かび上がる */}
+        <motion.div 
+          className="w-full mb-20 flex justify-center overflow-hidden"
+          initial={{ opacity: 0, y: 20, scale: 1.05 }}
+          animate={{ opacity: 0.4, y: 0, scale: 1 }}
+          transition={{ duration: 2.5, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+        >
           <img 
-            className="w-full h-auto rounded-sm blur-[10px] grayscale brightness-[1.02] opacity-40 transition-all duration-1000" 
+            className="w-full h-auto rounded-sm blur-[10px] grayscale brightness-[1.02] transition-all duration-1000" 
             src={IMAGE_URL} 
             alt="main" 
           />
-        </div>
+        </motion.div>
 
-        {/* ボタンエリア */}
-        <div className="relative group">
+        {/* ボタンエリア: メインビジュアルの後に静かに現れる */}
+        <motion.div 
+          className="relative group"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 2, delay: 0.8, ease: "easeOut" }}
+        >
           <Link 
             to="/watashi/about" 
             className="relative h-20 w-20 flex justify-center items-center no-underline outline-none"
@@ -70,10 +73,10 @@ const Top: React.FC = () => {
             onMouseLeave={() => setHovered(false)}
             onClick={handleClick}
           >
-            {/* 1. 中心点（核）: 常に静かに光る */}
+            {/* 中心点 */}
             <div className={`w-1 h-1 rounded-full bg-black transition-all duration-700 ${hovered ? 'scale-[15] opacity-0' : 'opacity-20 scale-100'}`} />
 
-            {/* 2. 環境波紋（待機時）: 非常に薄い線 */}
+            {/* 波紋 */}
             {!hovered && Array.from({ length: NUM_RIPPLES }).map((_, i) => (
               <span 
                 key={i} 
@@ -82,7 +85,7 @@ const Top: React.FC = () => {
               />
             ))}
 
-            {/* 3. ホバー時の外周円（ローディング感） */}
+            {/* 外周円 */}
             <div className={`absolute inset-[-10px] rounded-full transition-opacity duration-1000 ${showBtnCircle ? 'opacity-100' : 'opacity-0'}`}>
               <svg className="w-full h-full rotate-[-90deg]" viewBox="0 0 100 100">
                 <circle 
@@ -97,7 +100,7 @@ const Top: React.FC = () => {
               </svg>
             </div>
 
-            {/* 4. ノイズテクスチャの広がり */}
+            {/* ノイズテクスチャ */}
             <div 
               className={`absolute inset-[-10px] rounded-full transition-all duration-[2000ms] overflow-hidden pointer-events-none ${hovered ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}`}
               style={{ 
@@ -111,7 +114,7 @@ const Top: React.FC = () => {
               Enter
             </span>
           </Link>
-        </div>
+        </motion.div>
       </div>
 
       <style dangerouslySetInnerHTML={{ __html: `
@@ -126,7 +129,7 @@ const Top: React.FC = () => {
           100% { transform: scale(1.8); opacity: 0; } 
         }
       `}} />
-    </div>
+    </motion.div>
   );
 };
 
