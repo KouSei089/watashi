@@ -5,10 +5,8 @@ import * as d3 from "d3";
 import { MapPin } from "../../types";
 
 const JapanMap: React.FC = () => {
-  // SVG要素への参照に型を付ける
   const mapRef = useRef<SVGSVGElement | null>(null);
   
-  // Projectionは再計算不要なので useMemo で保持
   const projection = useMemo(() => 
     d3.geoMercator()
       .center([138.433, 35.5])
@@ -34,88 +32,57 @@ const JapanMap: React.FC = () => {
     const svg = d3.select(mapRef.current);
     svg.selectAll("*").remove();
 
-    const pinGroup = svg.append("g");
-
-    // 型定義を MapPin[] として明示
     const pins = regionalDetail as MapPin[];
+    const pinGroup = svg.append("g");
 
     const link = pinGroup
       .selectAll("a")
       .data(pins)
       .join("a")
       .attr("xlink:href", (d: MapPin) => d.url)
-      .attr("xlink:title", (d: MapPin) => d.area)
       .attr("target", "_blank")
-      .on("mouseover", onMouseOver)
-      .on("mouseout", onMouseOut)
-      .on("click", onClick);
+      .on("mouseover", (event: MouseEvent, d: MapPin) => {
+        const tooltip = d3.select("#map-tooltip");
+        tooltip.style("opacity", 1)
+               .html(`<div class="p-2 bg-white border border-gray-200 shadow-lg rounded text-[10px] font-jp">
+                        <img src="${d.image}" class="w-32 h-auto mb-1 rounded" />
+                        <strong>${d.area}</strong><br/>${d.date}
+                      </div>`)
+               .style("left", `${event.pageX + 15}px`)
+               .style("top", `${event.pageY - 10}px`);
+      })
+      .on("mouseout", () => {
+        d3.select("#map-tooltip").style("opacity", 0);
+      });
 
-    link
-      .selectAll("path")
+    link.selectAll("path")
       .data((d: MapPin) => [d])
       .join("path")
       .attr("d", createPinPath)
       .attr("fill", "#EA5455")
       .attr("stroke", "#EA5455")
-      .attr("stroke-width", 1);
+      .attr("stroke-width", 1.5)
+      .attr("class", "cursor-pointer hover:opacity-80 transition-opacity");
 
-    // ツールチップの生成（D3管理）
-    const tooltip = d3.select("body")
-      .selectAll<HTMLDivElement, unknown>(".map-tooltip")
-      .data([null])
-      .join("div")
-      .attr("class", "map-tooltip")
-      .style("position", "absolute")
-      .style("pointer-events", "none")
-      .style("opacity", 0)
-      .style("background", "white")
-      .style("padding", "8px")
-      .style("border", "1px solid #ddd")
-      .style("border-radius", "4px")
-      .style("z-index", "100");
-
-    function onMouseOver(event: MouseEvent, d: MapPin) {
-      tooltip.style("opacity", 1);
-      tooltip
-        .html(`
-          <div style="font-family: sans-serif; font-size: 12px;">
-            <img src="${d.image}" alt="${d.area}" style="width:200px; height:auto; display:block; margin-bottom:4px;" />
-            <strong>${d.area}</strong><br />
-            <span style="color: #666;">${d.date}</span>
-          </div>
-        `)
-        .style("left", event.pageX + 15 + "px")
-        .style("top", event.pageY + "px");
-    }
-
-    function onMouseOut() {
-      tooltip.style("opacity", 0);
-    }
-
-    function onClick(event: MouseEvent, d: MapPin) {
-      event.preventDefault(); // D3とReactの競合を避ける
-      window.open(d.url, '_blank', 'noopener,noreferrer');
-    }
-    
-    // クリーンアップ関数（アンマウント時にツールチップを消す）
-    return () => {
-      d3.selectAll(".map-tooltip").remove();
-    };
   }, [createPinPath]);
 
   return (
-    <div id="map-container" className="w-full h-[600px] mt-5 lg:mt-20 relative overflow-hidden">
-      <svg 
-        ref={mapRef} 
-        viewBox="0 0 1000 853" 
-        className="w-full h-full transition-transform duration-500"
-        style={{ 
-          backgroundImage: `url(${JapanSvg})`,
-          backgroundSize: 'contain',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
-        }}
-      />
+    <div className="w-full max-w-5xl mx-auto px-4 sm:px-8 mt-20">
+      <h3 className="text-sm text-gray-400 mb-4 font-jp tracking-widest">旅の記録</h3>
+      <div id="map-container" className="w-full h-[400px] md:h-[600px] relative bg-gray-50/50 rounded-2xl overflow-hidden border border-gray-100">
+        <svg 
+          ref={mapRef} 
+          viewBox="0 0 1000 853" 
+          className="w-full h-full relative z-10"
+          style={{ 
+            backgroundImage: `url(${JapanSvg})`,
+            backgroundSize: 'contain',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+          }}
+        />
+        <div id="map-tooltip" className="fixed pointer-events-none opacity-0 z-[100] transition-opacity duration-200" />
+      </div>
     </div>
   );
 };

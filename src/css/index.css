@@ -1,140 +1,36 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/* Utility Classes */
-.btn {
-  @apply font-bold py-2 px-4 rounded bg-blue-400;
-}
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500&display=swap');
 
-.style-ale {
-  @apply font-thin font-ale;
-}
-
-.style-jp {
-  @apply font-thin font-jp;
-}
-
-/* Card Styles */
-.card-style {
-  @apply w-44 h-44 mx-28 md:mx-6 lg:mx-12 xl:mx-24 border-natural hover:opacity-50 duration-700;
-}
-
-.card-title {
-  @apply ml-28 md:ml-6 lg:ml-24 mt-2 mb-12 md:mb-0 pl-1 hover:opacity-50 duration-700 text-sm lg:text-xl hover:text-black;
-}
-
-.title-text {
-  @apply text-5xl style-ale tracking-wide pl-6 lg:pl-48 pt-5;
-}
-
-/* globals.css または index.css など */
-html, body, * {
-  scrollbar-width: none !important;         /* Firefox */
-  -ms-overflow-style: none !important;      /* IE 10+ */
-}
-html::-webkit-scrollbar,
-body::-webkit-scrollbar,
-*::-webkit-scrollbar {
-  display: none !important;                 /* Chrome, Safari, Opera */
-}
-
-
-/* Dropdown */
-.dropdown:hover > .dropdown-content {
-  display: block;
-}
-
-/* Body */
 body {
-  background-color: #fff !important;
+  @apply bg-white text-gray-900;
+  font-family: 'Noto Sans JP', sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Tooltip */
-.tooltip {
-  position: absolute;
-  opacity: 0.7;
-  text-align: center;
-  font-size: 14px;
-  font-weight: lighter;
-  font-family: 'Noto Serif JP', serif;
-  color: #36312c;
-  transition: opacity 0.6s ease;
-  line-height: 170%;
-}
-
-/* SVG Pin Hover */
-.pin path {
-  cursor: pointer;
-  transition: fill 150ms;
-}
-
-/* Pagination */
-.pagination {
-  display: flex;
-  justify-content: center;
-  margin-top: 1rem;
-  list-style: none;
-  padding: 0;
-}
-
-.pagination li {
-  margin: 0 3px;
-  font-size: 1.2rem;
-}
-
-.pagination a {
-  cursor: pointer;
-}
-
-.pagination .active a {
-  font-weight: bold;
-  text-decoration: underline;
-}
-
-/* --- Navigation --- */
-
-/* ナビゲーションのリンクの色を常に継承・黒に（hover時はTailwindで制御したいので:hoverは外す） */
-.custom-navbar a,
-.custom-navbar a:visited,
-.custom-navbar a:active,
-.custom-navbar a:focus {
-  color: inherit !important;
-  text-decoration: none !important;
-}
-
-/* --- Wavy Underline --- */
 .wavy-underline {
-  position: relative;
-  color: inherit;
-  text-decoration: none;
+  @apply no-underline border-b border-transparent transition-all duration-300;
+  text-decoration: underline wavy rgba(0,0,0,0);
+  text-underline-offset: 4px;
 }
 
-.wavy-underline::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -2px;
-  height: 4px;
-  width: 100%;
-  background-image: url("data:image/svg+xml;utf8,<svg width='16' height='4' viewBox='0 0 16 4' fill='none' xmlns='http://www.w3.org/2000/svg'><path d='M0 2 Q 2 0, 4 2 T 8 2 T 12 2 T 16 2' stroke='black' stroke-width='1' fill='transparent'/></svg>");
-  background-repeat: repeat-x;
-  background-size: 16px 4px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s;
-}
-
-.wavy-underline:hover::after,
-.group:hover .group-hover\:wavy-underline::after {
-  opacity: 1;
-}
-
-/* ホバー時に色が薄くならないように */
 .wavy-underline:hover {
-  color: inherit !important;
-  opacity: 1 !important;
+  text-decoration-color: rgba(0,0,0,0.3);
 }
 
-/* --- その他のカスタムスタイルは必要に応じて追加 --- */
+/* スクロールバーのカスタマイズ（ミニマルに） */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #e5e7eb;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #d1d5db;
+}
