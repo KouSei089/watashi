@@ -43,7 +43,6 @@ const TIMELINE_HEIGHT = 200;
 const DOT_ANIMATION_DURATION = 400;
 
 const About: React.FC<AboutProps> = ({ onScrollEnd }) => {
-  // 型を HTMLDivElement | null にして初期値を null に
   const scrollIconRef = useRef<HTMLDivElement | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
