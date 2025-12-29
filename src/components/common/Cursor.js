@@ -1,5 +1,5 @@
-// Cursor.js
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { motion, useMotionValue, useSpring } from "framer-motion";
 
 const RING_SIZE = 48;
 const RING_SIZE_HOVER = 88;
@@ -8,7 +8,6 @@ const CURSOR_COLOR = "#D7D7D7";
 const RING_BORDER_WIDTH = 1.2;
 
 function isTouchDevice() {
-  // タッチイベントが使えるか、または画面幅が一定以下ならスマホとみなす
   return (
     "ontouchstart" in window ||
     navigator.maxTouchPoints > 0 ||
@@ -17,21 +16,25 @@ function isTouchDevice() {
 }
 
 const Cursor = () => {
-  const dotRef = useRef(null);
-  const ringRef = useRef(null);
-
-  const mouse = useRef({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
-  const ring = useRef({ x: window.innerWidth / 2, y: window.innerHeight / 2 });
-  const ringSizeRef = useRef(RING_SIZE);
-
   const [hovered, setHovered] = useState(false);
   const [showCursor, setShowCursor] = useState(() => !isTouchDevice());
 
-  // デバイス判定（リサイズ時も対応）
+  // マウス位置の生の値
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  // リング用のバネ設定（少し遅れて、弾力を持って追いかける）
+  const ringX = useSpring(mouseX, { stiffness: 150, damping: 20 });
+  const ringY = useSpring(mouseY, { stiffness: 150, damping: 20 });
+  
+  // リングサイズ用のバネ
+  const ringSize = useSpring(hovered ? RING_SIZE_HOVER : RING_SIZE, {
+    stiffness: 200,
+    damping: 25
+  });
+
   useEffect(() => {
-    const handleResize = () => {
-      setShowCursor(!isTouchDevice());
-    };
+    const handleResize = () => setShowCursor(!isTouchDevice());
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -40,10 +43,9 @@ const Cursor = () => {
     if (!showCursor) return;
 
     const handleMouseMove = (e) => {
-      mouse.current.x = e.clientX;
-      mouse.current.y = e.clientY;
+      mouseX.set(e.clientX);
+      mouseY.set(e.clientY);
     };
-    document.addEventListener("mousemove", handleMouseMove);
 
     const hoverSelectors = "a, button, [data-cursor-hover], .hover-target";
     const handleMouseOver = (e) => {
@@ -52,87 +54,74 @@ const Cursor = () => {
     const handleMouseOut = (e) => {
       if (e.target.closest(hoverSelectors)) setHovered(false);
     };
+
+    window.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseover", handleMouseOver);
     document.addEventListener("mouseout", handleMouseOut);
 
-    let frame;
-    const animate = () => {
-      if (dotRef.current) {
-        dotRef.current.style.transform = `translate3d(${mouse.current.x}px, ${mouse.current.y}px, 0)`;
-      }
-      ring.current.x += (mouse.current.x - ring.current.x) * 0.14;
-      ring.current.y += (mouse.current.y - ring.current.y) * 0.14;
-      const targetSize = hovered ? RING_SIZE_HOVER : RING_SIZE;
-      ringSizeRef.current += (targetSize - ringSizeRef.current) * 0.16;
-
-      if (ringRef.current) {
-        ringRef.current.style.transform = `translate3d(${ring.current.x}px, ${ring.current.y}px, 0)`;
-        ringRef.current.style.width = `${ringSizeRef.current}px`;
-        ringRef.current.style.height = `${ringSizeRef.current}px`;
-        ringRef.current.style.marginLeft = `${-ringSizeRef.current / 2}px`;
-        ringRef.current.style.marginTop = `${-ringSizeRef.current / 2}px`;
-      }
-      frame = requestAnimationFrame(animate);
-    };
-    animate();
-
     return () => {
-      document.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseover", handleMouseOver);
       document.removeEventListener("mouseout", handleMouseOut);
-      cancelAnimationFrame(frame);
     };
-  }, [hovered, showCursor]);
+  }, [showCursor, mouseX, mouseY]);
 
-  if (!showCursor) {
-    // カスタムカーソルも、CSSでのカーソル非表示も適用しない
-    return null;
-  }
+  useEffect(() => {
+    ringSize.set(hovered ? RING_SIZE_HOVER : RING_SIZE);
+  }, [hovered, ringSize]);
+
+  if (!showCursor) return null;
 
   return (
     <>
-      {/* 外側のリング */}
-      <div
-        ref={ringRef}
+      {/* 外側のリング: useSpring により滑らかな遅延が発生 */}
+      <motion.div
         style={{
           position: "fixed",
           top: 0,
           left: 0,
-          width: RING_SIZE,
-          height: RING_SIZE,
-          marginLeft: -RING_SIZE / 2,
-          marginTop: -RING_SIZE / 2,
+          x: ringX,
+          y: ringY,
+          width: ringSize,
+          height: ringSize,
+          translateX: "-50%",
+          translateY: "-50%",
           pointerEvents: "none",
           zIndex: 9999,
           border: `${RING_BORDER_WIDTH}px solid ${CURSOR_COLOR}`,
           borderRadius: "50%",
           background: "transparent",
           boxSizing: "border-box",
-          transition: "border-color 0.2s",
-          opacity: 1,
         }}
       />
-      {/* 中央の点 */}
-      <div
-        ref={dotRef}
+      
+      {/* 中央のドット: マウスに直結（遅延なし） */}
+      <motion.div
+        animate={{
+          opacity: hovered ? 0 : 1,
+          scale: hovered ? 0 : 1,
+        }}
+        transition={{ duration: 0.2 }}
         style={{
           position: "fixed",
           top: 0,
           left: 0,
+          x: mouseX,
+          y: mouseY,
           width: DOT_SIZE,
           height: DOT_SIZE,
-          marginLeft: -DOT_SIZE / 2,
-          marginTop: -DOT_SIZE / 2,
+          translateX: "-50%",
+          translateY: "-50%",
           pointerEvents: "none",
           zIndex: 10000,
           borderRadius: "50%",
           background: CURSOR_COLOR,
-          opacity: hovered ? 0 : 1,
-          transition: "opacity 0.18s cubic-bezier(.4,2,.3,1)",
         }}
       />
+      
       <style>{`
         body, * { cursor: none !important; }
+        a, button { cursor: none !important; }
       `}</style>
     </>
   );

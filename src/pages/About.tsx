@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
+import { motion, useScroll, useSpring } from 'framer-motion';
 import Profile from '../components/features/Profile';
 import EyecatchGrid from '../components/features/EyecatchGrid';
-import Footer from '../components/layout/Footer';
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -40,46 +40,48 @@ const timeline: TimelineItem[] = [...baseTimeline, { title: "", date: "" }];
 const ITEM_MARGIN = 48;
 const ITEM_WIDTH = 300;
 const TIMELINE_HEIGHT = 200;
-const DOT_ANIMATION_DURATION = 400;
 
 const About: React.FC<AboutProps> = ({ onScrollEnd }) => {
-  // 型を HTMLDivElement | null にして初期値を null に
   const scrollIconRef = useRef<HTMLDivElement | null>(null);
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
+  const footerTriggerRef = useRef<HTMLDivElement>(null); // Footer判定用
 
   const [showTimelineTitle, setShowTimelineTitle] = useState(false);
   const [pageVisible, setPageVisible] = useState(false);
   const [activeIndex, setActiveIndex] = useState<number | null>(0);
-  const [dotStep, setDotStep] = useState(0);
+
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
 
   useEffect(() => {
-    const timer = setTimeout(() => setPageVisible(true), 30);
-    return () => clearTimeout(timer);
+    setPageVisible(true);
   }, []);
 
+  // Footer表示判定ロジック (数値計算を排除し、Observerで安定化)
   useEffect(() => {
-    const interval = setInterval(() => {
-      setDotStep((prev) => (prev + 1) % 3);
-    }, DOT_ANIMATION_DURATION);
-    return () => clearInterval(interval);
-  }, []);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        if (onScrollEnd) onScrollEnd(entry.isIntersecting);
+      },
+      { threshold: 0.1, rootMargin: '0px 0px 50px 0px' }
+    );
 
+    if (footerTriggerRef.current) observer.observe(footerTriggerRef.current);
+    return () => observer.disconnect();
+  }, [onScrollEnd]);
+
+  // スクロールアイコンとタイトルの連動
   useEffect(() => {
     const handleScroll = () => {
       if (!scrollIconRef.current) return;
       const rect = scrollIconRef.current.getBoundingClientRect();
-      const iconCenter = rect.top + rect.height / 2;
-      const windowCenter = window.innerHeight / 2;
-      const isPastCenter = iconCenter < windowCenter;
-      
-      setShowTimelineTitle(isPastCenter);
-      if (onScrollEnd) onScrollEnd(isPastCenter);
+      setShowTimelineTitle(rect.top < window.innerHeight / 2);
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [onScrollEnd]);
+  }, []);
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
@@ -87,13 +89,12 @@ const About: React.FC<AboutProps> = ({ onScrollEnd }) => {
       const track = trackRef.current;
       if (!section || !track) return;
 
-      const sectionWidth = section.offsetWidth;
-      const extraSpace = sectionWidth * 1.2;
-      const lineWidth = (timeline.length - 1) * (ITEM_WIDTH + ITEM_MARGIN) + ITEM_WIDTH;
-      const totalWidth = lineWidth + extraSpace;
-      
-      track.style.width = `${totalWidth}px`;
-      const scrollLength = totalWidth - sectionWidth;
+      const isMobile = window.innerWidth < 768;
+      const extraSpace = isMobile ? window.innerWidth * 0.4 : window.innerWidth * 1.0;
+      const totalTimelineWidth = (timeline.length - 1) * (ITEM_WIDTH + ITEM_MARGIN) + ITEM_WIDTH;
+      const scrollLength = totalTimelineWidth + extraSpace - window.innerWidth;
+
+      track.style.width = `${totalTimelineWidth + extraSpace}px`;
 
       ScrollTrigger.create({
         trigger: section,
@@ -102,14 +103,14 @@ const About: React.FC<AboutProps> = ({ onScrollEnd }) => {
         scrub: 1,
         pin: true,
         anticipatePin: 1,
-        invalidateOnRefresh: true,
         onUpdate: (self) => {
           gsap.set(track, { x: -scrollLength * self.progress });
+          const centerX = window.innerWidth / 2;
           const cards = track.children;
-          const centerX = section.getBoundingClientRect().left + sectionWidth / 2;
           for (let i = 0; i < timeline.length; i++) {
+            if (!cards[i]) continue;
             const rect = cards[i].getBoundingClientRect();
-            if (Math.abs(rect.left + rect.width / 2 - centerX) < rect.width / 2) {
+            if (rect.left < centerX && rect.right > centerX) {
               setActiveIndex(i);
               break;
             }
@@ -120,45 +121,44 @@ const About: React.FC<AboutProps> = ({ onScrollEnd }) => {
     return () => ctx.revert();
   }, []);
 
-  const dotOpacities = [[1, 0.2, 0.2], [1, 1, 0.2], [1, 1, 1]][dotStep];
-
   return (
-    <div className={`bg-white min-h-screen transition-opacity duration-1000 font-jp ${pageVisible ? 'opacity-100' : 'opacity-0'}`}>
+    <div className={`bg-white min-h-screen transition-opacity duration-1000 font-jp overflow-x-hidden w-full ${pageVisible ? 'opacity-100' : 'opacity-0'}`}>
+      <motion.div className="fixed top-0 left-0 right-0 h-[1px] bg-black z-[100] origin-left" style={{ scaleX }} />
+      
       <Profile scrollIconRef={scrollIconRef} />
 
-      <div id="history" className="h-10 -mt-10" />
-      <section className={`max-w-5xl mx-auto px-4 sm:px-8 py-12 transition-all duration-700 ${showTimelineTitle ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8 pointer-events-none'}`}>
-        <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-matte tracking-wider mb-10">これまでのわたし</h2>
+      <section className="max-w-5xl mx-auto px-6 sm:px-8 py-12 w-full">
+        <h2 className="text-4xl sm:text-5xl md:text-7xl text-matte tracking-wider mb-10 transition-opacity duration-1000" style={{ opacity: showTimelineTitle ? 1 : 0.2 }}>
+          これまでのわたし
+        </h2>
       </section>
 
-      <section ref={sectionRef} className="max-w-5xl mx-auto px-4 sm:px-8 relative overflow-hidden bg-white" style={{ minHeight: TIMELINE_HEIGHT }}>
-        <div className="w-full flex items-center justify-start overflow-visible relative" style={{ height: TIMELINE_HEIGHT }}>
-          <div ref={trackRef} className="flex items-center relative transition-padding duration-200">
-            {timeline.map((item, idx) => (
-              <div key={idx} className="flex flex-col items-center justify-center relative transition-all duration-300" style={{ width: ITEM_WIDTH, marginRight: idx < timeline.length - 1 ? ITEM_MARGIN : 0, opacity: activeIndex === idx ? 1 : 0.4, transform: `scale(${activeIndex === idx ? 1.05 : 1})` }}>
-                {idx !== timeline.length - 1 ? (
-                  <>
-                    <div className="text-xl font-bold mb-1">{item.date}</div>
-                    <div className="text-sm font-light text-center px-4 h-10 flex items-center">{item.title}</div>
-                    <div className={`w-1.5 h-1.5 rounded-full mt-4 transition-colors ${activeIndex === idx ? 'bg-black' : 'bg-gray-300'}`} />
-                  </>
-                ) : (
-                  <div className="flex gap-2.5 mt-10 justify-center items-center h-10">
-                    {[0, 1, 2].map((i) => (
-                      <div key={i} className="w-1.5 h-1.5 rounded-full bg-black transition-all duration-300" style={{ opacity: dotOpacities[i], transform: `scale(${dotOpacities[i] === 1 ? 1.2 : 1})` }} />
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-            <div className="w-[120vw] min-w-[120px]" />
-            <div className="absolute bottom-2 left-0 h-px bg-gray-200 -z-10" style={{ width: `${(timeline.length - 1) * (ITEM_WIDTH + ITEM_MARGIN) + ITEM_WIDTH}px` }} />
+      <section ref={sectionRef} className="w-full relative overflow-hidden bg-white flex items-center" style={{ minHeight: '60vh' }}>
+        <div className="max-w-5xl mx-auto px-6 sm:px-8 w-full">
+          <div className="relative" style={{ height: TIMELINE_HEIGHT }}>
+            <div ref={trackRef} className="flex items-center relative h-full">
+              {timeline.map((item, idx) => (
+                <div key={idx} className="flex-shrink-0 flex flex-col items-center justify-center relative transition-all duration-500" style={{ width: ITEM_WIDTH, marginRight: idx < timeline.length - 1 ? ITEM_MARGIN : 0, opacity: activeIndex === idx ? 1 : 0.3, transform: `scale(${activeIndex === idx ? 1.05 : 0.95})` }}>
+                  {idx !== timeline.length - 1 ? (
+                    <>
+                      <div className="text-xl font-bold mb-1">{item.date}</div>
+                      <div className="text-sm font-light text-center px-4 h-10 flex items-center">{item.title}</div>
+                      <div className={`w-1.5 h-1.5 rounded-full mt-4 transition-colors duration-500 ${activeIndex === idx ? 'bg-black' : 'bg-gray-200'}`} />
+                    </>
+                  ) : (
+                    <div className="flex gap-2 mt-10 text-xs text-gray-400 italic">...</div>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
       <EyecatchGrid />
-      <Footer />
+
+      {/* Footer発火用の透明な目印 */}
+      <div ref={footerTriggerRef} className="h-4 w-full" />
     </div>
   );
 };
