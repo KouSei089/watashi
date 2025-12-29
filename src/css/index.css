@@ -1,37 +1,140 @@
-/* src/css/index.css */
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
-/* 1. Tailwind のベーススタイルを注入 */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/* 2. アプリ全体の基本設定 */
-@layer base {
-  html {
-    /* スムーズスクロールを有効化（Aboutページの遷移が綺麗になります） */
-    scroll-behavior: smooth;
-    /* フォントのアンチエイリアスを有効にして文字を綺麗に見せる */
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-
-  body {
-    @apply bg-white text-gray-900 font-sans;
-    margin: 0;
-    line-height: 1.6;
-  }
-
-  /* デフォルトのフォント設定（もしGoogle Fontsなどを使うならここで定義） */
-  :root {
-    --font-jp: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
-  }
+/* Utility Classes */
+.btn {
+  @apply font-bold py-2 px-4 rounded bg-blue-400;
 }
 
-/* 3. 再利用するカスタムクラス（Tailwindで書きにくいものだけ） */
-@layer components {
-  .wavy-underline {
-    text-decoration: underline;
-    text-decoration-style: wavy;
-    text-underline-offset: 4px;
-  }
+.style-ale {
+  @apply font-thin font-ale;
 }
+
+.style-jp {
+  @apply font-thin font-jp;
+}
+
+/* Card Styles */
+.card-style {
+  @apply w-44 h-44 mx-28 md:mx-6 lg:mx-12 xl:mx-24 border-natural hover:opacity-50 duration-700;
+}
+
+.card-title {
+  @apply ml-28 md:ml-6 lg:ml-24 mt-2 mb-12 md:mb-0 pl-1 hover:opacity-50 duration-700 text-sm lg:text-xl hover:text-black;
+}
+
+.title-text {
+  @apply text-5xl style-ale tracking-wide pl-6 lg:pl-48 pt-5;
+}
+
+/* globals.css または index.css など */
+html, body, * {
+  scrollbar-width: none !important;         /* Firefox */
+  -ms-overflow-style: none !important;      /* IE 10+ */
+}
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  display: none !important;                 /* Chrome, Safari, Opera */
+}
+
+
+/* Dropdown */
+.dropdown:hover > .dropdown-content {
+  display: block;
+}
+
+/* Body */
+body {
+  background-color: #fff !important;
+}
+
+/* Tooltip */
+.tooltip {
+  position: absolute;
+  opacity: 0.7;
+  text-align: center;
+  font-size: 14px;
+  font-weight: lighter;
+  font-family: 'Noto Serif JP', serif;
+  color: #36312c;
+  transition: opacity 0.6s ease;
+  line-height: 170%;
+}
+
+/* SVG Pin Hover */
+.pin path {
+  cursor: pointer;
+  transition: fill 150ms;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+  list-style: none;
+  padding: 0;
+}
+
+.pagination li {
+  margin: 0 3px;
+  font-size: 1.2rem;
+}
+
+.pagination a {
+  cursor: pointer;
+}
+
+.pagination .active a {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+/* --- Navigation --- */
+
+/* ナビゲーションのリンクの色を常に継承・黒に（hover時はTailwindで制御したいので:hoverは外す） */
+.custom-navbar a,
+.custom-navbar a:visited,
+.custom-navbar a:active,
+.custom-navbar a:focus {
+  color: inherit !important;
+  text-decoration: none !important;
+}
+
+/* --- Wavy Underline --- */
+.wavy-underline {
+  position: relative;
+  color: inherit;
+  text-decoration: none;
+}
+
+.wavy-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 4px;
+  width: 100%;
+  background-image: url("data:image/svg+xml;utf8,<svg width='16' height='4' viewBox='0 0 16 4' fill='none' xmlns='http://www.w3.org/2000/svg'><path d='M0 2 Q 2 0, 4 2 T 8 2 T 12 2 T 16 2' stroke='black' stroke-width='1' fill='transparent'/></svg>");
+  background-repeat: repeat-x;
+  background-size: 16px 4px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+.wavy-underline:hover::after,
+.group:hover .group-hover\:wavy-underline::after {
+  opacity: 1;
+}
+
+/* ホバー時に色が薄くならないように */
+.wavy-underline:hover {
+  color: inherit !important;
+  opacity: 1 !important;
+}
+
+/* --- その他のカスタムスタイルは必要に応じて追加 --- */
