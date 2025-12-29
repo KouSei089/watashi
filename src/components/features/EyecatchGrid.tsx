@@ -1,56 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { eyecatchData } from '../../data/eyecatchData';
 import { BookItem } from '../../types';
 
-interface GroupedYear {
-  year: string;
-  items: BookItem[];
-}
-
-const groupByYear = (data: BookItem[]): GroupedYear[] => {
-  const grouped: { [key: string]: BookItem[] } = {};
-  data.forEach(item => {
-    const year = item.created_at.slice(0, 4);
-    if (!grouped[year]) grouped[year] = [];
-    grouped[year].push(item);
-  });
-  return Object.entries(grouped)
-    .sort((a, b) => Number(b[0]) - Number(a[0]))
-    .map(([year, items]) => ({
-      year,
-      items: items.sort((a, b) => b.created_at.localeCompare(a.created_at)),
-    }));
-};
-
-const INITIAL_COUNT = 12;
-const LOAD_MORE_COUNT = 8;
+const INITIAL_COUNT = 40; // 小さくなる分、最初からある程度の数を表示
+const LOAD_MORE_COUNT = 24;
 
 const EyecatchGrid: React.FC = () => {
-  const grouped = groupByYear(eyecatchData);
-  const [visibleCount, setVisibleCount] = useState<Record<string, number>>(
-    Object.fromEntries(grouped.map(({ year }) => [year, INITIAL_COUNT]))
-  );
-  const [loadMoreInfo, setLoadMoreInfo] = useState<Record<string, { from: number; to: number }>>({});
+  const loaderRef = useRef<HTMLDivElement>(null);
+  
+  const allItems = useMemo(() => {
+    return Array.isArray(eyecatchData) 
+      ? [...eyecatchData].sort((a, b) => b.created_at.localeCompare(a.created_at))
+      : [];
+  }, []);
 
-  const handleLoadMore = () => {
-    const nextCounts: Record<string, number> = {};
-    const nextInfo: Record<string, { from: number; to: number }> = {};
-    grouped.forEach(({ year, items }) => {
-      const prevCount = visibleCount[year] ?? INITIAL_COUNT;
-      const newCount = Math.min(prevCount + LOAD_MORE_COUNT, items.length);
-      nextCounts[year] = newCount;
-      nextInfo[year] = { from: prevCount, to: newCount };
-    });
-    setVisibleCount(nextCounts);
-    setLoadMoreInfo(nextInfo);
-  };
+  const [visibleCount, setVisibleCount] = useState(INITIAL_COUNT);
 
-  const hasMore = grouped.some(({ year, items }) => (visibleCount[year] ?? INITIAL_COUNT) < items.length);
+  const handleLoadMore = useCallback(() => {
+    setVisibleCount((prev) => Math.min(prev + LOAD_MORE_COUNT, allItems.length));
+  }, [allItems.length]);
+
+  const hasMore = visibleCount < allItems.length;
+
+  useEffect(() => {
+    if (!hasMore) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) handleLoadMore();
+      },
+      { rootMargin: '0px 0px 100px 0px' } 
+    );
+    if (loaderRef.current) observer.observe(loaderRef.current);
+    return () => observer.disconnect();
+  }, [handleLoadMore, hasMore, visibleCount]);
 
   return (
     <section className="w-full bg-white pt-12 font-jp">
       <div id="book-diary" className="h-20 -mt-20" />
 
+      {/* テキストセクション：他のセクションと揃える */}
       <div className="max-w-5xl mx-auto px-4 sm:px-8 mb-10">
         <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-matte tracking-wider mb-6 text-left">
           読書の日記
@@ -64,64 +52,47 @@ const EyecatchGrid: React.FC = () => {
         </div>
       </div>
 
-      <div className="w-full grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-0 border-t border-gray-100 bg-white">
-        {grouped.flatMap(({ year, items }) => {
-          const count = visibleCount[year] ?? INITIAL_COUNT;
-          return items.slice(0, count).map((item, idx) => {
-            const isNew = loadMoreInfo[year] && idx >= loadMoreInfo[year].from;
-            const delay = isNew ? (idx - loadMoreInfo[year].from) * 100 : 0;
-
-            return (
-              <a
-                key={item.noteUrl}
-                href={item.noteUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`group relative aspect-[4/3] overflow-hidden bg-white border-r border-b border-gray-100 transition-opacity duration-700 ${isNew ? 'animate-fadeInUp' : ''}`}
-                style={{ animationDelay: `${delay}ms` }}
-              >
-                <img
-                  src={item.eyecatch}
-                  alt={item.name}
-                  className="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-all duration-300 flex flex-col justify-end p-2 opacity-0 group-hover:opacity-100">
-                  <span className="text-[10px] text-gray-300">{item.created_at}</span>
-                  <span className="text-[11px] text-white truncate">{item.name}</span>
-                </div>
-              </a>
-            );
-          });
-        })}
-
-        {hasMore && (
-          <button
-            onClick={handleLoadMore}
-            className="col-span-1 aspect-[4/3] flex flex-col items-center justify-center bg-white border-r border-b border-gray-100 text-[10px] md:text-xs text-gray-400 hover:text-black transition-colors group"
+      {/* サイズ調整：
+        スマホ: grid-cols-5 (非常に小さく緻密に)
+        PC: md:grid-cols-8 (アーカイブとしての美しさ)
+      */}
+      <div className="w-full grid grid-cols-5 md:grid-cols-8 gap-0 border-t border-gray-100 bg-white">
+        {allItems.slice(0, visibleCount).map((item) => (
+          <a
+            key={item.noteUrl}
+            href={item.noteUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            // フェード速度を2000msに維持しつつ、サイズを抑制
+            className="group relative aspect-[4/3] overflow-hidden bg-white border-r border-b border-gray-100 transition-opacity duration-[2000ms] ease-in-out"
           >
-            <span className="wavy-underline flex items-center gap-1">
-              <svg width="12" height="12" fill="none" viewBox="0 0 20 20" className="stroke-current">
-                <path d="M10 4v8m0 0l-3-3m3 3l3-3" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              MORE
-            </span>
-          </button>
+            <img
+              src={item.eyecatch}
+              alt={item.name}
+              className="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-[2000ms] ease-in-out"
+              loading="lazy"
+            />
+            {/* 文字サイズを極小(text-[7px])にして、繊細なデザインに合わせる */}
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-all duration-300 flex flex-col justify-end p-1.5 opacity-0 group-hover:opacity-100">
+              <span className="text-[7px] text-gray-300 leading-none mb-1">{item.created_at}</span>
+              <span className="text-[8px] md:text-[9px] text-white truncate leading-tight">{item.name}</span>
+            </div>
+          </a>
+        ))}
+      </div>
+
+      {/* 検知用エリア：ページが伸びる演出のため最小限に */}
+      <div ref={loaderRef} className="w-full h-4 bg-white flex items-center justify-center overflow-hidden">
+        {hasMore && (
+          <div className="flex gap-2 opacity-5 py-8">
+            {[0, 1, 2].map((i) => (
+              <div key={i} className="w-0.5 h-0.5 rounded-full bg-black animate-pulse" style={{ animationDelay: `${i * 0.4}s` }} />
+            ))}
+          </div>
         )}
       </div>
 
-      {/* フッターとの境界を美しくするための余白（下線が消えた効果を強調） */}
-      <div className="h-32 bg-white" />
-
-      <style dangerouslySetInnerHTML={{ __html: `
-        @keyframes fadeInUp {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fadeInUp {
-          animation: fadeInUp 0.8s ease forwards;
-        }
-      `}} />
+      {!hasMore && <div className="h-12 bg-white" />}
     </section>
   );
 };
