@@ -157,7 +157,6 @@ const About: React.FC<AboutProps> = ({ onScrollEnd }) => {
       </section>
 
       <EyecatchGrid />
-      <Footer />
     </div>
   );
 };
