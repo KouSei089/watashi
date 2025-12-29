@@ -1,11 +1,17 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+// 1. 'react-dom' ではなく 'react-dom/client' からインポート
+import { createRoot } from 'react-dom/client';
 import App from './App';
 import "./css/index.css";
 
-ReactDOM.render(
+// 2. root 要素を取得
+const container = document.getElementById('root');
+
+// 3. createRoot を使用してレンダリング
+const root = createRoot(container);
+
+root.render(
   <React.StrictMode>
     <App />
-  </React.StrictMode>,
-  document.getElementById('root')
+  </React.StrictMode>
 );

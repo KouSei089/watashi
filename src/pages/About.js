@@ -1,9 +1,7 @@
-// About.jsx
-
-import React, { useRef, useEffect, useState, useLayoutEffect } from 'react';
-import Profile from './Profile';
-import EyecatchGrid from './EyecatchGrid';
-import Footer from './Footer';
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
+import Profile from '../components/features/Profile';
+import EyecatchGrid from '../components/features/EyecatchGrid';
+import Footer from '../components/layout/Footer';
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -32,8 +30,6 @@ const timeline = [
   ...baseTimeline,
   { title: "", date: "" }
 ];
-
-const ITEM_HEIGHT = 140;
 const ITEM_MARGIN = 48;
 const TIMELINE_HEIGHT = 200;
 const ITEM_WIDTH = 300;
@@ -154,9 +150,6 @@ const About = () => {
       if (ctx) ctx.revert();
     };
   }, []);
-
-  // 線の長さ（「現在…」まで）
-  const lineWidth = (timeline.length - 1) * (ITEM_WIDTH + ITEM_MARGIN) + ITEM_WIDTH;
 
   // 点点アニメーション
   // 0: .__  1: .._  2: ...

@@ -1,6 +1,5 @@
-import React from "react";
-import JapanMap from "./JapanMap";
-import Log from "./Log";
+import JapanMap from '../components/features/JapanMap';
+import Log from '../components/features/Log';
 
 const Travel = () => {
   return (
