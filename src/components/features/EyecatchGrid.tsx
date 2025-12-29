@@ -2,13 +2,11 @@ import React, { useState } from 'react';
 import { eyecatchData } from '../../data/eyecatchData';
 import { BookItem } from '../../types';
 
-// グルーピング用の型
 interface GroupedYear {
   year: string;
   items: BookItem[];
 }
 
-// 補助関数: 年ごとにグループ化
 const groupByYear = (data: BookItem[]): GroupedYear[] => {
   const grouped: { [key: string]: BookItem[] } = {};
   data.forEach(item => {
@@ -29,39 +27,32 @@ const LOAD_MORE_COUNT = 8;
 
 const EyecatchGrid: React.FC = () => {
   const grouped = groupByYear(eyecatchData);
-
   const [visibleCount, setVisibleCount] = useState<Record<string, number>>(
     Object.fromEntries(grouped.map(({ year }) => [year, INITIAL_COUNT]))
   );
-
   const [loadMoreInfo, setLoadMoreInfo] = useState<Record<string, { from: number; to: number }>>({});
 
   const handleLoadMore = () => {
     const nextCounts: Record<string, number> = {};
     const nextInfo: Record<string, { from: number; to: number }> = {};
-
     grouped.forEach(({ year, items }) => {
       const prevCount = visibleCount[year] ?? INITIAL_COUNT;
       const newCount = Math.min(prevCount + LOAD_MORE_COUNT, items.length);
       nextCounts[year] = newCount;
       nextInfo[year] = { from: prevCount, to: newCount };
     });
-
     setVisibleCount(nextCounts);
     setLoadMoreInfo(nextInfo);
   };
 
-  const hasMore = grouped.some(
-    ({ year, items }) => (visibleCount[year] ?? INITIAL_COUNT) < items.length
-  );
+  const hasMore = grouped.some(({ year, items }) => (visibleCount[year] ?? INITIAL_COUNT) < items.length);
 
   return (
-    <section className="w-full bg-white py-12 font-jp">
-      {/* アンカーリンク用余白 */}
+    <section className="w-full bg-white pt-12 font-jp">
       <div id="book-diary" className="h-20 -mt-20" />
 
       <div className="max-w-5xl mx-auto px-4 sm:px-8 mb-10">
-        <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-matte tracking-wider mb-6">
+        <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-matte tracking-wider mb-6 text-left">
           読書の日記
         </h2>
         <div className="max-w-2xl text-xs md:text-sm text-gray-500 leading-relaxed">
@@ -73,7 +64,7 @@ const EyecatchGrid: React.FC = () => {
         </div>
       </div>
 
-      <div className="w-full grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-px border-y border-gray-100 bg-gray-100">
+      <div className="w-full grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-0 border-t border-gray-100 bg-white">
         {grouped.flatMap(({ year, items }) => {
           const count = visibleCount[year] ?? INITIAL_COUNT;
           return items.slice(0, count).map((item, idx) => {
@@ -86,7 +77,7 @@ const EyecatchGrid: React.FC = () => {
                 href={item.noteUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`group relative aspect-[4/3] overflow-hidden bg-white transition-opacity duration-700 ${isNew ? 'animate-fadeInUp' : ''}`}
+                className={`group relative aspect-[4/3] overflow-hidden bg-white border-r border-b border-gray-100 transition-opacity duration-700 ${isNew ? 'animate-fadeInUp' : ''}`}
                 style={{ animationDelay: `${delay}ms` }}
               >
                 <img
@@ -107,7 +98,7 @@ const EyecatchGrid: React.FC = () => {
         {hasMore && (
           <button
             onClick={handleLoadMore}
-            className="col-span-1 aspect-[4/3] flex flex-col items-center justify-center bg-white text-[10px] md:text-xs text-gray-400 hover:text-black transition-colors group"
+            className="col-span-1 aspect-[4/3] flex flex-col items-center justify-center bg-white border-r border-b border-gray-100 text-[10px] md:text-xs text-gray-400 hover:text-black transition-colors group"
           >
             <span className="wavy-underline flex items-center gap-1">
               <svg width="12" height="12" fill="none" viewBox="0 0 20 20" className="stroke-current">
@@ -118,6 +109,9 @@ const EyecatchGrid: React.FC = () => {
           </button>
         )}
       </div>
+
+      {/* フッターとの境界を美しくするための余白（下線が消えた効果を強調） */}
+      <div className="h-32 bg-white" />
 
       <style dangerouslySetInnerHTML={{ __html: `
         @keyframes fadeInUp {
