@@ -41,10 +41,9 @@ const Profile: React.FC<ProfileProps> = ({ scrollIconRef }) => (
     <motion.div className="flex flex-col items-center w-full" variants={itemVariants}>
       <div className="relative w-full max-w-[400px]">
         <img
-          className="w-full h-auto object-cover rounded shadow-sm cursor-pointer select-none"
+          className="w-full h-auto object-cover rounded shadow-sm cursor-pointer select-none blur-[6px] brightness-95 contrast-105 will-change-transform will-change-filter"
           src="https://github.com/KouSei089/watashi/assets/77420123/d32f15ff-a725-40a4-b58f-8c79d67f8eb6"
           alt="main-img"
-          style={{ filter: 'blur(8px) brightness(0.95) contrast(1.05)' }}
           draggable={false}
         />
       </div>

@@ -23,13 +23,13 @@ const Cursor = () => {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  // リング用のバネ設定（少し遅れて、弾力を持って追いかける）
-  const ringX = useSpring(mouseX, { stiffness: 150, damping: 20 });
-  const ringY = useSpring(mouseY, { stiffness: 150, damping: 20 });
+  // リング用のバネ設定（追従をより速く、軽くキビキビさせるためにstiffnessを上げました）
+  const ringX = useSpring(mouseX, { stiffness: 400, damping: 28 });
+  const ringY = useSpring(mouseY, { stiffness: 400, damping: 28 });
   
   // リングサイズ用のバネ
   const ringSize = useSpring(hovered ? RING_SIZE_HOVER : RING_SIZE, {
-    stiffness: 200,
+    stiffness: 300,
     damping: 25
   });
 

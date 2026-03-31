@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback, useMemo } from "react";
+import React, { useEffect, useRef, useMemo } from "react";
 import JapanSvg from '../../assets/svg/japanMap.svg';
 import regionalDetail from '../../data/regional/regional_detail.json';
 import * as d3 from "d3";

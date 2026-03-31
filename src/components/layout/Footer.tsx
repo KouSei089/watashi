@@ -13,7 +13,7 @@ const Footer: React.FC = () => {
           </div>
           <a
             href="mailto:izumiharuya12@gmail.com"
-            className="mt-1 text-base sm:text-lg text-black wavy-underline tracking-[0.08em]"
+            className="mt-1 text-base sm:text-lg text-black wavy-underline tracking-[0.08em] transition-all duration-500 ease-out hover:opacity-60"
           >
             izumiharuya12@gmail.com
             <span className="text-[10px] align-super ml-1 opacity-70">↗︎</span>

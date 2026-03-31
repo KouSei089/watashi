@@ -48,15 +48,10 @@ const About: React.FC<AboutProps> = ({ onScrollEnd }) => {
   const footerTriggerRef = useRef<HTMLDivElement>(null); // Footer判定用
 
   const [showTimelineTitle, setShowTimelineTitle] = useState(false);
-  const [pageVisible, setPageVisible] = useState(false);
   const [activeIndex, setActiveIndex] = useState<number | null>(0);
 
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
-
-  useEffect(() => {
-    setPageVisible(true);
-  }, []);
 
   // Footer表示判定ロジック (数値計算を排除し、Observerで安定化)
   useEffect(() => {
@@ -89,12 +84,17 @@ const About: React.FC<AboutProps> = ({ onScrollEnd }) => {
       const track = trackRef.current;
       if (!section || !track) return;
 
-      const isMobile = window.innerWidth < 768;
-      const extraSpace = isMobile ? window.innerWidth * 0.4 : window.innerWidth * 1.0;
-      const totalTimelineWidth = (timeline.length - 1) * (ITEM_WIDTH + ITEM_MARGIN) + ITEM_WIDTH;
-      const scrollLength = totalTimelineWidth + extraSpace - window.innerWidth;
+      // 画面のちょうど中央にカードが来るための初期余白を計算
+      const padding = window.innerWidth / 2 - ITEM_WIDTH / 2;
+      track.style.paddingLeft = `${padding}px`;
+      track.style.paddingRight = `${padding}px`;
 
-      track.style.width = `${totalTimelineWidth + extraSpace}px`;
+      // 全体カード幅 + 左右の余白
+      const totalItemsWidth = (timeline.length - 1) * (ITEM_WIDTH + ITEM_MARGIN) + ITEM_WIDTH;
+      track.style.width = `${totalItemsWidth + padding * 2}px`;
+
+      // 移動距離は「一番最初のカードから最後のカードまでの距離」にキッチリ合わせる
+      const scrollLength = (timeline.length - 1) * (ITEM_WIDTH + ITEM_MARGIN);
 
       ScrollTrigger.create({
         trigger: section,
@@ -105,16 +105,9 @@ const About: React.FC<AboutProps> = ({ onScrollEnd }) => {
         anticipatePin: 1,
         onUpdate: (self) => {
           gsap.set(track, { x: -scrollLength * self.progress });
-          const centerX = window.innerWidth / 2;
-          const cards = track.children;
-          for (let i = 0; i < timeline.length; i++) {
-            if (!cards[i]) continue;
-            const rect = cards[i].getBoundingClientRect();
-            if (rect.left < centerX && rect.right > centerX) {
-              setActiveIndex(i);
-              break;
-            }
-          }
+          const calculatedIndex = Math.round(self.progress * (timeline.length - 1));
+          const newIndex = Math.max(0, Math.min(timeline.length - 1, calculatedIndex));
+          setActiveIndex(newIndex);
         },
       });
     });
@@ -122,7 +115,13 @@ const About: React.FC<AboutProps> = ({ onScrollEnd }) => {
   }, []);
 
   return (
-    <div className={`bg-white min-h-screen transition-opacity duration-1000 font-jp overflow-x-hidden w-full ${pageVisible ? 'opacity-100' : 'opacity-0'}`}>
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className="bg-white min-h-screen font-jp overflow-x-hidden w-full"
+    >
       <motion.div className="fixed top-0 left-0 right-0 h-[1px] bg-black z-[100] origin-left" style={{ scaleX }} />
       
       <Profile scrollIconRef={scrollIconRef} />
@@ -133,8 +132,9 @@ const About: React.FC<AboutProps> = ({ onScrollEnd }) => {
         </h2>
       </section>
 
+      {/* 以前はここが max-w-5xl になっていたため、左端・中央の基準点が画面ではなくコンテナ依存となりズレが発生していました */}
       <section ref={sectionRef} className="w-full relative overflow-hidden bg-white flex items-center" style={{ minHeight: '60vh' }}>
-        <div className="max-w-5xl mx-auto px-6 sm:px-8 w-full">
+        <div className="w-full">
           <div className="relative" style={{ height: TIMELINE_HEIGHT }}>
             <div ref={trackRef} className="flex items-center relative h-full">
               {timeline.map((item, idx) => (
@@ -159,7 +159,7 @@ const About: React.FC<AboutProps> = ({ onScrollEnd }) => {
 
       {/* Footer発火用の透明な目印 */}
       <div ref={footerTriggerRef} className="h-4 w-full" />
-    </div>
+    </motion.div>
   );
 };
 

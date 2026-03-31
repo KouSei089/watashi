@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const Navbar: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const location = useLocation();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -68,7 +67,7 @@ const Navbar: React.FC = () => {
               <li key={item.path}>
                 <a
                   href={item.path}
-                  className={`text-black no-underline wavy-underline transition-all duration-300 ${scrolled ? 'text-xs' : 'text-sm'}`}
+                  className={`text-black no-underline wavy-underline transition-all duration-500 ease-out hover:opacity-60 ${scrolled ? 'text-xs' : 'text-sm'}`}
                 >
                   {item.name}
                 </a>

@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { eyecatchData } from '../../data/eyecatchData';
 
 const EyecatchGrid: React.FC = () => {
@@ -21,13 +20,13 @@ const EyecatchGrid: React.FC = () => {
         </div>
       </div>
 
-      {/* 解決策：JSによる制御を排除し、単純なCSSグリッドにする。
-        「content-visibility: auto」により、画面外の描画計算をブラウザに完全に任せ、
-        スクロールのガタつき（メインスレッドの詰まり）を解消します。
+      {/* 
+        解決策：JSによる制御を排除し、単純なCSSグリッドにする。
+        「content-visibility: auto」をコンテナ単位ではなく各要素単位でかけることで、
+        画面に入った少しの要素だけを都度レンダリングさせ、負荷スパイクを防ぎます。
       */}
       <div 
         className="w-full grid grid-cols-5 md:grid-cols-10 gap-0 border-t border-gray-100 bg-white border-l"
-        style={{ contentVisibility: 'auto', containIntrinsicSize: '1000px' } as any}
       >
         {allItems.map((item) => (
           <a
@@ -36,11 +35,12 @@ const EyecatchGrid: React.FC = () => {
             target="_blank"
             rel="noopener noreferrer"
             className="group relative aspect-[4/3] overflow-hidden bg-white border-r border-b border-gray-100 block"
+            style={{ contentVisibility: 'auto', containIntrinsicSize: '200px 150px' } as any}
           >
             <img
               src={item.eyecatch}
               alt={item.name}
-              className="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 sm:group-hover:scale-105 transition-all duration-700 ease-out"
+              className="w-full h-full object-cover transition-all duration-700 ease-out opacity-90 sm:group-hover:opacity-100 sm:group-hover:scale-105 will-change-transform"
               loading="lazy"
             />
             <div className="absolute inset-0 bg-black/60 flex flex-col justify-end p-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
