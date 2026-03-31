@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Switch, useLocation } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
 import Lenis from '@studio-freight/lenis';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -21,9 +22,9 @@ const AppContent: React.FC = () => {
   const [showFooter, setShowFooter] = useState(false);
 
   useEffect(() => {
-    // 1. Lenis初期化
+    // 1. Lenis初期化（もっさり感をなくし、サクッと軽快なスクロールにするためにdurationを短縮）
     const lenis = new Lenis({
-      duration: 1.2,
+      duration: 0.7,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
     });
@@ -35,10 +36,19 @@ const AppContent: React.FC = () => {
     });
     gsap.ticker.lagSmoothing(0);
 
-    // 3. 高さが変わった時にLenisに通知する
+    // 3. 高さが本当に変わった時のみLenisとScrollTriggerを更新する
+    let lastHeight = document.body.scrollHeight;
+    let timeoutId: NodeJS.Timeout | null = null;
     const resizeObserver = new ResizeObserver(() => {
-      lenis.resize();
-      ScrollTrigger.refresh();
+      if (timeoutId) clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        const currentHeight = document.body.scrollHeight;
+        if (currentHeight !== lastHeight) {
+          lastHeight = currentHeight;
+          lenis.resize();
+          ScrollTrigger.refresh();
+        }
+      }, 150); // Debounce処理で連続発火を抑制
     });
     resizeObserver.observe(document.body);
 
@@ -68,13 +78,15 @@ const AppContent: React.FC = () => {
       <Navbar />
       
       <main className="flex-grow">
-        <Switch>
-          <Route exact path="/watashi" component={Top} />
-          <Route path="/watashi/about" render={() => <About onScrollEnd={handleScrollEnd} />} />
-          <Route path="/watashi/book" component={Book} />
-          <Route path="/watashi/travel" component={Travel} />
-          <Route render={() => <Top />} />
-        </Switch>
+        <AnimatePresence mode="wait">
+          <Switch location={location} key={location.pathname}>
+            <Route exact path="/watashi" component={Top} />
+            <Route path="/watashi/about" render={() => <About onScrollEnd={handleScrollEnd} />} />
+            <Route path="/watashi/book" component={Book} />
+            <Route path="/watashi/travel" component={Travel} />
+            <Route render={() => <Top />} />
+          </Switch>
+        </AnimatePresence>
       </main>
 
       {/* Aboutではフラグが必要。それ以外(Book/Travel)では常に出す設定 */}

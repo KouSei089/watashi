@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 const RIPPLE_ANIMATION_DURATION = 4.0;
@@ -7,12 +7,8 @@ const NUM_RIPPLES = 4;
 const IMAGE_URL = "https://github.com/KouSei089/watashi/assets/77420123/d32f15ff-a725-40a4-b58f-8c79d67f8eb6";
 
 const Top: React.FC = () => {
-  const history = useHistory();
   const [hovered, setHovered] = useState(false);
-  const [fadeOut, setFadeOut] = useState(false);
   const [showBtnCircle, setShowBtnCircle] = useState(false);
-
-  const dotTimeout = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (hovered) {
@@ -21,12 +17,6 @@ const Top: React.FC = () => {
       setTimeout(() => setShowBtnCircle(false), 500);
     }
   }, [hovered]);
-
-  const handleClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setFadeOut(true);
-    setTimeout(() => history.push('/watashi/about'), 1600);
-  };
 
   const noiseSvg = encodeURIComponent(`
     <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
@@ -37,10 +27,11 @@ const Top: React.FC = () => {
 
   return (
     <motion.div 
-      // ページ全体のフェードイン
+      // ページ全体のフェードイン/アウト
       initial={{ opacity: 0 }}
-      animate={{ opacity: fadeOut ? 0 : 1 }}
-      transition={{ duration: 1.6, ease: "easeInOut" }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
       className="fixed inset-0 w-full h-full bg-white z-[60] flex flex-col items-center justify-center overflow-hidden"
     >
       <div className="flex flex-col items-center w-full max-w-2xl px-8">
@@ -53,7 +44,7 @@ const Top: React.FC = () => {
           transition={{ duration: 2.5, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
         >
           <img 
-            className="w-full h-auto rounded-sm blur-[10px] grayscale brightness-[1.02] transition-all duration-1000" 
+            className="w-full h-auto rounded-sm blur-md grayscale brightness-[1.05] opacity-90 transition-all duration-1000 will-change-transform will-change-filter" 
             src={IMAGE_URL} 
             alt="main" 
           />
@@ -71,7 +62,6 @@ const Top: React.FC = () => {
             className="relative h-20 w-20 flex justify-center items-center no-underline outline-none"
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
-            onClick={handleClick}
           >
             {/* 中心点 */}
             <div className={`w-1 h-1 rounded-full bg-black transition-all duration-700 ${hovered ? 'scale-[15] opacity-0' : 'opacity-20 scale-100'}`} />
@@ -121,12 +111,13 @@ const Top: React.FC = () => {
         .ripple-effect { 
           width: 80px; height: 80px; 
           border-radius: 50%; 
+          will-change: transform, opacity;
           animation: ripple-subtle 4.0s infinite linear; 
         }
         @keyframes ripple-subtle { 
-          0% { transform: scale(0.6); opacity: 0; } 
+          0% { transform: scale3d(0.6, 0.6, 1); opacity: 0; } 
           20% { opacity: 0.15; }
-          100% { transform: scale(1.8); opacity: 0; } 
+          100% { transform: scale3d(1.8, 1.8, 1); opacity: 0; } 
         }
       `}} />
     </motion.div>
