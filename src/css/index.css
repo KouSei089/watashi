@@ -4,6 +4,14 @@
 
 /* フォントは index.html の <link> で先読みする（@import はレンダーブロッキングになるため） */
 
+/* 横のはみ出しは html だけで止める。
+   body に overflow-x を付けると body がスクロールコンテナになり、
+   framer-motion の useScroll がページのスクロール量を拾えなくなる
+   （＝スクロール連動の演出が全部止まる）。 */
+html {
+  overflow-x: hidden;
+}
+
 body {
   @apply bg-white text-gray-900 font-jp;
   -webkit-font-smoothing: antialiased;
@@ -32,4 +40,58 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #d1d5db;
+}
+
+/* --- アニメーション --------------------------------------------------
+   以前は各コンポーネントの dangerouslySetInnerHTML に <style> を
+   直接書いていたため、同じ keyframes が重複して描画されていた。 */
+
+/* 導入の波紋 */
+.ripple-effect {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  will-change: transform, opacity;
+  animation: ripple-subtle 4s infinite linear;
+}
+@keyframes ripple-subtle {
+  0%   { transform: scale3d(0.6, 0.6, 1); opacity: 0; }
+  20%  { opacity: 0.15; }
+  100% { transform: scale3d(1.8, 1.8, 1); opacity: 0; }
+}
+
+/* 次の章へ促すマウスアイコン */
+.animate-mouse-move {
+  animation: mouse-move 1.6s cubic-bezier(0.4, 2, 0.3, 1) infinite;
+}
+@keyframes mouse-move {
+  0%   { opacity: 0; transform: translateY(0); }
+  30%  { opacity: 1; transform: translateY(8px); }
+  60%  { opacity: 1; transform: translateY(16px); }
+  100% { opacity: 0; transform: translateY(24px); }
+}
+
+/* 日本地図のピン */
+.animate-ping-slow {
+  animation: ping-slow 3s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+@keyframes ping-slow {
+  0%   { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(4); opacity: 0; }
+}
+.origin-center {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* スクロール演出は OS の設定を尊重して止める */
+@media (prefers-reduced-motion: reduce) {
+  .ripple-effect,
+  .animate-ping-slow,
+  .animate-mouse-move {
+    animation: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
 }

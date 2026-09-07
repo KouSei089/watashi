@@ -110,20 +110,6 @@ const JapanMap: React.FC = () => {
         />
         <div id="map-tooltip" className="fixed pointer-events-none opacity-0 z-[200] transition-opacity duration-300" />
       </div>
-
-      <style dangerouslySetInnerHTML={{ __html: `
-        @keyframes ping-slow {
-          0% { transform: scale(1); opacity: 0.8; }
-          100% { transform: scale(4); opacity: 0; }
-        }
-        .animate-ping-slow {
-          animation: ping-slow 3s cubic-bezier(0, 0, 0.2, 1) infinite;
-        }
-        .origin-center {
-          transform-box: fill-box;
-          transform-origin: center;
-        }
-      `}} />
     </div>
   );
 };

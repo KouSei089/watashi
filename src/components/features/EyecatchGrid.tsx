@@ -1,32 +1,51 @@
 import React from 'react';
+import { motion, useScroll, useVelocity, useSpring, useTransform, useReducedMotion } from 'framer-motion';
 import { eyecatchData } from '../../data/eyecatchData';
+import SectionTitle from '../common/SectionTitle';
+
+/** これ以上速く回しても傾きは増えない（px/秒） */
+const VELOCITY_CAP = 2500;
+const MAX_SKEW_DEG = 1.2;
 
 const EyecatchGrid: React.FC = () => {
-  const allItems = React.useMemo(() => {
-    return Array.isArray(eyecatchData) 
-      ? [...eyecatchData].sort((a, b) => b.created_at.localeCompare(a.created_at))
-      : [];
-  }, []);
+  const reduceMotion = useReducedMotion();
+
+  const allItems = React.useMemo(
+    () => [...eyecatchData].sort((a, b) => b.created_at.localeCompare(a.created_at)),
+    []
+  );
+
+  // スクロールの速さに応じて格子をわずかに傾ける。
+  // 速く回すと流れ、止まると整列する。静けさは壊さずに手応えだけ出す。
+  const { scrollY } = useScroll();
+  const velocity = useVelocity(scrollY);
+  const smoothVelocity = useSpring(velocity, { stiffness: 200, damping: 50, restDelta: 0.5 });
+  const skew = useTransform(
+    smoothVelocity,
+    [-VELOCITY_CAP, 0, VELOCITY_CAP],
+    [MAX_SKEW_DEG, 0, -MAX_SKEW_DEG],
+    { clamp: true }
+  );
 
   return (
-    <section id="book-diary" className="w-full bg-white pt-24 font-jp overflow-hidden scroll-mt-24">
+    <section className="w-full bg-white pt-24 font-jp overflow-hidden">
       <div className="max-w-5xl mx-auto px-6 sm:px-8 mb-16">
-        <h2 className="text-4xl sm:text-5xl md:text-7xl text-matte tracking-widest mb-8">
-          読書の日記
-        </h2>
+        <SectionTitle id="book-diary" className="mb-8">読書の日記</SectionTitle>
         <div className="max-w-2xl text-[11px] sm:text-sm text-gray-500 leading-relaxed tracking-wider text-left">
           <p className="mb-2 italic">日々の読書を記録しています。</p>
           <p>ここに並ぶのは、わたしの思考や感性をかたちづくってきた本たちの記録です。</p>
         </div>
       </div>
 
-      {/* 
-        解決策：JSによる制御を排除し、単純なCSSグリッドにする。
-        「content-visibility: auto」をコンテナ単位ではなく各要素単位でかけることで、
-        画面に入った少しの要素だけを都度レンダリングさせ、負荷スパイクを防ぎます。
+      {/*
+        JSによる制御は入れず単純なCSSグリッドのまま。
+        content-visibility を各要素にかけて、画面に入ったぶんだけ描画させる。
+        列ごとのパララックスは、格子の罫線が崩れるうえに
+        時系列の並び（行方向）が読めなくなるため採らなかった。
       */}
-      <div 
+      <motion.div
         className="w-full grid grid-cols-5 md:grid-cols-10 gap-0 border-t border-gray-100 bg-white border-l"
+        style={reduceMotion ? undefined : { skewY: skew }}
       >
         {allItems.map((item) => (
           <a
@@ -35,7 +54,7 @@ const EyecatchGrid: React.FC = () => {
             target="_blank"
             rel="noopener noreferrer"
             className="group relative aspect-[4/3] overflow-hidden bg-white border-r border-b border-gray-100 block"
-            style={{ contentVisibility: 'auto', containIntrinsicSize: '200px 150px' } as any}
+            style={{ contentVisibility: 'auto', containIntrinsicSize: '200px 150px' } as React.CSSProperties}
           >
             <img
               src={item.eyecatch}
@@ -49,7 +68,7 @@ const EyecatchGrid: React.FC = () => {
             </div>
           </a>
         ))}
-      </div>
+      </motion.div>
 
       <div className="w-full py-32 flex flex-col items-center justify-center bg-white">
         <div className="w-px h-12 bg-gray-100 mb-8" />
