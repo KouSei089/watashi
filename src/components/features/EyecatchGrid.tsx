@@ -9,7 +9,7 @@ const EyecatchGrid: React.FC = () => {
   }, []);
 
   return (
-    <section className="w-full bg-white pt-24 font-jp overflow-hidden">
+    <section id="book-diary" className="w-full bg-white pt-24 font-jp overflow-hidden scroll-mt-24">
       <div className="max-w-5xl mx-auto px-6 sm:px-8 mb-16">
         <h2 className="text-4xl sm:text-5xl md:text-7xl text-matte tracking-widest mb-8">
           読書の日記

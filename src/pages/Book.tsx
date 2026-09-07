@@ -1,14 +1,11 @@
 import React, { useState, useCallback } from "react";
 import { motion } from "framer-motion";
-import books from "../data/regional/regional_detail.json";
+import { eyecatchData } from "../data/eyecatchData";
+import { BookItem } from "../types";
 
-// 型定義
-interface BookItem {
-  name: string;
-  eyecatch: string;
-  created_at: string;
-  noteUrl: string;
-}
+// 旅の記録データ(regional_detail.json)を読み込んでいたため、
+// name / eyecatch / noteUrl が存在せず空のカードが並んでいた。
+const books = [...eyecatchData].sort((a, b) => b.created_at.localeCompare(a.created_at));
 
 // コンポーネントの分離: BookCard
 const BookCard: React.FC<{ item: BookItem }> = ({ item }) => (
@@ -61,9 +58,9 @@ const Book: React.FC = () => {
         
         {/* CSSグリッドに変更して整然としたレイアウトに */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
-          {displayItems.map((book: any, idx: number) => (
-            <motion.div 
-              key={book.name + idx}
+          {displayItems.map((book: BookItem, idx: number) => (
+            <motion.div
+              key={book.noteUrl}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "0px 0px -50px 0px" }}

@@ -59,11 +59,22 @@ const AppContent: React.FC = () => {
     };
   }, []);
 
-  // ページ遷移時にFooterを隠し、一番上へ戻る
+  // ページ遷移時にFooterを隠し、一番上（またはハッシュの位置）へ移動する
   useEffect(() => {
     setShowFooter(false);
-    window.scrollTo(0, 0);
-  }, [location.pathname]);
+
+    if (!location.hash) {
+      window.scrollTo(0, 0);
+      return;
+    }
+
+    // 遷移先がマウントされ、ScrollTriggerのpinで高さが確定してから移動する
+    const id = location.hash.slice(1);
+    const timeoutId = setTimeout(() => {
+      document.getElementById(id)?.scrollIntoView({ block: 'start' });
+    }, 200);
+    return () => clearTimeout(timeoutId);
+  }, [location.pathname, location.hash]);
 
   const handleScrollEnd = (atEnd: boolean) => {
     setShowFooter(atEnd);

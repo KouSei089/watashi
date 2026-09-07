@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { MAIN_VISUAL_URL } from '../data/site';
 
 const RIPPLE_ANIMATION_DURATION = 4.0;
 const NUM_RIPPLES = 4;
-const IMAGE_URL = "https://github.com/KouSei089/watashi/assets/77420123/d32f15ff-a725-40a4-b58f-8c79d67f8eb6";
 
 const Top: React.FC = () => {
   const [hovered, setHovered] = useState(false);
@@ -45,7 +45,7 @@ const Top: React.FC = () => {
         >
           <img 
             className="w-full h-auto rounded-sm blur-md grayscale brightness-[1.05] opacity-90 transition-all duration-1000 will-change-transform will-change-filter" 
-            src={IMAGE_URL} 
+            src={MAIN_VISUAL_URL}
             alt="main" 
           />
         </motion.div>

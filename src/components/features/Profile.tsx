@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion, Variants } from 'framer-motion';
+import { MAIN_VISUAL_URL, NOTE_URL, READS_URL } from '../../data/site';
 
 interface ProfileProps {
   scrollIconRef: React.RefObject<HTMLDivElement | null>;
@@ -25,9 +26,11 @@ const itemVariants: Variants = {
 const Profile: React.FC<ProfileProps> = ({ scrollIconRef }) => (
   <motion.section 
     className="relative max-w-5xl mx-auto px-6 sm:px-8 py-24 bg-white font-jp flex flex-col items-center text-center sm:text-left sm:items-start"
+    // ファーストビューの要素なので whileInView は使わない。
+    // ページ遷移直後の scrollTo(0,0) と IntersectionObserver の発火が競合し、
+    // opacity が 0 付近で固まったまま表示されない事故が起きていた。
     initial="hidden"
-    whileInView="visible"
-    viewport={{ once: true, margin: "-10%" }}
+    animate="visible"
     variants={containerVariants}
   >
     <motion.h1 
@@ -42,7 +45,7 @@ const Profile: React.FC<ProfileProps> = ({ scrollIconRef }) => (
       <div className="relative w-full max-w-[400px]">
         <img
           className="w-full h-auto object-cover rounded shadow-sm cursor-pointer select-none blur-[6px] brightness-95 contrast-105 will-change-transform will-change-filter"
-          src="https://github.com/KouSei089/watashi/assets/77420123/d32f15ff-a725-40a4-b58f-8c79d67f8eb6"
+          src={MAIN_VISUAL_URL}
           alt="main-img"
           draggable={false}
         />
@@ -64,10 +67,10 @@ const Profile: React.FC<ProfileProps> = ({ scrollIconRef }) => (
     </motion.p>
 
     <motion.div className="mt-10 flex gap-6 justify-center sm:justify-start w-full" variants={itemVariants}>
-      <a href="https://note.com/izuha0" target="_blank" rel="noopener noreferrer" className="wavy-underline text-xl">
+      <a href={NOTE_URL} target="_blank" rel="noopener noreferrer" className="wavy-underline text-xl">
         note <span className="text-[10px] align-super">↗</span>
       </a>
-      <a href="https://reads.jp/u/izuha" target="_blank" rel="noopener noreferrer" className="wavy-underline text-xl">
+      <a href={READS_URL} target="_blank" rel="noopener noreferrer" className="wavy-underline text-xl">
         reads(@izuha) <span className="text-[10px] align-super">↗︎</span>
       </a>
     </motion.div>

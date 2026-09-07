@@ -1,4 +1,5 @@
 import React from 'react';
+import { CONTACT_EMAIL } from '../../data/site';
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
@@ -12,10 +13,10 @@ const Footer: React.FC = () => {
             ご相談やお仕事のご依頼は、どうぞお気軽にメールにてご連絡ください。
           </div>
           <a
-            href="mailto:izumiharuya12@gmail.com"
+            href={`mailto:${CONTACT_EMAIL}`}
             className="mt-1 text-base sm:text-lg text-black wavy-underline tracking-[0.08em] transition-all duration-500 ease-out hover:opacity-60"
           >
-            izumiharuya12@gmail.com
+            {CONTACT_EMAIL}
             <span className="text-[10px] align-super ml-1 opacity-70">↗︎</span>
           </a>
         </div>

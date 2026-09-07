@@ -126,7 +126,7 @@ const About: React.FC<AboutProps> = ({ onScrollEnd }) => {
       
       <Profile scrollIconRef={scrollIconRef} />
 
-      <section className="max-w-5xl mx-auto px-6 sm:px-8 py-12 w-full">
+      <section id="history" className="max-w-5xl mx-auto px-6 sm:px-8 py-12 w-full scroll-mt-24">
         <h2 className="text-4xl sm:text-5xl md:text-7xl text-matte tracking-wider mb-10 transition-opacity duration-1000" style={{ opacity: showTimelineTitle ? 1 : 0.2 }}>
           これまでのわたし
         </h2>

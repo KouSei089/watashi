@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { NOTE_URL } from '../../data/site';
 
 const Navbar: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -37,11 +38,14 @@ const Navbar: React.FC = () => {
   );
 
   // --- 「旅の記録」をコメントアウトしました ---
+  // pathname と hash は react-router の Link に渡すため分けて持つ。
+  // 素の <a href> にすると SPA の外へフルリロードしてしまい、
+  // GitHub Pages 上では実ファイルが無いため 404 になる。
   const menuItems = [
-    { name: 'わたし', path: '/watashi/about' },
-    { name: 'これまでのわたし', path: '/watashi/about#history' },
-    // { name: '旅の記録', path: '/watashi/travel' }, 
-    { name: '読書の日記', path: '/watashi/about#book-diary' },
+    { name: 'わたし', pathname: '/watashi/about', hash: '' },
+    { name: 'これまでのわたし', pathname: '/watashi/about', hash: '#history' },
+    // { name: '旅の記録', pathname: '/watashi/travel', hash: '' },
+    { name: '読書の日記', pathname: '/watashi/about', hash: '#book-diary' },
   ];
 
   return (
@@ -64,18 +68,18 @@ const Navbar: React.FC = () => {
         <div className="hidden md:flex items-center">
           <ul className="flex space-x-8 list-none m-0 p-0 items-center">
             {menuItems.map((item) => (
-              <li key={item.path}>
-                <a
-                  href={item.path}
+              <li key={item.name}>
+                <Link
+                  to={{ pathname: item.pathname, hash: item.hash }}
                   className={`text-black no-underline wavy-underline transition-all duration-500 ease-out hover:opacity-60 ${scrolled ? 'text-xs' : 'text-sm'}`}
                 >
                   {item.name}
-                </a>
+                </Link>
               </li>
             ))}
             <li>
-              <a 
-                href="https://note.com/izuha0" 
+              <a
+                href={NOTE_URL}
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="text-black no-underline text-[10px] opacity-40 hover:opacity-100 transition-opacity flex items-center"
@@ -105,11 +109,16 @@ const Navbar: React.FC = () => {
       }`}>
         <div className="flex flex-col items-center justify-center h-full space-y-10 font-jp">
           {menuItems.map((item) => (
-            <a key={item.path} href={item.path} onClick={handleLinkClick} className="text-xl text-black no-underline tracking-[0.15em]">
+            <Link
+              key={item.name}
+              to={{ pathname: item.pathname, hash: item.hash }}
+              onClick={handleLinkClick}
+              className="text-xl text-black no-underline tracking-[0.15em]"
+            >
               {item.name}
-            </a>
+            </Link>
           ))}
-          <a href="https://note.com/izuha0" target="_blank" rel="noopener noreferrer" className="text-base text-gray-400 no-underline flex items-center" onClick={handleLinkClick}>
+          <a href={NOTE_URL} target="_blank" rel="noopener noreferrer" className="text-base text-gray-400 no-underline flex items-center" onClick={handleLinkClick}>
             note <ExternalIcon />
           </a>
           <button onClick={handleLinkClick} className="text-[10px] text-gray-300 uppercase tracking-widest pt-8">Close</button>
