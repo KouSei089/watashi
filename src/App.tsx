@@ -5,9 +5,6 @@ import Lenis from '@studio-freight/lenis';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-import './css/App.css';
-import './css/index.css';
-
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import Cursor from './components/common/Cursor';

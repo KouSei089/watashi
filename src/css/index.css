@@ -2,11 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500&display=swap');
+/* フォントは index.html の <link> で先読みする（@import はレンダーブロッキングになるため） */
 
 body {
-  @apply bg-white text-gray-900;
-  font-family: 'Noto Sans JP', sans-serif;
+  @apply bg-white text-gray-900 font-jp;
   -webkit-font-smoothing: antialiased;
 }
 
