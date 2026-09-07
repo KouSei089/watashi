@@ -152,16 +152,18 @@ const Timeline: React.FC = () => {
         className="w-full relative overflow-hidden bg-white flex items-center"
         style={{ minHeight: '60vh' }}
       >
-        {/* 背景の巨大な年号。横に進んでいる実感を出す。 */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
-          <AnimatePresence mode="wait">
+        {/* 背景の巨大な年号。横に進んでいる実感を出す。
+            mode="wait" にすると退場の完了を待つため、勢いよくスクロールした
+            ときに年号が置いていかれる。重ねて同時にクロスフェードさせる。 */}
+        <div className="absolute inset-0 pointer-events-none select-none">
+          <AnimatePresence initial={false}>
             <motion.span
               key={activeYear}
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 0.05, y: 0 }}
               exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-              className="text-[28vw] leading-none font-bold text-matte tracking-tighter"
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              className="absolute inset-0 flex items-center justify-center text-[28vw] leading-none font-bold text-matte tracking-tighter"
             >
               {activeYear}
             </motion.span>
