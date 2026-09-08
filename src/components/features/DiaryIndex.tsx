@@ -68,7 +68,7 @@ const DiaryIndex: React.FC = () => {
 
   return (
     <section className="relative w-full font-jp overflow-hidden">
-      <div className="relative z-10 px-6 md:px-12 pt-24 pb-16">
+      <div className="relative z-10 px-6 pt-24 pb-16">
         <SectionHeader
           id="book-diary"
           index="03"

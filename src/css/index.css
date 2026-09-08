@@ -32,10 +32,22 @@ body {
   opacity: 0.5;
 }
 
-/* 余白に置く小さなラベル・章番号・日付など */
+/*
+  余白に置く小さなラベル・章番号・日付など。
+  以前は 10px に 0.18em の字間を空けていたが、参考サイトの実測は
+  12〜13px・字間 normal〜わずかに負・太さ 500 だった。
+  字間を大きく空けるのは別の語彙で、密度のある編集的な組みからは浮く。
+*/
 .marginalia {
-  @apply text-[10px] tracking-[0.18em] text-ink/40;
+  @apply text-[11px] tracking-[0.02em] text-ink/45 font-medium;
+  line-height: 1.35;
   font-variant-numeric: tabular-nums;
+}
+
+/* 90 度回転して端に立てる小さな行 */
+.upright {
+  writing-mode: vertical-rl;
+  text-orientation: sideways;
 }
 
 /* スクロールバーのカスタマイズ（ミニマルに） */
@@ -99,6 +111,26 @@ body {
   background-size: 160px 160px;
   opacity: 0.35;
   mix-blend-mode: multiply;
+}
+
+/*
+  紙のざらつき。背景だけでなく写真や文字の上にも薄くかけて、
+  画面全体を 1 枚の刷り物として見せる。
+  細かい粒（baseFrequency を上げる）にして、
+  文字の読みやすさを損なわない濃さに留めている。
+*/
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23g)' opacity='0.65'/%3E%3C/svg%3E");
+  background-size: 140px 140px;
+  opacity: 0.14;
+  mix-blend-mode: multiply;
+}
+@media (prefers-reduced-motion: reduce) {
+  .grain-overlay { opacity: 0.09; }
 }
 
 /* ページの背景。大きくぼかした色の面をゆっくり漂わせる */

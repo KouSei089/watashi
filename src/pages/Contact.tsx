@@ -15,7 +15,7 @@ const Contact: React.FC = () => (
   <>
     <PageBackground palette={palettes.contact} />
     <div className="relative z-10">
-      <section className="w-full bg-paper font-jp px-6 md:px-12 pt-24 pb-24 min-h-[70vh]">
+      <section className="w-full bg-paper font-jp px-6 pt-24 pb-24 min-h-[70vh]">
         <SectionHeader
           id="contact"
           index="04"

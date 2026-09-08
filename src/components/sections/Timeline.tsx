@@ -37,7 +37,7 @@ const Timeline: React.FC = () => {
   }, []);
 
   return (
-    <section className="w-full font-jp px-6 md:px-12 pt-24 pb-24">
+    <section className="w-full font-jp px-6 pt-24 pb-24">
       <Reveal>
         <motion.div variants={revealItem}>
           <SectionHeader
@@ -67,7 +67,7 @@ const Timeline: React.FC = () => {
                   {titles.map((title) => (
                     <li
                       key={title}
-                      className="font-display text-[16px] sm:text-[19px] text-ink leading-[1.9] tracking-[0.03em]"
+                      className="font-display text-[16px] sm:text-[19px] text-ink leading-[1.65] tracking-[0.03em]"
                     >
                       {title}
                     </li>

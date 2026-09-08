@@ -4,6 +4,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { profile } from '../data/profile';
 import { timeline, timelineFractions, FIRST_YEAR, LAST_YEAR } from '../data/timeline';
 import { sections } from '../data/sections';
+import { eyecatchData } from '../data/eyecatchData';
 import PageBackground from '../components/common/PageBackground';
 import { palettes } from '../data/palettes';
 
@@ -28,6 +29,12 @@ const Index: React.FC = () => {
   const fractions = React.useMemo(() => timelineFractions(), []);
   const usableW = VIEW_W - PAD_X * 2;
 
+  // 最新の日記。表紙の右端に立てる
+  const latest = React.useMemo(
+    () => [...eyecatchData].sort((a, b) => b.created_at.localeCompare(a.created_at))[0],
+    []
+  );
+
   const yearLines = React.useMemo(() => {
     const span = LAST_YEAR - FIRST_YEAR + 1;
     return Array.from({ length: span + 1 }, (_, i) => PAD_X + (i / span) * usableW);
@@ -43,7 +50,7 @@ const Index: React.FC = () => {
         };
 
   return (
-    <section className="relative w-full bg-paper font-jp min-h-screen flex flex-col justify-between px-6 md:px-12 pt-24 pb-10">
+    <section className="relative w-full bg-paper font-jp min-h-screen flex flex-col justify-between px-6 lg:pr-16 pt-24 pb-10">
       <PageBackground palette={palettes.index} />
 
       <motion.div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 lg:gap-x-10" {...appear(0.1)}>
@@ -51,11 +58,24 @@ const Index: React.FC = () => {
         <div className="lg:col-span-10 marginalia">Ama-cho, Oki Islands — Shimane, Japan</div>
       </motion.div>
 
+      {/*
+        右端に立てる 1 行。参考サイトが同じ位置に使っている語彙で、
+        こちらは最新の日記への導線にしている。
+      */}
+      <motion.div
+        className="hidden lg:block absolute right-5 top-1/2 -translate-y-1/2 z-10"
+        {...appear(1.2)}
+      >
+        <Link to={sections[2].path} className="upright marginalia hover:!text-ink transition-colors no-underline">
+          {latest.created_at} — 最新の日記
+        </Link>
+      </motion.div>
+
       <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 lg:gap-x-10 my-14 lg:my-0">
         <div className="lg:col-span-2" />
         <div className="lg:col-span-10">
           <motion.h1
-            className="m-0 font-display text-[38px] sm:text-[50px] md:text-[60px] leading-[1.18] tracking-[0.05em] text-ink"
+            className="m-0 font-display text-[38px] sm:text-[50px] md:text-[60px] leading-[1.18] tracking-[0.01em] text-ink"
             {...appear(0.2)}
           >
             {profile.nameJa}
@@ -64,7 +84,7 @@ const Index: React.FC = () => {
             {profile.nameEn}
           </motion.p>
           <motion.p
-            className="mt-9 font-display text-[16px] sm:text-[19px] text-ink/70 tracking-[0.08em] m-0"
+            className="mt-9 font-display text-[16px] sm:text-[19px] text-ink/70 tracking-[0.01em] m-0"
             {...appear(0.5)}
           >
             {profile.theme}

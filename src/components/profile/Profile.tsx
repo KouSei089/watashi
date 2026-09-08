@@ -13,7 +13,7 @@ import { NOTE_URL, READS_URL, PROFILE_PHOTOS } from '../../data/site';
  * 枚数は PROFILE_PHOTOS の長さに追随する。
  */
 const Profile: React.FC = () => (
-  <section className="w-full bg-paper font-jp px-6 md:px-12 pt-24 pb-20">
+  <section className="w-full bg-paper font-jp px-6 pt-24 pb-20">
     <Reveal>
       <motion.div variants={revealItem}>
         <SectionHeader id="profile" index="01" label="About">
@@ -23,7 +23,7 @@ const Profile: React.FC = () => (
 
       <motion.div className="grid grid-cols-1 lg:grid-cols-12 lg:gap-x-10 mt-12" variants={revealItem}>
         <div className="lg:col-span-2" />
-        <p className="lg:col-span-7 max-w-2xl text-[13px] sm:text-[14px] text-ink/70 leading-[2.05] tracking-[0.02em] m-0">
+        <p className="lg:col-span-7 max-w-2xl text-[13px] sm:text-[14px] text-ink/70 leading-[1.75] tracking-[0.02em] m-0">
           <strong className="block mb-5 text-ink text-[14px] sm:text-[15px] font-medium">
             {profile.lead}
           </strong>

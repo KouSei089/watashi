@@ -62,7 +62,7 @@ const Navbar: React.FC = () => {
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 w-full z-[100] transition-colors duration-300 flex items-center justify-between px-6 md:px-12 font-jp h-14 ${
+        className={`fixed top-0 left-0 w-full z-[100] transition-colors duration-300 flex items-center justify-between px-6 font-jp h-14 ${
           scrolled || menuOpen ? 'backdrop-blur-md bg-paper/85 border-b border-ink/10' : 'bg-transparent'
         }`}
       >

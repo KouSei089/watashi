@@ -11,7 +11,7 @@ const Travel: React.FC = () => (
     transition={{ duration: 0.6, ease: 'easeOut' }}
     className="pt-24 min-h-screen bg-paper font-jp"
   >
-    <div className="px-6 md:px-12 mb-12">
+    <div className="px-6 mb-12">
       <SectionHeader
         id="travel"
         index="04"

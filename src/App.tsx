@@ -38,6 +38,9 @@ const AppContent: React.FC = () => {
       <Cursor />
       <Navbar />
 
+      {/* 紙のざらつき。画面全体を 1 枚の刷り物として見せる */}
+      <div className="grain-overlay" aria-hidden="true" />
+
       <main>
         <AnimatePresence mode="wait">
           <motion.div

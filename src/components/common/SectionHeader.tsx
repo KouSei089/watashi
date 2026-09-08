@@ -37,12 +37,12 @@ const SectionHeader: React.FC<SectionHeaderProps> = ({
     <div className="lg:col-span-10">
       <h2
         id={id}
-        className="font-display text-[21px] sm:text-[26px] text-ink tracking-[0.08em] m-0 scroll-mt-24"
+        className="font-display text-[21px] sm:text-[26px] text-ink tracking-[0.01em] m-0 scroll-mt-24"
       >
         {children}
       </h2>
       {note && (
-        <div className="mt-5 max-w-xl text-[13px] text-ink/50 leading-[1.9] tracking-[0.02em]">
+        <div className="mt-5 max-w-xl text-[13px] text-ink/50 leading-[1.65] tracking-[0.02em]">
           {note}
         </div>
       )}
