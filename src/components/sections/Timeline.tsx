@@ -17,7 +17,9 @@ const BASE_GAP = 44;
  * 空いた年数はその余白に書き添えてあるので、間延びが
  * 単なる余白ではなく「空いた時間」だと読める。
  *
- * 表紙の目盛りが横で示している粗密を、ここでは縦で見せている。
+ * 軸と点の基準を揃えるため、余白は ol ではなく li に持たせている。
+ * ol に padding を置くと、ol 基準の軸線と li 基準の点とで
+ * padding のぶんだけ横位置がずれる。
  */
 const Timeline: React.FC = () => {
   const years = useMemo(() => {
@@ -59,31 +61,35 @@ const Timeline: React.FC = () => {
           {FIRST_YEAR}—{LAST_YEAR}
         </div>
 
-        {/* 縦に通る時間軸。左の細い線が全体を貫く */}
-        <ol className="lg:col-span-10 relative list-none m-0 p-0 pl-8 sm:pl-12">
-          <span className="absolute left-0 top-1 bottom-1 w-px bg-ink/20" aria-hidden="true" />
+        <ol className="lg:col-span-10 relative list-none m-0 p-0">
+          {/* 全体を貫く時間軸。li の左端と同じ位置に立てる */}
+          <span className="absolute left-0 top-1.5 bottom-1.5 w-px bg-ink/20" aria-hidden="true" />
 
           {years.map(({ year, titles, skipped, gap }) => (
-            <li key={year} className="relative" style={{ marginTop: gap }}>
-              {/* 空いた年数を余白そのものに書く */}
+            <li key={year} className="relative pl-8 sm:pl-12" style={{ marginTop: gap }}>
+              {/*
+                空いた年数を、その余白のまんなかに書く。
+                下地は敷かない。動く背景の上では不透明な四角が浮いて見える。
+                軸の上に重ねず、右隣に置くことで線と文字がぶつからない。
+              */}
               {skipped > 0 && (
                 <span
-                  className="marginalia absolute left-0 -translate-x-1/2 -translate-y-1/2 bg-paper px-1 whitespace-nowrap"
+                  className="marginalia absolute left-0 ml-3 -translate-y-1/2 whitespace-nowrap"
                   style={{ top: -gap / 2 }}
                 >
                   {skipped}年
                 </span>
               )}
 
-              {/* 軸の上の点 */}
+              {/* 軸の上の点。左端＝軸の位置にちょうど重ねる */}
               <span
-                className="absolute left-0 top-[7px] w-[7px] h-[7px] -translate-x-1/2 rounded-full bg-paper border border-ink/60"
+                className="absolute left-0 top-1.5 w-[7px] h-[7px] -translate-x-1/2 rounded-full border border-ink/50 bg-paper"
                 aria-hidden="true"
               />
 
               <Reveal>
                 <motion.div variants={revealItem}>
-                  <div className="marginalia !text-ink mb-2">{year}</div>
+                  <div className="marginalia !text-ink mb-2 leading-none">{year}</div>
                   <ul className="list-none m-0 p-0">
                     {titles.map((title) => (
                       <li

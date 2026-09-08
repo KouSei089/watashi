@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { eyecatchData } from '../../data/eyecatchData';
 import { BookItem } from '../../types';
 import SectionHeader from '../common/SectionHeader';
@@ -25,18 +25,26 @@ const parseEntry = (item: BookItem): Entry => {
   };
 };
 
+const pad = (n: number) => String(n).padStart(3, '0');
+
 /**
  * 読書の日記。
  *
- * 1 件ずつ大きく見せる形も試したが、全体が見えず量が伝わらなかった。
- * 105 件を一望できる格子に戻している。並んでいること自体が、
+ * 105 件を一望できるようにしている。並んでいること自体が
  * 2 年半ぶんの記録の厚みになる。
  *
- * 隙間なく敷き詰めると密すぎて、背景の色も見えなくなる。
- * 写真のあいだを空けて、そこから背景が覗くようにしている。
- * 罫線の格子はやめた。線で仕切ると背景と切り離されてしまう。
+ * ただ敷き詰めるだけでは並んでいるようにしか見えないので、
+ * 年ごとに区切り、日付と通し番号を常に添えて索引にしている。
+ * ホバーでしか出さないと、指で触る画面では永久に読めない。
+ *
+ * 上の Rhythm は 105 件を書いた日そのものの位置に打った目盛りで、
+ * カードと相互に連動する。カードに触れるとその 1 本が伸び、
+ * 目盛りに触れるとそのカードが浮かぶ。図と実データが
+ * 別物に見えないようにするため。
  */
 const DiaryIndex: React.FC = () => {
+  const [active, setActive] = useState<number | null>(null);
+
   const entries = useMemo(
     () =>
       [...eyecatchData]
@@ -52,9 +60,8 @@ const DiaryIndex: React.FC = () => {
   }, [entries]);
 
   /*
-    105 件を書いた日付そのものの位置に打つ。
-    書き続けた時期と空いた時期がそのまま粗密として出る。
-    表紙が年表に対してやっているのと同じことを、日記に対してやっている。
+    書いた日そのものの位置。並び順は entries と揃えてある。
+    ここで日付順に並べ替えるとカードとの対応が崩れる。
   */
   const rhythm = useMemo(() => {
     const days = entries.map((e) => new Date(e.created_at.replace(/\./g, '-')).getTime());
@@ -62,8 +69,7 @@ const DiaryIndex: React.FC = () => {
     const max = Math.max(...days);
     const span = max - min || 1;
     return {
-      fractions: days.map((d) => (d - min) / span).sort((a, b) => a - b),
-      // 年の境目
+      fractions: days.map((d) => (d - min) / span),
       dividers: Array.from(new Set(entries.map((e) => e.year)))
         .map((y) => (new Date(`${y}-01-01`).getTime() - min) / span)
         .filter((f) => f >= 0 && f <= 1),
@@ -72,6 +78,16 @@ const DiaryIndex: React.FC = () => {
     };
   }, [entries]);
 
+  // 年ごとにまとめる。新しい年が上。通し番号は全体での位置を保つ
+  const grouped = useMemo(() => {
+    const map = new Map<string, { entry: Entry; index: number }[]>();
+    entries.forEach((entry, index) => {
+      map.set(entry.year, [...(map.get(entry.year) ?? []), { entry, index }]);
+    });
+    return Array.from(map.entries());
+  }, [entries]);
+
+  const activeEntry = active === null ? null : entries[active];
 
   return (
     <section className="w-full font-jp">
@@ -101,7 +117,7 @@ const DiaryIndex: React.FC = () => {
           </div>
         </div>
 
-        {/* 書いた日そのものの位置に打った目盛り。書く手の速さが粗密になる */}
+        {/* 書いた日そのものの位置に打った目盛り。カードと相互に連動する */}
         <div className="grid grid-cols-1 lg:grid-cols-12 lg:gap-x-10 mt-10">
           <div className="lg:col-span-2 marginalia mb-4 lg:mb-0">Rhythm</div>
           <div className="lg:col-span-10">
@@ -109,39 +125,78 @@ const DiaryIndex: React.FC = () => {
               fractions={rhythm.fractions}
               dividers={rhythm.dividers}
               ends={[rhythm.first, rhythm.last]}
+              activeIndex={active}
+              onHover={setActive}
               title={`${rhythm.first} から ${rhythm.last} までの ${entries.length} 件`}
             />
+            {/* いま指している 1 件。図の下に文字で出す */}
+            <div className="h-5 mt-2">
+              {activeEntry && (
+                <span className="marginalia !text-ink">
+                  {pad((active ?? 0) + 1)} — {activeEntry.created_at} — {activeEntry.title}
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
+      {/* 年ごとに区切った索引 */}
       <div className="w-full px-6 pb-24">
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
-          {entries.map((entry) => (
-            <a
-              key={entry.noteUrl}
-              href={entry.noteUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="diary-cell group relative block aspect-[1280/669] overflow-hidden"
-              title={`${entry.kind}｜${entry.title}（${entry.created_at}）`}
-            >
-              <img
-                src={entry.eyecatch}
-                alt={entry.name}
-                loading="lazy"
-                className="w-full h-full object-cover transition-transform duration-700 ease-out sm:group-hover:scale-105 will-change-transform"
-              />
-              <div className="absolute inset-0 bg-ink/75 flex flex-col justify-end p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <span className="text-[9px] text-white/50 mb-0.5 tabular-nums">{entry.created_at}</span>
-                <span className="text-[10px] text-white leading-tight">{entry.title}</span>
-              </div>
-            </a>
-          ))}
-        </div>
+        {grouped.map(([year, items]) => (
+          <section key={year} className="mt-14 first:mt-0">
+            <div className="flex items-baseline gap-4 pb-3 mb-5 border-b border-ink/15">
+              <span className="marginalia !text-ink">{year}</span>
+              <span className="marginalia">{items.length} entries</span>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-6">
+              {items.map(({ entry, index }) => (
+                <a
+                  key={entry.noteUrl}
+                  href={entry.noteUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="diary-cell group block no-underline"
+                  onMouseEnter={() => setActive(index)}
+                  onMouseLeave={() => setActive(null)}
+                >
+                  <div
+                    className={`relative aspect-[1280/669] overflow-hidden transition-shadow duration-500 ${
+                      active === index ? 'ring-1 ring-ink/50' : ''
+                    }`}
+                  >
+                    <img
+                      src={entry.eyecatch}
+                      alt={entry.name}
+                      loading="lazy"
+                      className={`w-full h-full object-cover transition-transform duration-700 ease-out will-change-transform ${
+                        active === index ? 'scale-105' : ''
+                      }`}
+                    />
+                  </div>
+
+                  {/* 日付と通し番号は常に出す。触る画面ではホバーが無い */}
+                  <div className="flex items-baseline gap-2 mt-2">
+                    <span className="marginalia !text-ink/30 tabular-nums">{pad(index + 1)}</span>
+                    <span
+                      className={`marginalia transition-colors duration-300 ${
+                        active === index ? '!text-ink' : ''
+                      }`}
+                    >
+                      {entry.created_at}
+                    </span>
+                  </div>
+                  <div className="text-[11px] text-ink/60 leading-[1.5] mt-0.5">{entry.title}</div>
+                </a>
+              ))}
+            </div>
+          </section>
+        ))}
       </div>
     </section>
   );
 };
 
 export default DiaryIndex;
+

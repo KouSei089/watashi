@@ -68,20 +68,21 @@ body {
 /* 読書グリッドのセル。画面に入ったぶんだけ描画させて負荷スパイクを防ぐ。
    contain-intrinsic-size を実寸とかけ離れた固定値にすると、画面外の行が
    高さを過大申告してスクロール中にページ全体の高さが動き続ける。
-   auto を付けて実際の高さを記憶させ、初期値も列数ごとの実寸に寄せる
-   （2列で約90px、4列で約85px、6列で約110px。比率は 1280:669）。 */
+   auto を付けて実際の高さを記憶させ、初期値も実寸に寄せる。
+   画像の下に日付と見出しが付くので、その高さも足している
+   （2列で画像約90px+文字45px、4列で約85px+45px、6列で約110px+45px）。 */
 .diary-cell {
   content-visibility: auto;
-  contain-intrinsic-size: auto 90px;
+  contain-intrinsic-size: auto 135px;
 }
 @media (min-width: 640px) {
   .diary-cell {
-    contain-intrinsic-size: auto 85px;
+    contain-intrinsic-size: auto 130px;
   }
 }
 @media (min-width: 1024px) {
   .diary-cell {
-    contain-intrinsic-size: auto 110px;
+    contain-intrinsic-size: auto 155px;
   }
 }
 
