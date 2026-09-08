@@ -7,6 +7,9 @@ import { timeline, startYear, FIRST_YEAR, LAST_YEAR } from '../../data/timeline'
 /** できごとの無い年の行の高さ。ここが「空いた時間」の長さになる */
 const EMPTY_YEAR_H = 58;
 
+/** 軸の上の丸の直径。その年のできごとの数だけ大きくなる */
+const dotSize = (count: number) => 9 + count * 3;
+
 /**
  * これまでのわたし。
  *
@@ -14,6 +17,11 @@ const EMPTY_YEAR_H = 58;
  * 行として置くので、空白そのものが年数として数えられる。
  * 以前は空いた年数を「2年」と文字で注記していたが、
  * 目盛りが数えられるなら注記は要らない。
+ *
+ * 軸の上の丸は、その年のできごとの数だけ大きくなる（1 件で 12px、
+ * 4 件で 21px）。ただの飾りではなく、年ごとの密度を示す。
+ * 中は塗らない。動く背景の上では不透明な円が浮いて見えるうえ、
+ * 軸が輪を貫くことで「線に通した粒」として読める。
  *
  * 軸と点の基準を揃えるため、余白は ol ではなく li に持たせている。
  * ol に padding を置くと、ol 基準の軸線と li 基準の点とで
@@ -79,10 +87,16 @@ const Timeline: React.FC = () => {
                 {/* 軸の上の印。できごとのある年は点、無い年は短い横棒 */}
                 {hasEvents ? (
                   <span
-                    className="absolute left-12 w-[7px] h-[7px] -translate-x-1/2 rounded-full border border-ink/60 bg-paper"
-                    style={{ top: 28 }}
+                    className="absolute left-12 -translate-x-1/2 rounded-full border border-ink/55 flex items-center justify-center"
+                    style={{
+                      width: dotSize(titles.length),
+                      height: dotSize(titles.length),
+                      top: 28 - dotSize(titles.length) / 2 + 3,
+                    }}
                     aria-hidden="true"
-                  />
+                  >
+                    <span className="w-[3px] h-[3px] rounded-full bg-ink/70" />
+                  </span>
                 ) : (
                   <span
                     className="absolute left-12 w-2 h-px -translate-x-1/2 bg-ink/25"

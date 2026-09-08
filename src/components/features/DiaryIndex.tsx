@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback, useEffect, useRef } from 'react';
 import { eyecatchData } from '../../data/eyecatchData';
 import { BookItem } from '../../types';
 import SectionHeader from '../common/SectionHeader';
@@ -44,12 +44,18 @@ const pad = (n: number) => String(n).padStart(3, '0');
  * 別物に見えないようにするため。
  *
  * 105 件を上から辿るしかないのが操作性の一番の問題だったので、
- * 年の見出しを画面上部に貼り付けて、いつでも年へ飛べるようにした。
+ * 年を移る帯を画面上部に貼り付けている。どの位置からでも他の年へ
+ * 移れるし、先頭にも戻れる。年ごとに見出しを貼り付ける作りも試したが、
+ * 白い帯が年の数だけ入れ替わり立ち替わり現れてぎこちなかった。
+ * 貼り付けるのは 1 本だけにして、いま見ている年をそこに示す。
+ *
  * Rhythm は押しても選べる。指で触る画面にはホバーが無い。
  */
 const DiaryIndex: React.FC = () => {
   const [active, setActive] = useState<number | null>(null);
+  const [currentYear, setCurrentYear] = useState<string | null>(null);
   const scrollTo = useScrollTo();
+  const gridRef = useRef<HTMLDivElement>(null);
 
   const entries = useMemo(
     () =>
@@ -100,6 +106,26 @@ const DiaryIndex: React.FC = () => {
     [scrollTo]
   );
 
+  // いま画面に入っている年を帯に示す
+  useEffect(() => {
+    const sections = gridRef.current?.querySelectorAll('section[id^="diary-"]');
+    if (!sections?.length) return;
+
+    const observer = new IntersectionObserver(
+      (records) => {
+        const visible = records
+          .filter((r) => r.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+        if (visible) setCurrentYear(visible.target.id.replace('diary-', ''));
+      },
+      // 帯のすぐ下を判定線にする
+      { rootMargin: '-72px 0px -70% 0px' }
+    );
+
+    sections.forEach((s) => observer.observe(s));
+    return () => observer.disconnect();
+  }, []);
+
   // 目盛りを押したら、その 1 件が入っている年まで送る
   const selectTick = useCallback(
     (i: number) => {
@@ -130,14 +156,9 @@ const DiaryIndex: React.FC = () => {
           <div className="lg:col-span-2 marginalia">{entries.length} Entries</div>
           <div className="lg:col-span-10 flex flex-wrap gap-x-6 gap-y-1 mt-2 lg:mt-0">
             {years.map(([year, count]) => (
-              <button
-                key={year}
-                type="button"
-                onClick={() => jumpToYear(year)}
-                className="marginalia bg-transparent border-0 p-0 hover:!text-ink transition-colors"
-              >
+              <span key={year} className="marginalia">
                 {year} <span className="text-ink/30">{count}</span>
-              </button>
+              </span>
             ))}
           </div>
         </div>
@@ -169,16 +190,44 @@ const DiaryIndex: React.FC = () => {
         </div>
       </div>
 
+      {/*
+        年を移る帯。年ごとに貼り付けるのではなく 1 本だけを貼り付け、
+        いま見ている年をそこに示す。どの位置からでも他の年へ移れる。
+      */}
+      <div className="sticky top-14 z-30 bg-paper/85 backdrop-blur-md border-y border-ink/10">
+        <div className="px-6 py-2.5 flex items-center gap-5">
+          <span className="marginalia hidden sm:inline">Jump</span>
+          <div className="flex items-center gap-4 flex-1 overflow-x-auto">
+            {years.map(([year, count]) => (
+              <button
+                key={year}
+                type="button"
+                onClick={() => jumpToYear(year)}
+                aria-current={currentYear === year ? 'true' : undefined}
+                className={`marginalia bg-transparent border-0 p-0 whitespace-nowrap transition-colors ${
+                  currentYear === year ? '!text-ink' : 'hover:!text-ink/70'
+                }`}
+              >
+                {year} <span className="text-ink/30">{count}</span>
+              </button>
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={() => scrollTo(0)}
+            className="marginalia bg-transparent border-0 p-0 hover:!text-ink transition-colors whitespace-nowrap"
+          >
+            ↑ 先頭
+          </button>
+        </div>
+      </div>
+
       {/* 年ごとに区切った索引 */}
-      <div className="w-full px-6 pb-24">
+      <div ref={gridRef} className="w-full px-6 pb-24 pt-10">
         {grouped.map(([year, items]) => (
-          <section key={year} id={`diary-${year}`} className="mt-14 first:mt-0 scroll-mt-16">
-            {/*
-              年の見出しは画面上部に貼り付ける。105 件を流し読みしている
-              あいだ、いま何年を見ているかが常に分かる。
-            */}
-            <div className="sticky top-14 z-20 flex items-baseline gap-4 py-3 mb-5 border-b border-ink/15 bg-paper/80 backdrop-blur-sm">
-              <span className="marginalia !text-ink">{year}</span>
+          <section key={year} id={`diary-${year}`} className="mt-16 first:mt-0 scroll-mt-28">
+            <div className="flex items-baseline gap-4 pb-3 mb-5 border-b border-ink/15">
+              <span className="font-display text-[19px] sm:text-[22px] text-ink leading-none">{year}</span>
               <span className="marginalia">{items.length} entries</span>
             </div>
 
