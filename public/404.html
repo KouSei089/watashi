@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <title>泉春称 (Izumi Haruya)</title>
+    <!--
+      GitHub Pages は SPA のルーティングを知らないため、/watashi/about のような
+      URL への直リンク・リロードを 404 として返します。
+      ここで一度クエリ文字列にパスを畳んでから index.html へ戻し、
+      index.html 側で元の URL に復元します。
+    -->
+    <script>
+      (function () {
+        // "/watashi" の 1 セグメントはリポジトリ名なので保持する
+        var pathSegmentsToKeep = 1;
+        var l = window.location;
+        l.replace(
+          l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+          l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?/' +
+          l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
+          (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+          l.hash
+        );
+      })();
+    </script>
+  </head>
+  <body></body>
+</html>

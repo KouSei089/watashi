@@ -1,17 +1,17 @@
 import React from 'react';
 import PageBackground from '../components/common/PageBackground';
 import { palettes } from '../data/palettes';
-import Profile from '../components/profile/Profile';
+import DiaryIndex from '../components/features/DiaryIndex';
 import Footer from '../components/layout/Footer';
 
-const About: React.FC = () => (
+const Diary: React.FC = () => (
   <>
-    <PageBackground palette={palettes.about} />
+    <PageBackground palette={palettes.diary} />
     <div className="relative z-10">
-      <Profile />
+      <DiaryIndex />
       <Footer />
     </div>
   </>
 );
 
-export default About;
+export default Diary;

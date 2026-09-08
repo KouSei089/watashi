@@ -1,105 +1,76 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Switch, useLocation } from 'react-router-dom';
-import { AnimatePresence } from 'framer-motion';
-import Lenis from '@studio-freight/lenis';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Route, Switch, Redirect, useLocation } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
 
-import './css/App.css';
-import './css/index.css';
+import { LenisProvider } from './lib/lenis';
+import { HOME_PATH } from './data/sections';
 
 import Navbar from './components/layout/Navbar';
-import Footer from './components/layout/Footer';
 import Cursor from './components/common/Cursor';
 
-import Top from './pages/Top';
+import Index from './pages/Index';
 import About from './pages/About';
-import Book from './pages/Book';
+import History from './pages/History';
+import Diary from './pages/Diary';
+import Contact from './pages/Contact';
 import Travel from './pages/Travel';
 
+/**
+ * 章ごとに独立したページを持つ。
+ *
+ * 以前は 1 本の縦スクロールに統合していたが、表紙と読書の日記が
+ * それぞれ 1 画面で完結する作りになり、スクロールで繋ぐ必然性が薄れた。
+ * スクロールを要するのは「これまでのわたし」の横スクロールだけで、
+ * それはページの中で従来どおり動く。
+ *
+ * GitHub Pages は SPA のルーティングを知らないため、直リンクとリロードは
+ * public/404.html が index.html に引き戻している。
+ */
 const AppContent: React.FC = () => {
   const location = useLocation();
-  const [showFooter, setShowFooter] = useState(false);
 
   useEffect(() => {
-    // 1. Lenis初期化（もっさり感をなくし、サクッと軽快なスクロールにするためにdurationを短縮）
-    const lenis = new Lenis({
-      duration: 0.7,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true,
-    });
-
-    // 2. GSAP Tickerと同期
-    lenis.on('scroll', ScrollTrigger.update);
-    gsap.ticker.add((time) => {
-      lenis.raf(time * 1000);
-    });
-    gsap.ticker.lagSmoothing(0);
-
-    // 3. 高さが本当に変わった時のみLenisとScrollTriggerを更新する
-    let lastHeight = document.body.scrollHeight;
-    let timeoutId: NodeJS.Timeout | null = null;
-    const resizeObserver = new ResizeObserver(() => {
-      if (timeoutId) clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => {
-        const currentHeight = document.body.scrollHeight;
-        if (currentHeight !== lastHeight) {
-          lastHeight = currentHeight;
-          lenis.resize();
-          ScrollTrigger.refresh();
-        }
-      }, 150); // Debounce処理で連続発火を抑制
-    });
-    resizeObserver.observe(document.body);
-
-    return () => {
-      lenis.destroy();
-      gsap.ticker.remove(lenis.raf);
-      resizeObserver.disconnect();
-    };
-  }, []);
-
-  // ページ遷移時にFooterを隠し、一番上へ戻る
-  useEffect(() => {
-    setShowFooter(false);
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
-  const handleScrollEnd = (atEnd: boolean) => {
-    setShowFooter(atEnd);
-  };
-
-  const isTopPage = location.pathname === '/watashi' || location.pathname === '/watashi/';
-  const isAboutPage = location.pathname === '/watashi/about';
-
   return (
-    <div className="bg-white min-h-screen flex flex-col">
+    <div className="bg-paper min-h-screen">
       <Cursor />
       <Navbar />
-      
-      <main className="flex-grow">
+
+      {/* 紙のざらつき。画面全体を 1 枚の刷り物として見せる */}
+      <div className="grain-overlay" aria-hidden="true" />
+
+      <main>
         <AnimatePresence mode="wait">
-          <Switch location={location} key={location.pathname}>
-            <Route exact path="/watashi" component={Top} />
-            <Route path="/watashi/about" render={() => <About onScrollEnd={handleScrollEnd} />} />
-            <Route path="/watashi/book" component={Book} />
-            <Route path="/watashi/travel" component={Travel} />
-            <Route render={() => <Top />} />
-          </Switch>
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.35, ease: 'easeOut' }}
+          >
+            <Switch location={location}>
+              <Route exact path={HOME_PATH} component={Index} />
+              <Route path={`${HOME_PATH}/about`} component={About} />
+              <Route path={`${HOME_PATH}/history`} component={History} />
+              <Route path={`${HOME_PATH}/diary`} component={Diary} />
+              <Route path={`${HOME_PATH}/contact`} component={Contact} />
+              <Route path={`${HOME_PATH}/travel`} component={Travel} />
+              <Route render={() => <Redirect to={HOME_PATH} />} />
+            </Switch>
+          </motion.div>
         </AnimatePresence>
       </main>
-
-      {/* Aboutではフラグが必要。それ以外(Book/Travel)では常に出す設定 */}
-      {!isTopPage && (
-        (isAboutPage ? showFooter : true) && <Footer />
-      )}
     </div>
   );
 };
 
 const App: React.FC = () => (
   <Router>
-    <AppContent />
+    <LenisProvider>
+      <AppContent />
+    </LenisProvider>
   </Router>
 );
 

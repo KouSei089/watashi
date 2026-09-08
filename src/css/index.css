@@ -2,22 +2,57 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500&display=swap');
+/* フォントは index.html の <link> で先読みする（@import はレンダーブロッキングになるため） */
+
+/* 横のはみ出しは html だけで止める。
+   body に overflow-x を付けると body がスクロールコンテナになり、
+   framer-motion の useScroll がページのスクロール量を拾えなくなる
+   （＝スクロール連動の演出が全部止まる）。 */
+html {
+  overflow-x: hidden;
+}
 
 body {
-  @apply bg-white text-gray-900;
-  font-family: 'Noto Sans JP', sans-serif;
+  @apply bg-paper text-ink font-jp;
   -webkit-font-smoothing: antialiased;
 }
 
-.wavy-underline {
-  @apply no-underline border-b border-transparent transition-all duration-300;
-  text-decoration: underline wavy rgba(0,0,0,0);
-  text-underline-offset: 4px;
+/*
+  リンクは素朴な下線に。以前は波線（text-decoration: wavy）だったが、
+  情報を整然と並べる組みの中では装飾が浮く。
+*/
+.rule-underline {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+  text-decoration-color: currentColor;
+  transition: opacity 0.3s ease;
+}
+.rule-underline:hover {
+  opacity: 0.5;
 }
 
-.wavy-underline:hover {
-  text-decoration-color: rgba(0,0,0,0.3);
+/*
+  余白に置く小さなラベル・章番号・日付など。
+  以前は 10px に 0.18em の字間を空けていたが、参考サイトの実測は
+  12〜13px・字間 normal〜わずかに負・太さ 500 だった。
+  字間を大きく空けるのは別の語彙で、密度のある編集的な組みからは浮く。
+
+  濃さは ink/45 だと紙（#F6F6F4）に対して 2.99:1 で、WCAG AA が
+  小さい文字に求める 4.5:1 を下回っていた。サイト中のラベル・日付・
+  番号がすべてこの様式なので、ここだけは基準を満たす必要がある。
+  ink/60 で 4.79:1。
+*/
+.marginalia {
+  @apply text-[11px] tracking-[0.02em] text-ink/60 font-medium;
+  line-height: 1.35;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 90 度回転して端に立てる小さな行 */
+.upright {
+  writing-mode: vertical-rl;
+  text-orientation: sideways;
 }
 
 /* スクロールバーのカスタマイズ（ミニマルに） */
@@ -28,9 +63,160 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #e5e7eb;
+  background: #dcdcd6;
   border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #d1d5db;
+  background: #c9c9c1;
+}
+
+/* 読書グリッドのセル。画面に入ったぶんだけ描画させて負荷スパイクを防ぐ。
+   contain-intrinsic-size を実寸とかけ離れた固定値にすると、画面外の行が
+   高さを過大申告してスクロール中にページ全体の高さが動き続ける。
+   auto を付けて実際の高さを記憶させ、初期値も実寸に寄せる。
+   画像の下に日付と見出しが付くので、その高さも足している
+   （2列で画像約90px+文字45px、4列で約85px+45px、6列で約110px+45px）。 */
+.diary-cell {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 135px;
+}
+@media (min-width: 640px) {
+  .diary-cell {
+    contain-intrinsic-size: auto 130px;
+  }
+}
+@media (min-width: 1024px) {
+  .diary-cell {
+    contain-intrinsic-size: auto 155px;
+  }
+}
+
+/* --- アニメーション --------------------------------------------------
+   以前は各コンポーネントの dangerouslySetInnerHTML に <style> を
+   直接書いていたため、同じ keyframes が重複して描画されていた。 */
+
+/*
+  自前のカーソルを出しているあいだだけ OS のカーソルを隠す。
+  以前は無条件に cursor: none を当てていたため、タッチ機器や
+  reduced-motion で何も見えないまま操作させることになっていた。
+*/
+.has-custom-cursor,
+.has-custom-cursor * {
+  cursor: none;
+}
+
+/* 読書の日記のサムネイル帯。細い、控えめなスクロールバー */
+.diary-strip {
+  scrollbar-width: thin;
+  scrollbar-color: #d5d5cd transparent;
+}
+.diary-strip::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
+}
+
+/* 背景の粒子。SVG の feTurbulence をデータURIで敷いている */
+.page-grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+  opacity: 0.35;
+  mix-blend-mode: multiply;
+}
+
+/*
+  紙のざらつき。背景だけでなく写真や文字の上にも薄くかけて、
+  画面全体を 1 枚の刷り物として見せる。
+  細かい粒（baseFrequency を上げる）にして、
+  文字の読みやすさを損なわない濃さに留めている。
+*/
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23g)' opacity='0.65'/%3E%3C/svg%3E");
+  background-size: 140px 140px;
+  opacity: 0.14;
+  mix-blend-mode: multiply;
+}
+@media (prefers-reduced-motion: reduce) {
+  .grain-overlay { opacity: 0.09; }
+}
+
+/* ページの背景。大きくぼかした色の面をゆっくり漂わせる。
+   4 枚に別々の道筋を与えている。同じ動きを時間差で流すと、
+   ずれていても同じ形が繰り返し通ることが見えてしまう。
+   往復（alternate）ではなく始点に戻る閉じた道にして、
+   折り返しの瞬間が見えないようにしている。 */
+.soft-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.8;
+  will-change: transform;
+}
+.soft-blob--0 { animation: drift-0 52s ease-in-out infinite; }
+.soft-blob--1 { animation: drift-1 67s ease-in-out infinite; }
+.soft-blob--2 { animation: drift-2 44s ease-in-out infinite; }
+.soft-blob--3 { animation: drift-3 78s ease-in-out infinite; }
+
+@keyframes drift-0 {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  25%  { transform: translate3d(7vw, 5vh, 0) scale(1.10); }
+  50%  { transform: translate3d(3vw, 12vh, 0) scale(0.95); }
+  75%  { transform: translate3d(-5vw, 6vh, 0) scale(1.05); }
+  100% { transform: translate3d(0, 0, 0) scale(1); }
+}
+@keyframes drift-1 {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  30%  { transform: translate3d(-9vw, 7vh, 0) scale(0.92); }
+  60%  { transform: translate3d(-2vw, -6vh, 0) scale(1.12); }
+  100% { transform: translate3d(0, 0, 0) scale(1); }
+}
+@keyframes drift-2 {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  40%  { transform: translate3d(-6vw, -9vh, 0) scale(1.08); }
+  70%  { transform: translate3d(6vw, -3vh, 0) scale(0.94); }
+  100% { transform: translate3d(0, 0, 0) scale(1); }
+}
+@keyframes drift-3 {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  35%  { transform: translate3d(10vw, -4vh, 0) scale(1.06); }
+  65%  { transform: translate3d(4vw, 9vh, 0) scale(0.9); }
+  100% { transform: translate3d(0, 0, 0) scale(1); }
+}
+
+/* 次の章へ促すマウスアイコン */
+.animate-mouse-move {
+  animation: mouse-move 1.6s cubic-bezier(0.4, 2, 0.3, 1) infinite;
+}
+@keyframes mouse-move {
+  0%   { opacity: 0; transform: translateY(0); }
+  30%  { opacity: 1; transform: translateY(8px); }
+  60%  { opacity: 1; transform: translateY(16px); }
+  100% { opacity: 0; transform: translateY(24px); }
+}
+
+/* 日本地図のピン */
+.animate-ping-slow {
+  animation: ping-slow 3s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+@keyframes ping-slow {
+  0%   { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(4); opacity: 0; }
+}
+.origin-center {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* スクロール演出は OS の設定を尊重して止める */
+@media (prefers-reduced-motion: reduce) {
+  .animate-ping-slow,
+  .animate-mouse-move {
+    animation: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
 }

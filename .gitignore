@@ -21,3 +21,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# 写真の元データ（6000x4000）。Web用に最適化したものが public/photos にある
+/photos-original

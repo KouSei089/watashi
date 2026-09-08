@@ -1,52 +1,54 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { sections, CONTACT_PATH, HOME_PATH } from '../../data/sections';
+import { profile } from '../../data/profile';
 
+/**
+ * 奥付。
+ *
+ * 以前は著作権表示の 1 行だけで、どのページも唐突に終わっていた。
+ * 表紙の目次と同じ組みをここにも置き、名前を大きく据えて締める。
+ * どのページの末尾からでも、他の章へ移れる。
+ */
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="w-full bg-white text-gray-600 py-16 mt-24 font-jp border-t border-gray-100">
-      <div className="max-w-5xl mx-auto px-4 flex flex-col">
-        {/* JOB OFFER */}
-        <div className="w-full flex flex-col items-start mb-8">
-          <div className="text-base sm:text-lg text-gray-600 mb-3 leading-relaxed font-jp">
-            ご相談やお仕事のご依頼は、どうぞお気軽にメールにてご連絡ください。
-          </div>
-          <a
-            href="mailto:izumiharuya12@gmail.com"
-            className="mt-1 text-base sm:text-lg text-black wavy-underline tracking-[0.08em] transition-all duration-500 ease-out hover:opacity-60"
-          >
-            izumiharuya12@gmail.com
-            <span className="text-[10px] align-super ml-1 opacity-70">↗︎</span>
-          </a>
-        </div>
+    <footer className="relative w-full text-ink font-jp border-t border-ink/10 mt-24">
+      <div className="px-6 pt-14 pb-10 grid grid-cols-1 lg:grid-cols-12 lg:gap-x-10 gap-y-12">
+        <div className="lg:col-span-2 marginalia">Colophon</div>
 
-        {/* Divider */}
-        <div className="w-full border-t border-gray-100 my-8"></div>
-
-        {/* Copyright - 中央寄せ */}
-        <div className="text-xs text-gray-400 text-center font-jp leading-loose">
-          &copy; {currentYear} watashi - izumi haruya. All rights reserved.
-          <br />
-          <div className="inline-flex items-center justify-center gap-1.5 mt-2 text-slate-400">
-            <span>Designed &amp; built with</span>
-            <span 
-              className="inline-flex items-center justify-center" 
-              aria-label="sparkle" 
-              role="img"
-            >
-              <svg width="18" height="18" viewBox="0 0 20 20" fill="none" className="stroke-current">
-                <g>
-                  <path d="M10 2.5V5.5" strokeWidth="1.2" strokeLinecap="round"/>
-                  <path d="M10 14.5V17.5" strokeWidth="1.2" strokeLinecap="round"/>
-                  <path d="M2.5 10H5.5" strokeWidth="1.2" strokeLinecap="round"/>
-                  <path d="M14.5 10H17.5" strokeWidth="1.2" strokeLinecap="round"/>
-                  <circle cx="10" cy="10" r="3.5" strokeWidth="1.2"/>
-                </g>
-              </svg>
+        <div className="lg:col-span-4">
+          <Link to={HOME_PATH} className="no-underline block">
+            <span className="font-display block text-[30px] sm:text-[40px] leading-[1.15] tracking-[0.01em] text-ink">
+              {profile.nameJa}
             </span>
-            <span>in Japan.</span>
-          </div>
+            <span className="marginalia block mt-3">{profile.nameEn}</span>
+          </Link>
+          <span className="marginalia block mt-6">島根県隠岐郡海士町</span>
         </div>
+
+        {/* 表紙の目次と同じ並び */}
+        <nav className="lg:col-span-6" aria-label="目次">
+          <ul className="list-none m-0 p-0 border-t border-ink/22">
+            {[...sections, { index: '04', path: CONTACT_PATH, label: 'Contact', name: 'おといあわせ' }].map((s) => (
+              <li key={s.path} className="border-b border-ink/22">
+                <Link to={s.path} className="group flex items-baseline gap-4 py-3 no-underline">
+                  <span className="marginalia w-8 shrink-0">({s.index})</span>
+                  <span className="marginalia w-20 shrink-0 hidden sm:block">{s.label}</span>
+                  <span className="font-display text-[15px] sm:text-[17px] text-ink flex-1 group-hover:opacity-60 transition-opacity duration-300">
+                    {s.name}
+                  </span>
+                  <span className="marginalia transition-transform duration-300 group-hover:translate-x-1">→</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </div>
+
+      <div className="px-6 py-4 border-t border-ink/10">
+        <span className="marginalia">© {currentYear} watashi — izumi haruya</span>
       </div>
     </footer>
   );
