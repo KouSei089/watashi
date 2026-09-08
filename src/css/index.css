@@ -62,20 +62,6 @@ body {
    以前は各コンポーネントの dangerouslySetInnerHTML に <style> を
    直接書いていたため、同じ keyframes が重複して描画されていた。 */
 
-/* 導入の波紋 */
-.ripple-effect {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  will-change: transform, opacity;
-  animation: ripple-subtle 4s infinite linear;
-}
-@keyframes ripple-subtle {
-  0%   { transform: scale3d(0.6, 0.6, 1); opacity: 0; }
-  20%  { opacity: 0.15; }
-  100% { transform: scale3d(1.8, 1.8, 1); opacity: 0; }
-}
-
 /* 次の章へ促すマウスアイコン */
 .animate-mouse-move {
   animation: mouse-move 1.6s cubic-bezier(0.4, 2, 0.3, 1) infinite;
@@ -102,7 +88,6 @@ body {
 
 /* スクロール演出は OS の設定を尊重して止める */
 @media (prefers-reduced-motion: reduce) {
-  .ripple-effect,
   .animate-ping-slow,
   .animate-mouse-move {
     animation: none;
