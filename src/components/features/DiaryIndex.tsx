@@ -1,9 +1,8 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useRef, useEffect } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { eyecatchData } from '../../data/eyecatchData';
 import { BookItem } from '../../types';
 import SectionHeader from '../common/SectionHeader';
-
-type ViewMode = 'txt' | 'img';
 
 interface Entry extends BookItem {
   /** 索引に出す見出し。「読書日記 ｜ 6/2〜6/8」なら「6/2〜6/8」 */
@@ -15,8 +14,8 @@ interface Entry extends BookItem {
 
 /**
  * 105 件のうち 100 件が「読書日記 ｜ 日付」という同じ形をしている。
- * 見出しに毎回「読書日記 ｜」が並ぶのは索引として冗長なので、
- * 種別として括り出し、見出しには日付だけを残す。
+ * 見出しに毎回「読書日記 ｜」が並ぶのは冗長なので種別として括り出し、
+ * 見出しには日付だけを残す。
  */
 const parseEntry = (item: BookItem): Entry => {
   const matched = item.name.match(/^読書日記\s*｜\s*(.+)$/);
@@ -28,8 +27,23 @@ const parseEntry = (item: BookItem): Entry => {
   };
 };
 
+const pad = (n: number) => String(n).padStart(3, '0');
+
+/**
+ * 読書の日記。
+ *
+ * andmade.jp/studies に倣い、一覧を敷き詰めるのではなく
+ * 1 件ずつ見せる。左に全件のサムネイルの帯、中央に選ばれた 1 枚、
+ * 右に現在地のカウンター。
+ *
+ * 背景は選ばれた記事の色に染まる。参考サイトと同じ効果だが、
+ * note の画像には CORS が無く canvas で画素を読めないため、
+ * 同じ画像を大きくぼかして敷くことで色だけを取り出している。
+ */
 const DiaryIndex: React.FC = () => {
-  const [mode, setMode] = useState<ViewMode>('txt');
+  const [index, setIndex] = useState(0);
+  const stripRef = useRef<HTMLDivElement>(null);
+  const reduceMotion = useReducedMotion();
 
   const entries = useMemo(
     () =>
@@ -39,20 +53,42 @@ const DiaryIndex: React.FC = () => {
     []
   );
 
-  // 年ごとにまとめる。新しい年が上。
-  const byYear = useMemo(() => {
-    const map = new Map<string, Entry[]>();
-    entries.forEach((entry) => {
-      const list = map.get(entry.year) ?? [];
-      list.push(entry);
-      map.set(entry.year, list);
-    });
-    return Array.from(map.entries());
-  }, [entries]);
+  const current = entries[index];
+
+  // 選択が変わったら、帯の中のその 1 枚を見える位置へ寄せる
+  useEffect(() => {
+    const strip = stripRef.current;
+    if (!strip) return;
+    const active = strip.querySelector<HTMLElement>('[data-active="true"]');
+    active?.scrollIntoView({ block: 'nearest', behavior: reduceMotion ? 'auto' : 'smooth' });
+  }, [index, reduceMotion]);
+
+  const step = (delta: number) =>
+    setIndex((i) => Math.min(entries.length - 1, Math.max(0, i + delta)));
 
   return (
-    <section className="w-full bg-paper font-jp overflow-hidden">
-      <div className="px-6 md:px-12 pt-24 pb-10">
+    <section className="relative w-full bg-paper font-jp overflow-hidden">
+      {/* 記事の色。大きくぼかして敷いている */}
+      <AnimatePresence initial={false}>
+        <motion.div
+          key={current.noteUrl}
+          className="absolute inset-0 pointer-events-none"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.5 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 1.1, ease: 'easeInOut' }}
+          style={{
+            backgroundImage: `url(${current.eyecatch})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            filter: 'blur(90px) saturate(0.7)',
+            transform: 'scale(1.25)',
+          }}
+          aria-hidden="true"
+        />
+      </AnimatePresence>
+
+      <div className="relative z-10 px-6 md:px-12 pt-24 pb-16">
         <SectionHeader
           id="book-diary"
           index="03"
@@ -67,93 +103,107 @@ const DiaryIndex: React.FC = () => {
           読書の日記
         </SectionHeader>
 
-        {/* 件数と、テキストか画像かの切替 */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 lg:gap-x-10 mt-12 pb-3 border-b border-ink/15">
-          <div className="lg:col-span-2 marginalia">{entries.length} Entries</div>
-          <div className="lg:col-span-10 flex items-center gap-1.5 mt-2 lg:mt-0">
-            {(['txt', 'img'] as ViewMode[]).map((value, i) => (
-              <React.Fragment key={value}>
-                {i > 0 && <span className="marginalia">·</span>}
+        <div className="grid grid-cols-1 lg:grid-cols-12 lg:gap-x-10 mt-14">
+          {/* 全件の帯 */}
+          <div className="lg:col-span-2 order-2 lg:order-1 mt-10 lg:mt-0">
+            <div className="marginalia mb-3">{entries.length} Entries</div>
+            <div
+              ref={stripRef}
+              className="flex lg:block gap-2 lg:gap-0 overflow-x-auto lg:overflow-x-visible lg:overflow-y-auto lg:max-h-[60vh] lg:pr-2 diary-strip"
+            >
+              {entries.map((entry, i) => (
                 <button
+                  key={entry.noteUrl}
                   type="button"
-                  onClick={() => setMode(value)}
-                  aria-pressed={mode === value}
-                  className={`marginalia bg-transparent border-0 p-0 transition-colors duration-300 ${
-                    mode === value ? '!text-ink underline underline-offset-4' : 'hover:!text-ink/70'
+                  data-active={i === index}
+                  onClick={() => setIndex(i)}
+                  aria-label={`${entry.kind} ${entry.title}`}
+                  aria-current={i === index ? 'true' : undefined}
+                  className={`block shrink-0 w-16 lg:w-full aspect-[4/3] mb-0 lg:mb-1.5 overflow-hidden border-0 p-0 bg-transparent transition-opacity duration-300 ${
+                    i === index ? 'opacity-100' : 'opacity-35 hover:opacity-70'
                   }`}
                 >
-                  {value === 'txt' ? 'Txt' : 'Img'}
+                  <img
+                    src={entry.eyecatch}
+                    alt=""
+                    loading="lazy"
+                    className="w-full h-full object-cover"
+                  />
                 </button>
-              </React.Fragment>
-            ))}
+              ))}
+            </div>
+          </div>
+
+          {/* 選ばれた 1 件 */}
+          <div className="lg:col-span-7 order-1 lg:order-2">
+            <AnimatePresence mode="wait">
+              <motion.a
+                key={current.noteUrl}
+                href={current.noteUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.4, ease: 'easeOut' }}
+              >
+                <img
+                  src={current.eyecatch}
+                  alt={current.name}
+                  className="w-full aspect-[4/3] object-cover"
+                />
+              </motion.a>
+            </AnimatePresence>
+
+            <div className="mt-6">
+              <div className="marginalia mb-2">
+                {current.kind} — {current.created_at}
+              </div>
+              <a
+                href={current.noteUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rule-underline text-[15px] sm:text-[17px] text-ink"
+              >
+                {current.title} <span className="text-[9px] align-super">↗</span>
+              </a>
+            </div>
+          </div>
+
+          {/* 現在地 */}
+          <div className="lg:col-span-3 order-3 mt-10 lg:mt-0 lg:pl-6">
+            <div className="flex items-center gap-3">
+              <span className="marginalia !text-ink">{pad(index + 1)}</span>
+              <span className="relative block flex-1 h-px bg-ink/20">
+                <span
+                  className="absolute inset-y-0 left-0 bg-ink/60 transition-[width] duration-500 ease-out"
+                  style={{ width: `${((index + 1) / entries.length) * 100}%` }}
+                />
+              </span>
+              <span className="marginalia">{pad(entries.length)}</span>
+            </div>
+
+            <div className="flex gap-4 mt-6">
+              <button
+                type="button"
+                onClick={() => step(-1)}
+                disabled={index === 0}
+                className="marginalia bg-transparent border-0 p-0 disabled:opacity-25 hover:!text-ink transition-colors"
+              >
+                ← Prev
+              </button>
+              <button
+                type="button"
+                onClick={() => step(1)}
+                disabled={index === entries.length - 1}
+                className="marginalia bg-transparent border-0 p-0 disabled:opacity-25 hover:!text-ink transition-colors"
+              >
+                Next →
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-
-      {mode === 'txt' ? (
-        <div className="px-6 md:px-12 pb-8">
-          {byYear.map(([year, items]) => (
-            <div key={year} className="mb-14">
-              <div className="grid grid-cols-1 lg:grid-cols-12 lg:gap-x-10 items-baseline mb-7">
-                <div className="lg:col-span-2 marginalia">{year}</div>
-                <div className="lg:col-span-10 marginalia">{items.length} entries</div>
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-12 lg:gap-x-10">
-                <div className="lg:col-span-2" />
-                <ul className="lg:col-span-10 list-none m-0 p-0 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-8">
-                  {items.map((entry) => (
-                    <li key={entry.noteUrl}>
-                      <a
-                        href={entry.noteUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="rule-underline text-[13px] text-ink leading-[1.6] block"
-                      >
-                        {entry.title}
-                      </a>
-                      <div className="marginalia mt-2">{entry.kind}</div>
-                      <div className="marginalia">{entry.created_at}</div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        /*
-          描画の間引きは .diary-cell（index.css）に寄せている。
-          列ごとのパララックスは、格子の罫線が崩れるうえに
-          時系列の並び（行方向）が読めなくなるため採らなかった。
-        */
-        <div className="w-full grid grid-cols-5 md:grid-cols-10 gap-0 border-t border-ink/10 border-l">
-          {entries.map((entry) => (
-            <a
-              key={entry.noteUrl}
-              href={entry.noteUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="diary-cell group relative aspect-[4/3] overflow-hidden bg-paper border-r border-b border-ink/10 block"
-            >
-              <img
-                src={entry.eyecatch}
-                alt={entry.name}
-                className="w-full h-full object-cover transition-all duration-700 ease-out opacity-90 sm:group-hover:opacity-100 sm:group-hover:scale-105 will-change-transform"
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-ink/70 flex flex-col justify-end p-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <span className="text-[6px] text-white/50 mb-0.5">{entry.created_at}</span>
-                <span className="text-[7px] text-white truncate leading-tight">{entry.title}</span>
-              </div>
-            </a>
-          ))}
-        </div>
-      )}
-
-      <div className="w-full py-28 flex flex-col items-center justify-center">
-        <div className="w-px h-10 bg-ink/10 mb-6" />
-        <span className="marginalia">Fin.</span>
       </div>
     </section>
   );

@@ -73,6 +73,36 @@ body {
    以前は各コンポーネントの dangerouslySetInnerHTML に <style> を
    直接書いていたため、同じ keyframes が重複して描画されていた。 */
 
+/* 読書の日記のサムネイル帯。細い、控えめなスクロールバー */
+.diary-strip {
+  scrollbar-width: thin;
+  scrollbar-color: #d5d5cd transparent;
+}
+.diary-strip::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
+}
+
+/* 冒頭の背景。大きくぼかした色の面をゆっくり漂わせる */
+.opening-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.8;
+  will-change: transform;
+}
+.opening-blob--drift {
+  animation-name: blob-drift;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+@keyframes blob-drift {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  50%  { transform: translate3d(4vw, 3vh, 0) scale(1.08); }
+  100% { transform: translate3d(-3vw, 5vh, 0) scale(0.96); }
+}
+
 /* 次の章へ促すマウスアイコン */
 .animate-mouse-move {
   animation: mouse-move 1.6s cubic-bezier(0.4, 2, 0.3, 1) infinite;

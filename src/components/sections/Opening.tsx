@@ -3,6 +3,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { profile } from '../../data/profile';
 import { timeline, timelineFractions, FIRST_YEAR, LAST_YEAR } from '../../data/timeline';
 import { useScrollTo } from '../../lib/lenis';
+import OpeningBackground from './OpeningBackground';
 
 const VIEW_W = 1000;
 const VIEW_H = 44;
@@ -41,15 +42,17 @@ const Opening: React.FC = () => {
         };
 
   return (
-    <section className="w-full bg-paper font-jp min-h-screen flex flex-col justify-between px-6 md:px-12 pt-28 pb-10">
+    <section className="relative w-full bg-paper font-jp min-h-screen flex flex-col justify-between px-6 md:px-12 pt-28 pb-10">
+      <OpeningBackground />
+
       {/* 所在を示す小さな標記 */}
-      <motion.div className="grid grid-cols-1 lg:grid-cols-12 lg:gap-x-10" {...appear(0.1)}>
+      <motion.div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 lg:gap-x-10" {...appear(0.1)}>
         <div className="lg:col-span-2 marginalia">(00)</div>
         <div className="lg:col-span-10 marginalia">Ama-cho, Oki Islands — Shimane, Japan</div>
       </motion.div>
 
       {/* 名前とテーマ */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 lg:gap-x-10 my-16 lg:my-0">
+      <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 lg:gap-x-10 my-16 lg:my-0">
         <div className="lg:col-span-2" />
         <div className="lg:col-span-10">
           <motion.h1
@@ -71,19 +74,19 @@ const Opening: React.FC = () => {
       </div>
 
       {/* できごとの目盛り */}
-      <motion.div className="grid grid-cols-1 lg:grid-cols-12 lg:gap-x-10" {...appear(0.7)}>
+      <motion.div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 lg:gap-x-10" {...appear(0.7)}>
         <div className="lg:col-span-2 marginalia mb-4 lg:mb-0">
           {timeline.length} Events
         </div>
 
         <div className="lg:col-span-10">
+          {/*
+            preserveAspectRatio="none" で横だけ伸ばす。
+            高さを auto にすると幅に比例して縮み、狭い画面では
+            目盛りが 8px ほどに潰れて読めなくなる。高さは固定する。
+          */}
           <svg
             viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
-            /*
-              preserveAspectRatio="none" で横だけ伸ばす。
-              高さを auto にすると幅に比例して縮み、狭い画面では
-              目盛りが 8px ほどに潰れて読めなくなる。高さは固定する。
-            */
             className="w-full overflow-visible"
             style={{ height: VIEW_H }}
             preserveAspectRatio="none"
@@ -151,7 +154,7 @@ const Opening: React.FC = () => {
       </motion.div>
 
       {/* 読み進める合図 */}
-      <motion.div className="flex justify-end" {...appear(1.4)}>
+      <motion.div className="relative z-10 flex justify-end" {...appear(1.4)}>
         <button
           type="button"
           onClick={() => scrollTo('#profile')}
