@@ -2,7 +2,7 @@ import React from 'react';
 import Opening from '../components/sections/Opening';
 import Profile from '../components/profile/Profile';
 import Timeline from '../components/sections/Timeline';
-import EyecatchGrid from '../components/features/EyecatchGrid';
+import DiaryIndex from '../components/features/DiaryIndex';
 import Footer from '../components/layout/Footer';
 
 /**
@@ -25,7 +25,7 @@ const Home: React.FC = () => (
     <Opening />
     <Profile />
     <Timeline />
-    <EyecatchGrid />
+    <DiaryIndex />
     <Footer />
   </div>
 );
