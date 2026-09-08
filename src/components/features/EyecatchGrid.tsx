@@ -5,7 +5,9 @@ import SectionTitle from '../common/SectionTitle';
 
 /** これ以上速く回しても傾きは増えない（px/秒） */
 const VELOCITY_CAP = 2500;
-const MAX_SKEW_DEG = 1.2;
+// 1.2 度では効いているかどうか判別できなかったので、
+// 意図した演出だと読み取れる程度まで上げている。
+const MAX_SKEW_DEG = 2.2;
 
 const EyecatchGrid: React.FC = () => {
   const reduceMotion = useReducedMotion();

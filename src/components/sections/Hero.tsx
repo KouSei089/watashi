@@ -37,9 +37,11 @@ const Hero: React.FC = () => {
     offset: ['start start', 'end end'],
   });
 
-  // ぼけは晴らすが、モノクロのままにして静けさは保つ
-  const blurPx = useTransform(scrollYProgress, [0, 0.7], [12, 0], { clamp: true });
-  const imageOpacity = useTransform(scrollYProgress, [0, 0.7], [0.4, 0.92], { clamp: true });
+  // ぼけは晴らすが、モノクロのままにして静けさは保つ。
+  // 初期値を blur 12px / opacity 0.4 にしていたときは、白い画面に
+  // 何も無いように見えてしまった。像があると分かる程度には残す。
+  const blurPx = useTransform(scrollYProgress, [0, 0.7], [7, 0], { clamp: true });
+  const imageOpacity = useTransform(scrollYProgress, [0, 0.7], [0.65, 0.95], { clamp: true });
   const filter = useMotionTemplate`blur(${blurPx}px) grayscale(1) brightness(1.05)`;
 
   // 読み進めると導入の合図は静かに退場する
@@ -68,7 +70,7 @@ const Hero: React.FC = () => {
               className="w-full h-auto rounded-sm will-change-[filter,opacity]"
               style={
                 reduceMotion
-                  ? { filter: 'grayscale(1) brightness(1.05)', opacity: 0.92 }
+                  ? { filter: 'grayscale(1) brightness(1.05)', opacity: 0.95 }
                   : { filter, opacity: imageOpacity }
               }
               src={MAIN_VISUAL_URL}

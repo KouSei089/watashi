@@ -30,8 +30,10 @@ const timeline: TimelineItem[] = [
 
 const startYear = (date: string) => parseInt(date.slice(0, 4), 10);
 
-const BASE_GAP = 48; // 同じ年のできごとどうしの最小の間隔
-const YEAR_GAP = 150; // 年がひとつ空くごとに足される間隔
+// 全長が旧実装（等間隔・5220px）とほぼ同じ 5310px に収まる組み合わせ。
+// 間隔は 40〜310px の幅を持つので、年の濃淡は残る。
+const BASE_GAP = 40; // 同じ年のできごとどうしの最小の間隔
+const YEAR_GAP = 90; // 年がひとつ空くごとに足される間隔
 const TRACK_HEIGHT = 220;
 
 /**
@@ -52,7 +54,7 @@ const Timeline: React.FC = () => {
   // 幅の変化だけを見る。高さで再計算するとモバイルのアドレスバーの
   // 伸縮のたびに pin が組み直されて画面が跳ねる。
   useEffect(() => {
-    const measure = () => setItemWidth(window.innerWidth < 640 ? 220 : 300);
+    const measure = () => setItemWidth(window.innerWidth < 640 ? 200 : 260);
     measure();
 
     let lastWidth = window.innerWidth;
