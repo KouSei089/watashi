@@ -1,4 +1,6 @@
 import React from 'react';
+import PageBackground from '../components/common/PageBackground';
+import { palettes } from '../data/palettes';
 import SectionHeader from '../components/common/SectionHeader';
 import Footer from '../components/layout/Footer';
 import { CONTACT_EMAIL, NOTE_URL, READS_URL } from '../data/site';
@@ -11,25 +13,27 @@ import { CONTACT_EMAIL, NOTE_URL, READS_URL } from '../data/site';
  */
 const Contact: React.FC = () => (
   <>
-    <section className="w-full bg-paper font-jp px-6 md:px-12 pt-24 pb-24 min-h-[70vh]">
-      <SectionHeader
-        id="contact"
-        index="04"
-        label="Contact"
-        note="ご相談やお仕事のご依頼は、どうぞお気軽にメールにてご連絡ください。"
-      >
-        おといあわせ
-      </SectionHeader>
+    <PageBackground palette={palettes.contact} />
+    <div className="relative z-10">
+      <section className="w-full bg-paper font-jp px-6 md:px-12 pt-24 pb-24 min-h-[70vh]">
+        <SectionHeader
+          id="contact"
+          index="04"
+          label="Contact"
+          note="ご相談やお仕事のご依頼は、どうぞお気軽にメールにてご連絡ください。"
+        >
+          おといあわせ
+        </SectionHeader>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 lg:gap-x-10 mt-14">
-        <div className="lg:col-span-2 marginalia mb-4 lg:mb-0">Mail</div>
-        <div className="lg:col-span-10">
-          <a
-            href={`mailto:${CONTACT_EMAIL}`}
-            className="rule-underline font-display text-[19px] sm:text-[24px] text-ink tracking-[0.02em]"
-          >
-            {CONTACT_EMAIL}
-          </a>
+        <div className="grid grid-cols-1 lg:grid-cols-12 lg:gap-x-10 mt-14">
+          <div className="lg:col-span-2 marginalia mb-4 lg:mb-0">Mail</div>
+          <div className="lg:col-span-10">
+            <a
+              href={`mailto:${CONTACT_EMAIL}`}
+              className="rule-underline font-display text-[19px] sm:text-[24px] text-ink tracking-[0.02em]"
+            >
+              {CONTACT_EMAIL}
+            </a>
         </div>
       </div>
 
@@ -46,6 +50,7 @@ const Contact: React.FC = () => (
       </div>
     </section>
     <Footer />
+    </div>
   </>
 );
 

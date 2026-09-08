@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { motion, useMotionValue, useSpring, useReducedMotion } from 'framer-motion';
 
-const ARM = 10; // 十字の腕の長さ
-const HOVER_SCALE = 1.9;
+const SIZE = 13;
+const HOVER_SCALE = 2.9;
 
 const isCoarsePointer = () =>
   typeof window !== 'undefined' &&
@@ -11,10 +11,12 @@ const isCoarsePointer = () =>
 /**
  * カーソル。
  *
- * 以前は 48px の輪と点が遅れて追いかける作りで、
- * 情報を整然と並べる今の紙面には過剰だった。
- * 表紙の目盛りと同じ語彙の、細い十字（レティクル）にしている。
- * リンクの上では十字が開き、線が濃くなる。
+ * 参考にした andmade.jp は自前のカーソルを持たず、OS のものをそのまま
+ * 使っている。あの抑制された紙面に合わせ、こちらも主張しない
+ * 細い輪だけにしている。リンクの上でだけ静かに開く。
+ *
+ * 位置はばねを効かせず点に直結させる。遅れて追いかける作りは
+ * 気持ちがいい反面、読ませる紙面では目が持っていかれる。
  *
  * タッチ機器と reduced-motion では出さず、OS のカーソルに任せる。
  */
@@ -27,8 +29,8 @@ const Cursor: React.FC = () => {
   const x = useMotionValue(-100);
   const y = useMotionValue(-100);
 
-  // 十字そのものは遅れずに付いてくる。開閉だけをばねで受ける。
-  const scale = useSpring(1, { stiffness: 420, damping: 32 });
+  // 開閉だけをばねで受ける
+  const scale = useSpring(1, { stiffness: 380, damping: 30 });
 
   useEffect(() => {
     const decide = () => setEnabled(!isCoarsePointer() && !reduceMotion);
@@ -64,7 +66,7 @@ const Cursor: React.FC = () => {
   }, [hovered, scale]);
 
   /*
-    OS のカーソルを隠すのは、自前の十字が実際に描かれてから。
+    OS のカーソルを隠すのは、自前の輪が実際に描かれてから。
     描画前や、何らかの理由で出せていないときにまで隠すと、
     何も見えないまま操作させることになる。
   */
@@ -76,39 +78,38 @@ const Cursor: React.FC = () => {
 
   if (!enabled) return null;
 
-  const stroke = hovered ? 'rgba(17,17,17,0.85)' : 'rgba(17,17,17,0.5)';
-
   return (
-    <motion.svg
+    <motion.div
       aria-hidden="true"
-      width={ARM * 2}
-      height={ARM * 2}
-      viewBox={`0 0 ${ARM * 2} ${ARM * 2}`}
       /*
         opacity は style ではなく animate で渡す。
         MotionValue を含む style に生の opacity を混ぜると
         framer-motion が初期値のまま握り続け、state を更新しても
-        反映されない（十字が透明のまま出てこない）。
+        反映されない（輪が透明のまま出てこない）。
       */
+      initial={{ opacity: 0 }}
       animate={{ opacity: visible ? 1 : 0 }}
       transition={{ duration: 0.25, ease: 'easeOut' }}
-      initial={{ opacity: 0 }}
       style={{
         position: 'fixed',
         top: 0,
         left: 0,
+        width: SIZE,
+        height: SIZE,
         x,
         y,
         translateX: '-50%',
         translateY: '-50%',
         scale,
+        borderRadius: '50%',
+        border: '1px solid rgba(17,17,17,0.55)',
+        backgroundColor: hovered ? 'rgba(17,17,17,0.06)' : 'transparent',
+        transitionProperty: 'background-color',
+        transitionDuration: '0.35s',
         pointerEvents: 'none',
         zIndex: 9999,
       }}
-    >
-      <line x1={0} y1={ARM} x2={ARM * 2} y2={ARM} stroke={stroke} strokeWidth="1" />
-      <line x1={ARM} y1={0} x2={ARM} y2={ARM * 2} stroke={stroke} strokeWidth="1" />
-    </motion.svg>
+    />
   );
 };
 

@@ -36,9 +36,9 @@ const pad = (n: number) => String(n).padStart(3, '0');
  * 1 件ずつ見せる。左に全件のサムネイルの帯、中央に選ばれた 1 枚、
  * 右に現在地のカウンター。
  *
- * 背景は選ばれた記事の色に染まる。参考サイトと同じ効果だが、
- * note の画像には CORS が無く canvas で画素を読めないため、
- * 同じ画像を大きくぼかして敷くことで色だけを取り出している。
+ * 背景は記事ごとに変えず、ページの色（黄）に固定している。
+ * 記事の画像から色を取る作りも試したが、章ごとに色を決める方針に
+ * したので、選ぶ記事によって色が動くのはかえって落ち着かない。
  */
 const DiaryIndex: React.FC = () => {
   const [index, setIndex] = useState(0);
@@ -67,27 +67,7 @@ const DiaryIndex: React.FC = () => {
     setIndex((i) => Math.min(entries.length - 1, Math.max(0, i + delta)));
 
   return (
-    <section className="relative w-full bg-paper font-jp overflow-hidden">
-      {/* 記事の色。大きくぼかして敷いている */}
-      <AnimatePresence initial={false}>
-        <motion.div
-          key={current.noteUrl}
-          className="absolute inset-0 pointer-events-none"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.5 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 1.1, ease: 'easeInOut' }}
-          style={{
-            backgroundImage: `url(${current.eyecatch})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            filter: 'blur(90px) saturate(0.7)',
-            transform: 'scale(1.25)',
-          }}
-          aria-hidden="true"
-        />
-      </AnimatePresence>
-
+    <section className="relative w-full font-jp overflow-hidden">
       <div className="relative z-10 px-6 md:px-12 pt-24 pb-16">
         <SectionHeader
           id="book-diary"

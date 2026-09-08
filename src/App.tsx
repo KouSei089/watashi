@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Switch, Redirect, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 import { LenisProvider } from './lib/lenis';
 import { HOME_PATH } from './data/sections';
@@ -31,9 +30,6 @@ const AppContent: React.FC = () => {
   const location = useLocation();
 
   useEffect(() => {
-    // ScrollTrigger は refresh の前後でスクロール位置を控えて復元する。
-    // 章を移ったら必ず先頭から読ませたいので、その記憶を消してから戻す。
-    ScrollTrigger.clearScrollMemory();
     window.scrollTo(0, 0);
   }, [location.pathname]);
 

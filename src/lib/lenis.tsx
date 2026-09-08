@@ -1,21 +1,8 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import Lenis from '@studio-freight/lenis';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useReducedMotion } from 'framer-motion';
 
-// リロード時のブラウザによるスクロール位置の復元は、こちらの scrollTo や
-// ScrollTrigger の pin と競合して位置が飛ぶ。
-// ScrollTrigger は登録時点の scrollRestoration を控えておき、refresh のたびに
-// その値へ戻す。したがって registerPlugin より前に設定しないと上書きされる
-// （React の effect の中では手遅れ）。
-if (typeof window !== 'undefined' && 'scrollRestoration' in window.history) {
-  window.history.scrollRestoration = 'manual';
-}
-
-gsap.registerPlugin(ScrollTrigger);
-
-/** Navbar の高さぶん、アンカー移動先を上に逃がす */
+/** ナビの高さぶん、アンカー移動先を上に逃がす */
 export const SCROLL_OFFSET = -72;
 
 const LenisContext = createContext<Lenis | null>(null);
@@ -64,14 +51,14 @@ export const LenisProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       smoothWheel: true,
     });
 
-    instance.on('scroll', ScrollTrigger.update);
-
-    // 以前は gsap.ticker.add に無名関数を渡しておきながら
-    // gsap.ticker.remove(lenis.raf) で別の関数を外そうとしていたため、
-    // ページ遷移のたびに ticker のコールバックが残り続けていた
-    const tick = (time: number) => instance.raf(time * 1000);
-    gsap.ticker.add(tick);
-    gsap.ticker.lagSmoothing(0);
+    // 以前は GSAP の ticker に相乗りしていたが、横スクロールの年表をやめて
+    // ScrollTrigger を使う箇所が無くなったので、自前の rAF で回す。
+    let frame = 0;
+    const raf = (time: number) => {
+      instance.raf(time);
+      frame = requestAnimationFrame(raf);
+    };
+    frame = requestAnimationFrame(raf);
 
     setLenis(instance);
 
@@ -85,7 +72,6 @@ export const LenisProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         if (currentHeight !== lastHeight) {
           lastHeight = currentHeight;
           instance.resize();
-          ScrollTrigger.refresh();
         }
       }, 150);
     });
@@ -93,8 +79,8 @@ export const LenisProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     return () => {
       if (timeoutId) clearTimeout(timeoutId);
+      cancelAnimationFrame(frame);
       resizeObserver.disconnect();
-      gsap.ticker.remove(tick);
       instance.destroy();
       setLenis(null);
     };

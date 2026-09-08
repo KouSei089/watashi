@@ -1,205 +1,84 @@
-import React, { useState, useRef, useMemo, useLayoutEffect, useEffect } from 'react';
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import React, { useMemo } from 'react';
+import { motion } from 'framer-motion';
+import Reveal, { revealItem } from '../common/Reveal';
 import SectionHeader from '../common/SectionHeader';
-import { timeline, startYear } from '../../data/timeline';
+import { timeline, startYear, FIRST_YEAR, LAST_YEAR } from '../../data/timeline';
 
-
-// 全長が旧実装（等間隔・5220px）とほぼ同じ 5310px に収まる組み合わせ。
-// 間隔は 40〜310px の幅を持つので、年の濃淡は残る。
-const BASE_GAP = 40; // 同じ年のできごとどうしの最小の間隔
-const YEAR_GAP = 90; // 年がひとつ空くごとに足される間隔
-const TRACK_HEIGHT = 220;
-
-// カードの移動距離に対して、どれだけスクロールさせるか。
-// 1 なら 1px スクロールでカードが 1px 動く。
-// スマホは 1 スワイプが 500px 前後しかないため、等倍だと年表を抜けるだけで
-// 10 回スワイプすることになる。指の運びに合わせて速める。
-const SCRUB_RATIO_DESKTOP = 1;
-const SCRUB_RATIO_MOBILE = 1.9;
+/** 年がひとつ空くごとに足される余白（px） */
+const YEAR_GAP = 56;
+const BASE_GAP = 40;
 
 /**
  * これまでのわたし。
  *
- * 横スクロールの位置を「項目の順番」ではなく「年の隔たり」で決めている。
- * 2016→2019 のように空いた年は間延びし、できごとが重なった 2025 は密集する。
- * 等間隔だったときは読み取れなかった、時間の濃淡がスクロール量として出る。
+ * 以前は GSAP の pin による横スクロールだったが、ページを章ごとに
+ * 分けたことで「スクロールで見せる」必然性が無くなり、
+ * 静かな紙面からも浮いていた。縦に読ませる年表にしている。
+ *
+ * 年ごとのまとまりの上の余白を、前の年からの隔たりに比例させている。
+ * 2016 から 2019 は間延びし、できごとの重なった 2025 は詰まる。
+ * 表紙の目盛りが示す粗密と、そのまま同じものを縦で見せている。
  */
 const Timeline: React.FC = () => {
-  const sectionRef = useRef<HTMLElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
+  const years = useMemo(() => {
+    const map = new Map<number, string[]>();
+    timeline.forEach((item) => {
+      const y = startYear(item.date);
+      map.set(y, [...(map.get(y) ?? []), item.title]);
+    });
 
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [itemWidth, setItemWidth] = useState(260);
-  const [scrubRatio, setScrubRatio] = useState(SCRUB_RATIO_DESKTOP);
-  const reduceMotion = useReducedMotion();
-
-  // 幅の変化だけを見る。高さで再計算するとモバイルのアドレスバーの
-  // 伸縮のたびに pin が組み直されて画面が跳ねる。
-  useEffect(() => {
-    const measure = () => {
-      const isMobile = window.innerWidth < 640;
-      setItemWidth(isMobile ? 200 : 260);
-      setScrubRatio(isMobile ? SCRUB_RATIO_MOBILE : SCRUB_RATIO_DESKTOP);
-    };
-    measure();
-
-    let lastWidth = window.innerWidth;
-    let timeoutId: ReturnType<typeof setTimeout> | null = null;
-    const onResize = () => {
-      if (window.innerWidth === lastWidth) return;
-      lastWidth = window.innerWidth;
-      if (timeoutId) clearTimeout(timeoutId);
-      timeoutId = setTimeout(measure, 150);
-    };
-
-    window.addEventListener('resize', onResize);
-    return () => {
-      if (timeoutId) clearTimeout(timeoutId);
-      window.removeEventListener('resize', onResize);
-    };
+    const entries = Array.from(map.entries()).sort((a, b) => a[0] - b[0]);
+    return entries.map(([year, titles], i) => ({
+      year,
+      titles,
+      // 前の年からの隔たりぶん、上に余白を積む
+      gap: i === 0 ? 0 : BASE_GAP + (year - entries[i - 1][0] - 1) * YEAR_GAP,
+    }));
   }, []);
 
-  // 各カードの横位置。年の差が空くほど間隔が広がる。
-  const positions = useMemo(() => {
-    let x = 0;
-    return timeline.map((item, i) => {
-      if (i > 0) {
-        const gapYears = startYear(item.date) - startYear(timeline[i - 1].date);
-        x += itemWidth + BASE_GAP + Math.max(0, gapYears) * YEAR_GAP;
-      }
-      return x;
-    });
-  }, [itemWidth]);
-
-  // カードが動く距離と、そのために必要なスクロール量は別物
-  const scrollLength = positions[positions.length - 1];
-  const pinLength = Math.round(scrollLength / scrubRatio);
-
-  useLayoutEffect(() => {
-    if (reduceMotion) return;
-
-    const ctx = gsap.context(() => {
-      const section = sectionRef.current;
-      const track = trackRef.current;
-      if (!section || !track) return;
-
-      ScrollTrigger.create({
-        trigger: section,
-        start: 'center center',
-        end: () => `+=${pinLength}`,
-        scrub: 1,
-        pin: true,
-        anticipatePin: 1,
-        invalidateOnRefresh: true,
-        onUpdate: (self) => {
-          const x = scrollLength * self.progress;
-          gsap.set(track, { x: -x });
-
-          // いま画面中央にいちばん近いカードを選ぶ。
-          // 間隔が不均等になったので、進捗×件数では求まらない。
-          let nearest = 0;
-          for (let i = 1; i < positions.length; i += 1) {
-            if (Math.abs(positions[i] - x) < Math.abs(positions[nearest] - x)) nearest = i;
-          }
-          setActiveIndex(nearest);
-        },
-      });
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, [positions, scrollLength, pinLength, reduceMotion]);
-
-  const activeYear = startYear(timeline[activeIndex].date);
-
-  // reduced-motion では pin も横スクロールも行わず、素直な縦並びにする
-  if (reduceMotion) {
-    return (
-      <section className="w-full bg-paper">
-        <div className="px-6 md:px-12 py-16">
-          <SectionHeader id="history" index="02" label="History" className="mb-12">
+  return (
+    <section className="w-full font-jp px-6 md:px-12 pt-24 pb-24">
+      <Reveal>
+        <motion.div variants={revealItem}>
+          <SectionHeader
+            id="history"
+            index="02"
+            label="History"
+            note={`${FIRST_YEAR}年から${LAST_YEAR}年まで、${timeline.length}のできごと。年のあいだの余白は、実際に空いた時間の長さです。`}
+          >
             これまでのわたし
           </SectionHeader>
-          <ol className="list-none m-0 p-0 border-l border-ink/10">
-            {timeline.map((item) => (
-              <li key={item.title} className="relative pl-6 pb-8">
-                <span className="absolute left-[-2.5px] top-2 w-1 h-1 rounded-full bg-ink" />
-                <div className="marginalia mb-1">{item.date}</div>
-                <div className="text-[13px] text-ink">{item.title}</div>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
-    );
-  }
+        </motion.div>
+      </Reveal>
 
-  return (
-    <>
-      <div className="px-6 md:px-12 pt-24 pb-16 w-full">
-        <SectionHeader id="history" index="02" label="History">
-          これまでのわたし
-        </SectionHeader>
-      </div>
-
-      <section
-        ref={sectionRef}
-        className="w-full relative overflow-hidden bg-paper flex items-center"
-        style={{ minHeight: '60vh' }}
-      >
-        {/* いま何年を見ているか。以前は 28vw の巨大な背景文字だったが、
-            小さな文字で情報を並べる組みの中では主張が強すぎた。
-            隅に置くノンブルに変えている。
-            mode="wait" にすると退場の完了を待つため、勢いよくスクロールした
-            ときに年号が置いていかれる。重ねて同時にクロスフェードさせる。 */}
-        <div className="absolute left-6 md:left-12 bottom-8 w-32 h-10 pointer-events-none select-none">
-          <AnimatePresence initial={false}>
-            <motion.span
-              key={activeYear}
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-              className="absolute inset-0 text-[32px] leading-none text-ink/15 tabular-nums tracking-tight"
-            >
-              {activeYear}
-            </motion.span>
-          </AnimatePresence>
-        </div>
-
-        <div className="w-full relative" style={{ height: TRACK_HEIGHT }}>
-          {/* 時間軸そのもの */}
-          <div className="absolute left-0 right-0 top-1/2 h-px bg-ink/10" />
-
-          <div
-            ref={trackRef}
-            className="relative h-full"
-            style={{ marginLeft: `calc(50% - ${itemWidth / 2}px)`, width: scrollLength + itemWidth }}
-          >
-            {timeline.map((item, idx) => {
-              const isActive = activeIndex === idx;
-              return (
-                <div
-                  key={item.title}
-                  className="absolute top-0 h-full flex flex-col items-center justify-center text-center transition-all duration-500"
-                  style={{
-                    left: positions[idx],
-                    width: itemWidth,
-                    opacity: isActive ? 1 : 0.3,
-                    transform: `scale(${isActive ? 1.05 : 0.95})`,
-                  }}
-                >
-                  <div className="marginalia mb-2">{item.date}</div>
-                  <div className="text-[13px] text-ink px-4 h-10 flex items-center leading-[1.7]">{item.title}</div>
-                  <div className={`w-1 h-1 rounded-full mt-4 transition-colors duration-500 ${isActive ? 'bg-ink' : 'bg-ink/20'}`} />
+      <ol className="list-none m-0 p-0 mt-16">
+        {years.map(({ year, titles, gap }) => (
+          <li key={year} style={{ marginTop: gap }}>
+            <Reveal>
+              <motion.div
+                className="grid grid-cols-1 lg:grid-cols-12 lg:gap-x-10 border-t border-ink/15 pt-4"
+                variants={revealItem}
+              >
+                <div className="lg:col-span-2 mb-3 lg:mb-0">
+                  <span className="marginalia !text-ink">{year}</span>
                 </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-    </>
+
+                <ul className="lg:col-span-10 list-none m-0 p-0">
+                  {titles.map((title) => (
+                    <li
+                      key={title}
+                      className="font-display text-[16px] sm:text-[19px] text-ink leading-[1.9] tracking-[0.03em]"
+                    >
+                      {title}
+                    </li>
+                  ))}
+                </ul>
+              </motion.div>
+            </Reveal>
+          </li>
+        ))}
+      </ol>
+    </section>
   );
 };
 

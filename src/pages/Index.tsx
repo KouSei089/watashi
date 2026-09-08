@@ -4,7 +4,8 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { profile } from '../data/profile';
 import { timeline, timelineFractions, FIRST_YEAR, LAST_YEAR } from '../data/timeline';
 import { sections } from '../data/sections';
-import OpeningBackground from '../components/sections/OpeningBackground';
+import PageBackground from '../components/common/PageBackground';
+import { palettes } from '../data/palettes';
 
 const VIEW_W = 1000;
 const VIEW_H = 44;
@@ -43,7 +44,7 @@ const Index: React.FC = () => {
 
   return (
     <section className="relative w-full bg-paper font-jp min-h-screen flex flex-col justify-between px-6 md:px-12 pt-24 pb-10">
-      <OpeningBackground />
+      <PageBackground palette={palettes.index} />
 
       <motion.div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 lg:gap-x-10" {...appear(0.1)}>
         <div className="lg:col-span-2 marginalia">(00)</div>
