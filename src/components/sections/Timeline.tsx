@@ -5,19 +5,19 @@ import SectionHeader from '../common/SectionHeader';
 import { timeline, startYear, FIRST_YEAR, LAST_YEAR } from '../../data/timeline';
 
 /** 年がひとつ空くごとに足される余白（px） */
-const YEAR_GAP = 56;
-const BASE_GAP = 40;
+const YEAR_GAP = 64;
+const BASE_GAP = 44;
 
 /**
  * これまでのわたし。
  *
- * 以前は GSAP の pin による横スクロールだったが、ページを章ごとに
- * 分けたことで「スクロールで見せる」必然性が無くなり、
- * 静かな紙面からも浮いていた。縦に読ませる年表にしている。
- *
- * 年ごとのまとまりの上の余白を、前の年からの隔たりに比例させている。
+ * 縦に一本の時間軸を通し、できごとを軸上の点として打つ。
+ * 年ごとのまとまりの上の余白は、前の年からの隔たりに比例させている。
  * 2016 から 2019 は間延びし、できごとの重なった 2025 は詰まる。
- * 表紙の目盛りが示す粗密と、そのまま同じものを縦で見せている。
+ * 空いた年数はその余白に書き添えてあるので、間延びが
+ * 単なる余白ではなく「空いた時間」だと読める。
+ *
+ * 表紙の目盛りが横で示している粗密を、ここでは縦で見せている。
  */
 const Timeline: React.FC = () => {
   const years = useMemo(() => {
@@ -28,12 +28,15 @@ const Timeline: React.FC = () => {
     });
 
     const entries = Array.from(map.entries()).sort((a, b) => a[0] - b[0]);
-    return entries.map(([year, titles], i) => ({
-      year,
-      titles,
-      // 前の年からの隔たりぶん、上に余白を積む
-      gap: i === 0 ? 0 : BASE_GAP + (year - entries[i - 1][0] - 1) * YEAR_GAP,
-    }));
+    return entries.map(([year, titles], i) => {
+      const skipped = i === 0 ? 0 : year - entries[i - 1][0] - 1;
+      return {
+        year,
+        titles,
+        skipped,
+        gap: i === 0 ? 0 : BASE_GAP + skipped * YEAR_GAP,
+      };
+    });
   }, []);
 
   return (
@@ -51,33 +54,52 @@ const Timeline: React.FC = () => {
         </motion.div>
       </Reveal>
 
-      <ol className="list-none m-0 p-0 mt-16">
-        {years.map(({ year, titles, gap }) => (
-          <li key={year} style={{ marginTop: gap }}>
-            <Reveal>
-              <motion.div
-                className="grid grid-cols-1 lg:grid-cols-12 lg:gap-x-10 border-t border-ink/15 pt-4"
-                variants={revealItem}
-              >
-                <div className="lg:col-span-2 mb-3 lg:mb-0">
-                  <span className="marginalia !text-ink">{year}</span>
-                </div>
+      <div className="grid grid-cols-1 lg:grid-cols-12 lg:gap-x-10 mt-20">
+        <div className="lg:col-span-2 marginalia mb-6 lg:mb-0">
+          {FIRST_YEAR}—{LAST_YEAR}
+        </div>
 
-                <ul className="lg:col-span-10 list-none m-0 p-0">
-                  {titles.map((title) => (
-                    <li
-                      key={title}
-                      className="font-display text-[16px] sm:text-[19px] text-ink leading-[1.65] tracking-[0.03em]"
-                    >
-                      {title}
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
-            </Reveal>
-          </li>
-        ))}
-      </ol>
+        {/* 縦に通る時間軸。左の細い線が全体を貫く */}
+        <ol className="lg:col-span-10 relative list-none m-0 p-0 pl-8 sm:pl-12">
+          <span className="absolute left-0 top-1 bottom-1 w-px bg-ink/20" aria-hidden="true" />
+
+          {years.map(({ year, titles, skipped, gap }) => (
+            <li key={year} className="relative" style={{ marginTop: gap }}>
+              {/* 空いた年数を余白そのものに書く */}
+              {skipped > 0 && (
+                <span
+                  className="marginalia absolute left-0 -translate-x-1/2 -translate-y-1/2 bg-paper px-1 whitespace-nowrap"
+                  style={{ top: -gap / 2 }}
+                >
+                  {skipped}年
+                </span>
+              )}
+
+              {/* 軸の上の点 */}
+              <span
+                className="absolute left-0 top-[7px] w-[7px] h-[7px] -translate-x-1/2 rounded-full bg-paper border border-ink/60"
+                aria-hidden="true"
+              />
+
+              <Reveal>
+                <motion.div variants={revealItem}>
+                  <div className="marginalia !text-ink mb-2">{year}</div>
+                  <ul className="list-none m-0 p-0">
+                    {titles.map((title) => (
+                      <li
+                        key={title}
+                        className="font-display text-[16px] sm:text-[19px] text-ink leading-[1.65] tracking-[0.03em]"
+                      >
+                        {title}
+                      </li>
+                    ))}
+                  </ul>
+                </motion.div>
+              </Reveal>
+            </li>
+          ))}
+        </ol>
+      </div>
     </section>
   );
 };

@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { eyecatchData } from '../../data/eyecatchData';
 import { BookItem } from '../../types';
 import SectionHeader from '../common/SectionHeader';
+import TickRule from '../common/TickRule';
 
 interface Entry extends BookItem {
   /** 見出し。「読書日記 ｜ 6/2〜6/8」なら「6/2〜6/8」 */
@@ -50,6 +51,28 @@ const DiaryIndex: React.FC = () => {
     return Array.from(counts.entries()).sort((a, b) => b[0].localeCompare(a[0]));
   }, [entries]);
 
+  /*
+    105 件を書いた日付そのものの位置に打つ。
+    書き続けた時期と空いた時期がそのまま粗密として出る。
+    表紙が年表に対してやっているのと同じことを、日記に対してやっている。
+  */
+  const rhythm = useMemo(() => {
+    const days = entries.map((e) => new Date(e.created_at.replace(/\./g, '-')).getTime());
+    const min = Math.min(...days);
+    const max = Math.max(...days);
+    const span = max - min || 1;
+    return {
+      fractions: days.map((d) => (d - min) / span).sort((a, b) => a - b),
+      // 年の境目
+      dividers: Array.from(new Set(entries.map((e) => e.year)))
+        .map((y) => (new Date(`${y}-01-01`).getTime() - min) / span)
+        .filter((f) => f >= 0 && f <= 1),
+      first: entries[entries.length - 1].created_at,
+      last: entries[0].created_at,
+    };
+  }, [entries]);
+
+
   return (
     <section className="w-full font-jp">
       <div className="px-6 pt-24 pb-12">
@@ -75,6 +98,19 @@ const DiaryIndex: React.FC = () => {
                 {year} <span className="text-ink/30">{count}</span>
               </span>
             ))}
+          </div>
+        </div>
+
+        {/* 書いた日そのものの位置に打った目盛り。書く手の速さが粗密になる */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 lg:gap-x-10 mt-10">
+          <div className="lg:col-span-2 marginalia mb-4 lg:mb-0">Rhythm</div>
+          <div className="lg:col-span-10">
+            <TickRule
+              fractions={rhythm.fractions}
+              dividers={rhythm.dividers}
+              ends={[rhythm.first, rhythm.last]}
+              title={`${rhythm.first} から ${rhythm.last} までの ${entries.length} 件`}
+            />
           </div>
         </div>
       </div>
