@@ -4,6 +4,15 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useReducedMotion } from 'framer-motion';
 
+// リロード時のブラウザによるスクロール位置の復元は、こちらの scrollTo や
+// ScrollTrigger の pin と競合して位置が飛ぶ。
+// ScrollTrigger は登録時点の scrollRestoration を控えておき、refresh のたびに
+// その値へ戻す。したがって registerPlugin より前に設定しないと上書きされる
+// （React の effect の中では手遅れ）。
+if (typeof window !== 'undefined' && 'scrollRestoration' in window.history) {
+  window.history.scrollRestoration = 'manual';
+}
+
 gsap.registerPlugin(ScrollTrigger);
 
 /** Navbar の高さぶん、アンカー移動先を上に逃がす */

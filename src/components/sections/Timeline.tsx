@@ -36,6 +36,13 @@ const BASE_GAP = 40; // 同じ年のできごとどうしの最小の間隔
 const YEAR_GAP = 90; // 年がひとつ空くごとに足される間隔
 const TRACK_HEIGHT = 220;
 
+// カードの移動距離に対して、どれだけスクロールさせるか。
+// 1 なら 1px スクロールでカードが 1px 動く。
+// スマホは 1 スワイプが 500px 前後しかないため、等倍だと年表を抜けるだけで
+// 10 回スワイプすることになる。指の運びに合わせて速める。
+const SCRUB_RATIO_DESKTOP = 1;
+const SCRUB_RATIO_MOBILE = 1.9;
+
 /**
  * これまでのわたし。
  *
@@ -48,13 +55,18 @@ const Timeline: React.FC = () => {
   const trackRef = useRef<HTMLDivElement>(null);
 
   const [activeIndex, setActiveIndex] = useState(0);
-  const [itemWidth, setItemWidth] = useState(300);
+  const [itemWidth, setItemWidth] = useState(260);
+  const [scrubRatio, setScrubRatio] = useState(SCRUB_RATIO_DESKTOP);
   const reduceMotion = useReducedMotion();
 
   // 幅の変化だけを見る。高さで再計算するとモバイルのアドレスバーの
   // 伸縮のたびに pin が組み直されて画面が跳ねる。
   useEffect(() => {
-    const measure = () => setItemWidth(window.innerWidth < 640 ? 200 : 260);
+    const measure = () => {
+      const isMobile = window.innerWidth < 640;
+      setItemWidth(isMobile ? 200 : 260);
+      setScrubRatio(isMobile ? SCRUB_RATIO_MOBILE : SCRUB_RATIO_DESKTOP);
+    };
     measure();
 
     let lastWidth = window.innerWidth;
@@ -85,7 +97,9 @@ const Timeline: React.FC = () => {
     });
   }, [itemWidth]);
 
+  // カードが動く距離と、そのために必要なスクロール量は別物
   const scrollLength = positions[positions.length - 1];
+  const pinLength = Math.round(scrollLength / scrubRatio);
 
   useLayoutEffect(() => {
     if (reduceMotion) return;
@@ -98,7 +112,7 @@ const Timeline: React.FC = () => {
       ScrollTrigger.create({
         trigger: section,
         start: 'center center',
-        end: () => `+=${scrollLength}`,
+        end: () => `+=${pinLength}`,
         scrub: 1,
         pin: true,
         anticipatePin: 1,
@@ -119,7 +133,7 @@ const Timeline: React.FC = () => {
     }, sectionRef);
 
     return () => ctx.revert();
-  }, [positions, scrollLength, reduceMotion]);
+  }, [positions, scrollLength, pinLength, reduceMotion]);
 
   const activeYear = startYear(timeline[activeIndex].date);
 

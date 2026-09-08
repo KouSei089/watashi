@@ -42,6 +42,22 @@ body {
   background: #d1d5db;
 }
 
+/* 読書グリッドのセル。
+   画面に入ったぶんだけ描画させて負荷スパイクを防ぐ。
+   固定値の contain-intrinsic-size（150px）は実寸（10列で約95px、5列で約60px）
+   と食い違い、画面外の行が高さを過大申告していた。その結果スクロール中に
+   ページ全体の高さが変わり続け、そのたびに ScrollTrigger.refresh() が走って
+   年表の pin が揺れる。auto を付けて実際の高さを記憶させる。 */
+.diary-cell {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 60px;
+}
+@media (min-width: 768px) {
+  .diary-cell {
+    contain-intrinsic-size: auto 96px;
+  }
+}
+
 /* --- アニメーション --------------------------------------------------
    以前は各コンポーネントの dangerouslySetInnerHTML に <style> を
    直接書いていたため、同じ keyframes が重複して描画されていた。 */

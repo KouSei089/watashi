@@ -41,7 +41,7 @@ const EyecatchGrid: React.FC = () => {
 
       {/*
         JSによる制御は入れず単純なCSSグリッドのまま。
-        content-visibility を各要素にかけて、画面に入ったぶんだけ描画させる。
+        描画の間引きは .diary-cell（index.css）に寄せている。
         列ごとのパララックスは、格子の罫線が崩れるうえに
         時系列の並び（行方向）が読めなくなるため採らなかった。
       */}
@@ -55,8 +55,7 @@ const EyecatchGrid: React.FC = () => {
             href={item.noteUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative aspect-[4/3] overflow-hidden bg-white border-r border-b border-gray-100 block"
-            style={{ contentVisibility: 'auto', containIntrinsicSize: '200px 150px' } as React.CSSProperties}
+            className="diary-cell group relative aspect-[4/3] overflow-hidden bg-white border-r border-b border-gray-100 block"
           >
             <img
               src={item.eyecatch}
