@@ -20,6 +20,8 @@ interface TickRuleProps {
   activeIndex?: number | null;
   /** 目盛りにさわったとき。添字を返す */
   onHover?: (index: number | null) => void;
+  /** 目盛りを押したとき。指で触る画面にはホバーが無いため */
+  onSelect?: (index: number) => void;
   title: string;
   delay?: number;
 }
@@ -43,12 +45,13 @@ const TickRule: React.FC<TickRuleProps> = ({
   labels,
   activeIndex = null,
   onHover,
+  onSelect,
   title,
   delay = 0,
 }) => {
   const reduceMotion = useReducedMotion();
   const usableW = VIEW_W - PAD_X * 2;
-  const interactive = !!onHover;
+  const interactive = !!onHover || !!onSelect;
 
   return (
     <div>
@@ -131,6 +134,7 @@ const TickRule: React.FC<TickRuleProps> = ({
                 fill="transparent"
                 style={{ cursor: 'pointer' }}
                 onMouseEnter={() => onHover?.(i)}
+                onClick={() => onSelect?.(i)}
               />
             );
           })}

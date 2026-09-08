@@ -1,8 +1,9 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import { eyecatchData } from '../../data/eyecatchData';
 import { BookItem } from '../../types';
 import SectionHeader from '../common/SectionHeader';
 import TickRule from '../common/TickRule';
+import { useScrollTo } from '../../lib/lenis';
 
 interface Entry extends BookItem {
   /** 見出し。「読書日記 ｜ 6/2〜6/8」なら「6/2〜6/8」 */
@@ -41,9 +42,14 @@ const pad = (n: number) => String(n).padStart(3, '0');
  * カードと相互に連動する。カードに触れるとその 1 本が伸び、
  * 目盛りに触れるとそのカードが浮かぶ。図と実データが
  * 別物に見えないようにするため。
+ *
+ * 105 件を上から辿るしかないのが操作性の一番の問題だったので、
+ * 年の見出しを画面上部に貼り付けて、いつでも年へ飛べるようにした。
+ * Rhythm は押しても選べる。指で触る画面にはホバーが無い。
  */
 const DiaryIndex: React.FC = () => {
   const [active, setActive] = useState<number | null>(null);
+  const scrollTo = useScrollTo();
 
   const entries = useMemo(
     () =>
@@ -89,6 +95,20 @@ const DiaryIndex: React.FC = () => {
 
   const activeEntry = active === null ? null : entries[active];
 
+  const jumpToYear = useCallback(
+    (year: string) => scrollTo(`#diary-${year}`),
+    [scrollTo]
+  );
+
+  // 目盛りを押したら、その 1 件が入っている年まで送る
+  const selectTick = useCallback(
+    (i: number) => {
+      setActive(i);
+      jumpToYear(entries[i].year);
+    },
+    [entries, jumpToYear]
+  );
+
   return (
     <section className="w-full font-jp">
       <div className="px-6 pt-24 pb-12">
@@ -108,11 +128,16 @@ const DiaryIndex: React.FC = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 lg:gap-x-10 mt-16 pb-3 border-b border-ink/15">
           <div className="lg:col-span-2 marginalia">{entries.length} Entries</div>
-          <div className="lg:col-span-10 flex flex-wrap gap-x-8 gap-y-1 mt-2 lg:mt-0">
+          <div className="lg:col-span-10 flex flex-wrap gap-x-6 gap-y-1 mt-2 lg:mt-0">
             {years.map(([year, count]) => (
-              <span key={year} className="marginalia">
+              <button
+                key={year}
+                type="button"
+                onClick={() => jumpToYear(year)}
+                className="marginalia bg-transparent border-0 p-0 hover:!text-ink transition-colors"
+              >
                 {year} <span className="text-ink/30">{count}</span>
-              </span>
+              </button>
             ))}
           </div>
         </div>
@@ -127,14 +152,17 @@ const DiaryIndex: React.FC = () => {
               ends={[rhythm.first, rhythm.last]}
               activeIndex={active}
               onHover={setActive}
+              onSelect={selectTick}
               title={`${rhythm.first} から ${rhythm.last} までの ${entries.length} 件`}
             />
             {/* いま指している 1 件。図の下に文字で出す */}
             <div className="h-5 mt-2">
-              {activeEntry && (
+              {activeEntry ? (
                 <span className="marginalia !text-ink">
                   {pad((active ?? 0) + 1)} — {activeEntry.created_at} — {activeEntry.title}
                 </span>
+              ) : (
+                <span className="marginalia">目盛りにふれると、その日の記録が出ます</span>
               )}
             </div>
           </div>
@@ -144,8 +172,12 @@ const DiaryIndex: React.FC = () => {
       {/* 年ごとに区切った索引 */}
       <div className="w-full px-6 pb-24">
         {grouped.map(([year, items]) => (
-          <section key={year} className="mt-14 first:mt-0">
-            <div className="flex items-baseline gap-4 pb-3 mb-5 border-b border-ink/15">
+          <section key={year} id={`diary-${year}`} className="mt-14 first:mt-0 scroll-mt-16">
+            {/*
+              年の見出しは画面上部に貼り付ける。105 件を流し読みしている
+              あいだ、いま何年を見ているかが常に分かる。
+            */}
+            <div className="sticky top-14 z-20 flex items-baseline gap-4 py-3 mb-5 border-b border-ink/15 bg-paper/80 backdrop-blur-sm">
               <span className="marginalia !text-ink">{year}</span>
               <span className="marginalia">{items.length} entries</span>
             </div>
@@ -158,8 +190,11 @@ const DiaryIndex: React.FC = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="diary-cell group block no-underline"
+                  aria-label={`${entry.kind} ${entry.title}（${entry.created_at}）を note で読む`}
                   onMouseEnter={() => setActive(index)}
                   onMouseLeave={() => setActive(null)}
+                  onFocus={() => setActive(index)}
+                  onBlur={() => setActive(null)}
                 >
                   <div
                     className={`relative aspect-[1280/669] overflow-hidden transition-shadow duration-500 ${
@@ -187,7 +222,12 @@ const DiaryIndex: React.FC = () => {
                       {entry.created_at}
                     </span>
                   </div>
-                  <div className="text-[11px] text-ink/60 leading-[1.5] mt-0.5">{entry.title}</div>
+                  <div className="text-[11px] text-ink/60 leading-[1.5] mt-0.5">
+                    {entry.title}
+                    <span className="text-[9px] align-super ml-1 opacity-0 group-hover:opacity-60 group-focus:opacity-60 transition-opacity">
+                      ↗
+                    </span>
+                  </div>
                 </a>
               ))}
             </div>
