@@ -137,24 +137,47 @@ body {
   .grain-overlay { opacity: 0.09; }
 }
 
-/* ページの背景。大きくぼかした色の面をゆっくり漂わせる */
-.opening-blob {
+/* ページの背景。大きくぼかした色の面をゆっくり漂わせる。
+   4 枚に別々の道筋を与えている。同じ動きを時間差で流すと、
+   ずれていても同じ形が繰り返し通ることが見えてしまう。
+   往復（alternate）ではなく始点に戻る閉じた道にして、
+   折り返しの瞬間が見えないようにしている。 */
+.soft-blob {
   position: absolute;
   border-radius: 50%;
   filter: blur(80px);
   opacity: 0.8;
   will-change: transform;
 }
-.opening-blob--drift {
-  animation-name: blob-drift;
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: infinite;
-  animation-direction: alternate;
-}
-@keyframes blob-drift {
+.soft-blob--0 { animation: drift-0 52s ease-in-out infinite; }
+.soft-blob--1 { animation: drift-1 67s ease-in-out infinite; }
+.soft-blob--2 { animation: drift-2 44s ease-in-out infinite; }
+.soft-blob--3 { animation: drift-3 78s ease-in-out infinite; }
+
+@keyframes drift-0 {
   0%   { transform: translate3d(0, 0, 0) scale(1); }
-  50%  { transform: translate3d(4vw, 3vh, 0) scale(1.08); }
-  100% { transform: translate3d(-3vw, 5vh, 0) scale(0.96); }
+  25%  { transform: translate3d(7vw, 5vh, 0) scale(1.10); }
+  50%  { transform: translate3d(3vw, 12vh, 0) scale(0.95); }
+  75%  { transform: translate3d(-5vw, 6vh, 0) scale(1.05); }
+  100% { transform: translate3d(0, 0, 0) scale(1); }
+}
+@keyframes drift-1 {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  30%  { transform: translate3d(-9vw, 7vh, 0) scale(0.92); }
+  60%  { transform: translate3d(-2vw, -6vh, 0) scale(1.12); }
+  100% { transform: translate3d(0, 0, 0) scale(1); }
+}
+@keyframes drift-2 {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  40%  { transform: translate3d(-6vw, -9vh, 0) scale(1.08); }
+  70%  { transform: translate3d(6vw, -3vh, 0) scale(0.94); }
+  100% { transform: translate3d(0, 0, 0) scale(1); }
+}
+@keyframes drift-3 {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  35%  { transform: translate3d(10vw, -4vh, 0) scale(1.06); }
+  65%  { transform: translate3d(4vw, 9vh, 0) scale(0.9); }
+  100% { transform: translate3d(0, 0, 0) scale(1); }
 }
 
 /* 次の章へ促すマウスアイコン */
