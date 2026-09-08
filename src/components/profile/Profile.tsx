@@ -6,13 +6,19 @@ import { profile, likes } from '../../data/profile';
 import { NOTE_URL, READS_URL, PROFILE_PHOTOS } from '../../data/site';
 
 /**
- * 案C｜写真を主役にする。
+ * 「わたし」の節。
  *
- * ぼかしをやめ、写真をはっきり大きく見せる。
+ * 写真を主役にする。以前はぼかした 1 枚を小さく置いていたが、
+ * 白い画面に何も無いようにしか見えなかった。ぼかしをやめ、大きく見せる。
  * 「シャッターを押すのがすきです」と書いている人のサイトとして筋が通る。
- * 写真は PROFILE_PHOTOS に足すだけで、1 枚でも複数枚でも成立する組み。
+ *
+ * 写真は src/data/site.ts の PROFILE_PHOTOS に足すだけでよく、
+ * 1 枚でも複数枚でも成立する。奇数枚のときは最後の 1 枚が横幅いっぱいになる。
+ *
+ * 本文は 11px から 15/17px へ。<br> 区切りの一段落に潰れていた
+ * 「すきなもの」は 1 行ずつ独立させ、スクロールで順に現れる。
  */
-const ProfilePhoto: React.FC = () => {
+const Profile: React.FC = () => {
   const [lead, ...rest] = PROFILE_PHOTOS;
 
   return (
@@ -114,4 +120,4 @@ const ProfilePhoto: React.FC = () => {
   );
 };
 
-export default ProfilePhoto;
+export default Profile;
