@@ -31,7 +31,7 @@ const AppContent: React.FC = () => {
   }, [location.pathname, location.hash, scrollTo]);
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-paper min-h-screen">
       <Cursor />
       <Navbar />
       <ChapterRail />

@@ -13,18 +13,29 @@ html {
 }
 
 body {
-  @apply bg-white text-gray-900 font-jp;
+  @apply bg-paper text-ink font-jp;
   -webkit-font-smoothing: antialiased;
 }
 
-.wavy-underline {
-  @apply no-underline border-b border-transparent transition-all duration-300;
-  text-decoration: underline wavy rgba(0,0,0,0);
-  text-underline-offset: 4px;
+/*
+  リンクは素朴な下線に。以前は波線（text-decoration: wavy）だったが、
+  情報を整然と並べる組みの中では装飾が浮く。
+*/
+.rule-underline {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+  text-decoration-color: currentColor;
+  transition: opacity 0.3s ease;
+}
+.rule-underline:hover {
+  opacity: 0.5;
 }
 
-.wavy-underline:hover {
-  text-decoration-color: rgba(0,0,0,0.3);
+/* 余白に置く小さなラベル・章番号・日付など */
+.marginalia {
+  @apply text-[10px] tracking-[0.18em] text-ink/40;
+  font-variant-numeric: tabular-nums;
 }
 
 /* スクロールバーのカスタマイズ（ミニマルに） */
@@ -35,11 +46,11 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #e5e7eb;
+  background: #dcdcd6;
   border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #d1d5db;
+  background: #c9c9c1;
 }
 
 /* 読書グリッドのセル。

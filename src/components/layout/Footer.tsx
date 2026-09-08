@@ -1,53 +1,44 @@
 import React from 'react';
-import { CONTACT_EMAIL } from '../../data/site';
+import { CONTACT_EMAIL, NOTE_URL, READS_URL } from '../../data/site';
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="w-full bg-white text-gray-600 py-16 mt-24 font-jp border-t border-gray-100">
-      <div className="max-w-5xl mx-auto px-4 flex flex-col">
-        {/* JOB OFFER */}
-        <div className="w-full flex flex-col items-start mb-8">
-          <div className="text-base sm:text-lg text-gray-600 mb-3 leading-relaxed font-jp">
+    <footer className="w-full bg-paper text-ink font-jp border-t border-ink/10">
+      <div className="px-6 md:px-12 py-16 grid grid-cols-1 lg:grid-cols-12 gap-y-10 lg:gap-x-10">
+        <div className="lg:col-span-2">
+          <span className="marginalia">Contact</span>
+        </div>
+
+        <div className="lg:col-span-7">
+          <p className="m-0 mb-4 text-[13px] text-ink/60 leading-[1.9]">
             ご相談やお仕事のご依頼は、どうぞお気軽にメールにてご連絡ください。
-          </div>
+          </p>
           <a
             href={`mailto:${CONTACT_EMAIL}`}
-            className="mt-1 text-base sm:text-lg text-black wavy-underline tracking-[0.08em] transition-all duration-500 ease-out hover:opacity-60"
+            className="rule-underline text-[15px] sm:text-[17px] text-ink tracking-[0.02em]"
           >
             {CONTACT_EMAIL}
-            <span className="text-[10px] align-super ml-1 opacity-70">↗︎</span>
           </a>
         </div>
 
-        {/* Divider */}
-        <div className="w-full border-t border-gray-100 my-8"></div>
-
-        {/* Copyright - 中央寄せ */}
-        <div className="text-xs text-gray-400 text-center font-jp leading-loose">
-          &copy; {currentYear} watashi - izumi haruya. All rights reserved.
-          <br />
-          <div className="inline-flex items-center justify-center gap-1.5 mt-2 text-slate-400">
-            <span>Designed &amp; built with</span>
-            <span 
-              className="inline-flex items-center justify-center" 
-              aria-label="sparkle" 
-              role="img"
-            >
-              <svg width="18" height="18" viewBox="0 0 20 20" fill="none" className="stroke-current">
-                <g>
-                  <path d="M10 2.5V5.5" strokeWidth="1.2" strokeLinecap="round"/>
-                  <path d="M10 14.5V17.5" strokeWidth="1.2" strokeLinecap="round"/>
-                  <path d="M2.5 10H5.5" strokeWidth="1.2" strokeLinecap="round"/>
-                  <path d="M14.5 10H17.5" strokeWidth="1.2" strokeLinecap="round"/>
-                  <circle cx="10" cy="10" r="3.5" strokeWidth="1.2"/>
-                </g>
-              </svg>
-            </span>
-            <span>in Japan.</span>
-          </div>
+        <div className="lg:col-span-3 flex flex-col gap-2 items-start">
+          <span className="marginalia mb-1">Elsewhere</span>
+          <a href={NOTE_URL} target="_blank" rel="noopener noreferrer" className="rule-underline text-[13px] text-ink">
+            note <span className="text-[9px] align-super">↗</span>
+          </a>
+          <a href={READS_URL} target="_blank" rel="noopener noreferrer" className="rule-underline text-[13px] text-ink">
+            reads(@izuha) <span className="text-[9px] align-super">↗</span>
+          </a>
         </div>
+      </div>
+
+      <div className="px-6 md:px-12 py-6 border-t border-ink/10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <span className="marginalia">
+          © {currentYear} watashi — izumi haruya
+        </span>
+        <span className="marginalia">Designed &amp; built in Japan</span>
       </div>
     </footer>
   );

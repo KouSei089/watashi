@@ -79,10 +79,9 @@ const Navbar: React.FC = () => {
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 w-full z-[100] transition-all duration-300 flex items-center justify-between px-6 md:px-12 font-jp ${
-          scrolled || menuOpen ? 'backdrop-blur-md bg-white/80' : 'bg-transparent'
-        } ${scrolled ? 'border-b border-gray-100' : ''}`}
-        style={{ height: scrolled ? '3.5rem' : '5rem' }}
+        className={`fixed top-0 left-0 w-full z-[100] transition-colors duration-300 flex items-center justify-between px-6 md:px-12 font-jp h-14 ${
+          scrolled || menuOpen ? 'backdrop-blur-md bg-paper/85 border-b border-ink/10' : 'bg-transparent'
+        }`}
       >
         <Link
           to={HOME_PATH}
@@ -95,38 +94,35 @@ const Navbar: React.FC = () => {
             }
           }}
         >
-          <h1 className={`text-black transition-all duration-300 font-normal m-0 tracking-tight ${
-            scrolled ? 'text-sm opacity-70' : 'text-base opacity-100'
-          }`}>
-            watashi - izumi haruya
+          <h1 className="text-ink font-medium m-0 text-[13px] tracking-[0.02em]">
+            watashi — izumi haruya
           </h1>
         </Link>
 
         {/* デスクトップメニュー */}
         <div className="hidden md:flex items-center">
-          <ul className="flex space-x-8 list-none m-0 p-0 items-center">
-            {menuItems.map((item) => (
-              <li key={item.hash}>
+          <ul className="flex list-none m-0 p-0 items-center gap-1.5">
+            {menuItems.map((item, i) => (
+              <li key={item.hash} className="flex items-center gap-1.5">
                 <button
                   type="button"
                   onClick={() => goToChapter(item.hash)}
-                  className={`text-black bg-transparent border-0 p-0 cursor-pointer wavy-underline transition-all duration-500 ease-out hover:opacity-60 ${scrolled ? 'text-xs' : 'text-sm'}`}
+                  className="text-ink bg-transparent border-0 p-0 cursor-pointer text-[13px] rule-underline"
                 >
                   {item.name}
                 </button>
+                {i < menuItems.length - 1 && <span className="text-ink/30 text-[13px]">,</span>}
               </li>
             ))}
-            <li>
-              <a
-                href={NOTE_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-black no-underline text-[10px] opacity-40 hover:opacity-100 transition-opacity flex items-center"
-              >
-                note <ExternalIcon />
-              </a>
-            </li>
           </ul>
+          <a
+            href={NOTE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="ml-10 text-ink/40 no-underline text-[11px] hover:text-ink transition-colors flex items-center"
+          >
+            note <ExternalIcon />
+          </a>
         </div>
 
         {/* モバイルハンバーガー */}
@@ -137,15 +133,15 @@ const Navbar: React.FC = () => {
           aria-label={menuOpen ? 'メニューを閉じる' : 'メニューを開く'}
         >
           <div className="relative w-5 h-4">
-            <span className={`absolute block w-5 h-[1.5px] bg-black transition-all duration-300 ${menuOpen ? 'top-2 rotate-45' : 'top-0'}`} />
-            <span className={`absolute block w-5 h-[1.5px] bg-black transition-all duration-300 top-2 ${menuOpen ? 'opacity-0' : 'opacity-100'}`} />
-            <span className={`absolute block w-5 h-[1.5px] bg-black transition-all duration-300 ${menuOpen ? 'top-2 -rotate-45' : 'top-4'}`} />
+            <span className={`absolute block w-5 h-[1px] bg-ink transition-all duration-300 ${menuOpen ? 'top-2 rotate-45' : 'top-0'}`} />
+            <span className={`absolute block w-5 h-[1px] bg-ink transition-all duration-300 top-2 ${menuOpen ? 'opacity-0' : 'opacity-100'}`} />
+            <span className={`absolute block w-5 h-[1px] bg-ink transition-all duration-300 ${menuOpen ? 'top-2 -rotate-45' : 'top-4'}`} />
           </div>
         </button>
       </nav>
 
       {/* モバイルメニュー */}
-      <div className={`fixed inset-0 z-[90] bg-white transition-all duration-500 ease-in-out md:hidden ${
+      <div className={`fixed inset-0 z-[90] bg-paper transition-all duration-500 ease-in-out md:hidden ${
         menuOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-4'
       }`}>
         <div className="flex flex-col items-center justify-center h-full space-y-10 font-jp">
@@ -154,7 +150,7 @@ const Navbar: React.FC = () => {
               key={item.hash}
               type="button"
               onClick={() => goToChapter(item.hash)}
-              className="text-xl text-black bg-transparent border-0 tracking-[0.15em]"
+              className="text-[17px] text-ink bg-transparent border-0 tracking-[0.08em]"
             >
               {item.name}
             </button>
@@ -163,12 +159,12 @@ const Navbar: React.FC = () => {
             href={NOTE_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-base text-gray-400 no-underline flex items-center"
+            className="text-[13px] text-ink/40 no-underline flex items-center"
             onClick={() => setMenuOpen(false)}
           >
             note <ExternalIcon />
           </a>
-          <button onClick={() => setMenuOpen(false)} className="text-[10px] text-gray-300 uppercase tracking-widest pt-8">Close</button>
+          <button onClick={() => setMenuOpen(false)} className="marginalia pt-8">Close</button>
         </div>
       </div>
     </>

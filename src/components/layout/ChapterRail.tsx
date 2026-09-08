@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useScrollTo, useLenis } from '../../lib/lenis';
 
 const chapters = [
-  { id: 'profile', label: 'わたし' },
-  { id: 'history', label: 'これまでのわたし' },
-  { id: 'book-diary', label: '読書の日記' },
+  { id: 'profile', index: '01', label: 'わたし' },
+  { id: 'history', index: '02', label: 'これまでのわたし' },
+  { id: 'book-diary', index: '03', label: '読書の日記' },
 ];
 
 /**
@@ -86,19 +86,20 @@ const ChapterRail: React.FC = () => {
           >
             {/* ラベルはデスクトップのみ。狭い画面では点だけにする */}
             <span
-              className={`hidden md:block text-[10px] tracking-[0.2em] whitespace-nowrap transition-all duration-500 ${
+              className={`hidden md:flex items-baseline gap-2 text-[10px] tracking-[0.18em] whitespace-nowrap transition-all duration-500 ${
                 isActive
-                  ? 'opacity-50 text-black'
-                  : 'opacity-0 group-hover:opacity-40 text-gray-500 translate-x-1 group-hover:translate-x-0'
+                  ? 'opacity-100 text-ink/60'
+                  : 'opacity-0 group-hover:opacity-50 text-ink/50 translate-x-1 group-hover:translate-x-0'
               }`}
             >
+              <span className="tabular-nums">({chapter.index})</span>
               {chapter.label}
             </span>
 
             {/* 目盛り。現在の章は、章の中の進み具合ぶんだけ伸びる */}
-            <span className="relative block h-px w-2 md:w-8 bg-black/20 overflow-hidden">
+            <span className="relative block h-px w-2 md:w-8 bg-ink/20 overflow-hidden">
               <span
-                className="absolute inset-y-0 left-0 bg-black/60 transition-[width] duration-150 ease-out"
+                className="absolute inset-y-0 left-0 bg-ink/70 transition-[width] duration-150 ease-out"
                 style={{ width: isActive ? `${chapterProgress * 100}%` : '0%' }}
               />
             </span>

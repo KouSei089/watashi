@@ -1,40 +1,32 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import Reveal, { revealItem } from '../common/Reveal';
-import SectionTitle from '../common/SectionTitle';
+import SectionHeader from '../common/SectionHeader';
 import { profile, likes } from '../../data/profile';
 import { NOTE_URL, READS_URL, PROFILE_PHOTOS } from '../../data/site';
 
 /**
  * 「わたし」の節。
  *
- * 写真を主役にする。以前はぼかした 1 枚を小さく置いていたが、
- * 白い画面に何も無いようにしか見えなかった。ぼかしをやめ、大きく見せる。
+ * 写真は画面の端まで使う。max-w のコンテナに収めると
+ * 「ページに貼られた画像」に見えてしまい、写真が主役にならない。
+ * 切り取りもしない（3:2 のまま）。撮られた構図をそのまま出す。
  *
- * 写真は src/data/site.ts の PROFILE_PHOTOS に足すだけでよく、
- * 1 枚でも複数枚でも成立する。奇数枚のときは最後の 1 枚が横幅いっぱいになる。
- *
- * 文章は地の文のまま。「すきなもの」を一行ずつ大きく見せる案も試したが、
- * 強調せず続けて読ませる元のかたちに戻した。
+ * 写真は src/data/site.ts の PROFILE_PHOTOS に足すだけでよい。
+ * 1 枚目が主題として全幅、2 枚目以降は 2 カラム。
  */
 const Profile: React.FC = () => {
   const [lead, ...rest] = PROFILE_PHOTOS;
 
   return (
-    <section className="w-full bg-white font-jp">
-      {/* 主題の1枚 */}
+    <section className="w-full bg-paper font-jp">
       {lead && (
         <motion.figure
-          className="m-0 w-full max-w-6xl mx-auto px-0 sm:px-8 pt-24"
-          initial={{ opacity: 0, scale: 1.02 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1] }}
+          className="m-0 w-full pt-20"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
         >
-          {/*
-            高さを vh で固定すると 3:2 の写真が 2.2:1 の帯に切り取られ、
-            撮られた構図（上の梁、手前のテーブル）が落ちてしまう。
-            写真そのままの比率で置く。
-          */}
           <img
             src={lead.src}
             alt={lead.alt}
@@ -44,43 +36,55 @@ const Profile: React.FC = () => {
         </motion.figure>
       )}
 
-      <div className="max-w-3xl mx-auto px-6 sm:px-8 pt-20 pb-16">
+      <div className="px-6 md:px-12 pt-20 pb-16">
         <Reveal>
           <motion.div variants={revealItem}>
-            <SectionTitle id="profile" className="mb-14">わたし</SectionTitle>
+            <SectionHeader id="profile" index="01" label="About">
+              わたし
+            </SectionHeader>
           </motion.div>
 
-          <motion.p
-            className="max-w-2xl text-[14px] sm:text-[16px] text-gray-600 leading-[2.1] tracking-[0.02em]"
-            variants={revealItem}
-          >
-            <strong className="block mb-5 text-black text-[15px] sm:text-[17px] font-medium">
-              {profile.lead}
-            </strong>
-            {profile.bio}
-            <br className="hidden sm:block" />
-            {profile.themeLine}
-            <br />
-            <br />
-            {profile.likesIntro}
-            <br />
-            {likes.map((like) => (
-              <React.Fragment key={like}>
-                {like}
-                <br />
-              </React.Fragment>
-            ))}
-          </motion.p>
+          <motion.div className="grid grid-cols-1 lg:grid-cols-12 lg:gap-x-10 mt-12" variants={revealItem}>
+            <div className="lg:col-span-2" />
+            <p className="lg:col-span-7 max-w-2xl text-[13px] sm:text-[14px] text-ink/70 leading-[2.05] tracking-[0.02em] m-0">
+              <strong className="block mb-5 text-ink text-[14px] sm:text-[15px] font-medium">
+                {profile.lead}
+              </strong>
+              {profile.bio}
+              <br className="hidden sm:block" />
+              {profile.themeLine}
+              <br />
+              <br />
+              {profile.likesIntro}
+              <br />
+              {likes.map((like) => (
+                <React.Fragment key={like}>
+                  {like}
+                  <br />
+                </React.Fragment>
+              ))}
+            </p>
+
+            <div className="lg:col-span-3 mt-10 lg:mt-0 flex flex-col gap-2 items-start">
+              <span className="marginalia mb-1">Links</span>
+              <a href={NOTE_URL} target="_blank" rel="noopener noreferrer" className="rule-underline text-[13px] text-ink">
+                note <span className="text-[9px] align-super">↗</span>
+              </a>
+              <a href={READS_URL} target="_blank" rel="noopener noreferrer" className="rule-underline text-[13px] text-ink">
+                reads(@izuha) <span className="text-[9px] align-super">↗</span>
+              </a>
+            </div>
+          </motion.div>
         </Reveal>
       </div>
 
-      {/* 残りの写真。無ければ何も出ない */}
+      {/* 残りの写真も端まで。無ければ何も出ない */}
       {rest.length > 0 && (
-        <div className="max-w-6xl mx-auto px-0 sm:px-8 mb-20 grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
+        <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-px bg-ink/10">
           {rest.map((photo, i) => (
             <Reveal key={photo.src}>
               <motion.figure
-                className={`m-0 ${rest.length % 2 === 1 && i === rest.length - 1 ? 'sm:col-span-2' : ''}`}
+                className={`m-0 bg-paper ${rest.length % 2 === 1 && i === rest.length - 1 ? 'sm:col-span-2' : ''}`}
                 variants={revealItem}
               >
                 <img
@@ -95,19 +99,6 @@ const Profile: React.FC = () => {
           ))}
         </div>
       )}
-
-      <div className="max-w-3xl mx-auto px-6 sm:px-8 pb-24">
-        <Reveal>
-          <motion.div className="flex gap-8" variants={revealItem}>
-            <a href={NOTE_URL} target="_blank" rel="noopener noreferrer" className="wavy-underline text-lg">
-              note <span className="text-[10px] align-super">↗</span>
-            </a>
-            <a href={READS_URL} target="_blank" rel="noopener noreferrer" className="wavy-underline text-lg">
-              reads(@izuha) <span className="text-[10px] align-super">↗︎</span>
-            </a>
-          </motion.div>
-        </Reveal>
-      </div>
     </section>
   );
 };

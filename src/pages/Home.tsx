@@ -20,7 +20,7 @@ const Home: React.FC = () => (
   // auto になってこの div 自体がスクロールコンテナになり、useScroll の進捗が
   // 常に 0 のまま（＝スクロール連動の演出が一切効かない）になる。
   // 横のはみ出しは body 側で止めている。
-  <div className="bg-white w-full font-jp">
+  <div className="bg-paper w-full font-jp">
     <Profile />
     <Timeline />
     <EyecatchGrid />

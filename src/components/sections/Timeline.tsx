@@ -2,7 +2,7 @@ import React, { useState, useRef, useMemo, useLayoutEffect, useEffect } from 're
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import SectionTitle from '../common/SectionTitle';
+import SectionHeader from '../common/SectionHeader';
 
 interface TimelineItem {
   title: string;
@@ -140,15 +140,17 @@ const Timeline: React.FC = () => {
   // reduced-motion では pin も横スクロールも行わず、素直な縦並びにする
   if (reduceMotion) {
     return (
-      <section className="w-full bg-white">
-        <div className="max-w-5xl mx-auto px-6 sm:px-8 py-12">
-          <SectionTitle id="history" className="mb-10">これまでのわたし</SectionTitle>
-          <ol className="list-none m-0 p-0 border-l border-gray-200">
+      <section className="w-full bg-paper">
+        <div className="px-6 md:px-12 py-16">
+          <SectionHeader id="history" index="02" label="History" className="mb-12">
+            これまでのわたし
+          </SectionHeader>
+          <ol className="list-none m-0 p-0 border-l border-ink/10">
             {timeline.map((item) => (
               <li key={item.title} className="relative pl-6 pb-8">
-                <span className="absolute left-[-3.5px] top-2 w-1.5 h-1.5 rounded-full bg-black" />
-                <div className="text-xl font-bold">{item.date}</div>
-                <div className="text-sm font-light">{item.title}</div>
+                <span className="absolute left-[-2.5px] top-2 w-1 h-1 rounded-full bg-ink" />
+                <div className="marginalia mb-1">{item.date}</div>
+                <div className="text-[13px] text-ink">{item.title}</div>
               </li>
             ))}
           </ol>
@@ -159,27 +161,31 @@ const Timeline: React.FC = () => {
 
   return (
     <>
-      <div className="max-w-5xl mx-auto px-6 sm:px-8 py-12 w-full">
-        <SectionTitle id="history">これまでのわたし</SectionTitle>
+      <div className="px-6 md:px-12 pt-24 pb-16 w-full">
+        <SectionHeader id="history" index="02" label="History">
+          これまでのわたし
+        </SectionHeader>
       </div>
 
       <section
         ref={sectionRef}
-        className="w-full relative overflow-hidden bg-white flex items-center"
+        className="w-full relative overflow-hidden bg-paper flex items-center"
         style={{ minHeight: '60vh' }}
       >
-        {/* 背景の巨大な年号。横に進んでいる実感を出す。
+        {/* いま何年を見ているか。以前は 28vw の巨大な背景文字だったが、
+            小さな文字で情報を並べる組みの中では主張が強すぎた。
+            隅に置くノンブルに変えている。
             mode="wait" にすると退場の完了を待つため、勢いよくスクロールした
             ときに年号が置いていかれる。重ねて同時にクロスフェードさせる。 */}
-        <div className="absolute inset-0 pointer-events-none select-none">
+        <div className="absolute left-6 md:left-12 bottom-8 w-32 h-10 pointer-events-none select-none">
           <AnimatePresence initial={false}>
             <motion.span
               key={activeYear}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 0.05, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-              className="absolute inset-0 flex items-center justify-center text-[28vw] leading-none font-bold text-matte tracking-tighter"
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+              className="absolute inset-0 text-[32px] leading-none text-ink/15 tabular-nums tracking-tight"
             >
               {activeYear}
             </motion.span>
@@ -188,7 +194,7 @@ const Timeline: React.FC = () => {
 
         <div className="w-full relative" style={{ height: TRACK_HEIGHT }}>
           {/* 時間軸そのもの */}
-          <div className="absolute left-0 right-0 top-1/2 h-px bg-gray-100" />
+          <div className="absolute left-0 right-0 top-1/2 h-px bg-ink/10" />
 
           <div
             ref={trackRef}
@@ -208,9 +214,9 @@ const Timeline: React.FC = () => {
                     transform: `scale(${isActive ? 1.05 : 0.95})`,
                   }}
                 >
-                  <div className="text-xl font-bold mb-1">{item.date}</div>
-                  <div className="text-sm font-light px-4 h-10 flex items-center">{item.title}</div>
-                  <div className={`w-1.5 h-1.5 rounded-full mt-4 transition-colors duration-500 ${isActive ? 'bg-black' : 'bg-gray-200'}`} />
+                  <div className="marginalia mb-2">{item.date}</div>
+                  <div className="text-[13px] text-ink px-4 h-10 flex items-center leading-[1.7]">{item.title}</div>
+                  <div className={`w-1 h-1 rounded-full mt-4 transition-colors duration-500 ${isActive ? 'bg-ink' : 'bg-ink/20'}`} />
                 </div>
               );
             })}
