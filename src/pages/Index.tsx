@@ -1,9 +1,10 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { motion, useReducedMotion } from 'framer-motion';
-import { profile } from '../../data/profile';
-import { timeline, timelineFractions, FIRST_YEAR, LAST_YEAR } from '../../data/timeline';
-import { useScrollTo } from '../../lib/lenis';
-import OpeningBackground from './OpeningBackground';
+import { profile } from '../data/profile';
+import { timeline, timelineFractions, FIRST_YEAR, LAST_YEAR } from '../data/timeline';
+import { sections } from '../data/sections';
+import OpeningBackground from '../components/sections/OpeningBackground';
 
 const VIEW_W = 1000;
 const VIEW_H = 44;
@@ -12,21 +13,20 @@ const BASELINE_Y = 34;
 const TICK_TOP = 8;
 
 /**
- * サイトの冒頭。
+ * 表紙。
  *
- * 写真は置かない。代わりに、年表の 16 のできごとを実際の年の位置に打った
- * 目盛りを置いている。装飾としての幾何ではなく、図そのものが情報になる。
- * 2016 から 2019 は間が空き、2025 は 4 本が寄る。この粗密が
- * そのまま「これまでのわたし」の横スクロールの粗密と一致している。
+ * 名前とテーマ、16 のできごとを実際の年の位置に打った目盛り、
+ * そして各章への目次。
+ *
+ * 目盛りは装飾ではなく図そのものが情報になっている。
+ * 2016 から 2019 は間が空き、2025 は 4 本が寄る。この粗密は
+ *「これまでのわたし」の横スクロールの粗密とそのまま一致する。
  */
-const Opening: React.FC = () => {
-  const scrollTo = useScrollTo();
+const Index: React.FC = () => {
   const reduceMotion = useReducedMotion();
-
   const fractions = React.useMemo(() => timelineFractions(), []);
   const usableW = VIEW_W - PAD_X * 2;
 
-  // 年の境目。10 年ぶんの薄い区切り。
   const yearLines = React.useMemo(() => {
     const span = LAST_YEAR - FIRST_YEAR + 1;
     return Array.from({ length: span + 1 }, (_, i) => PAD_X + (i / span) * usableW);
@@ -42,21 +42,19 @@ const Opening: React.FC = () => {
         };
 
   return (
-    <section className="relative w-full bg-paper font-jp min-h-screen flex flex-col justify-between px-6 md:px-12 pt-28 pb-10">
+    <section className="relative w-full bg-paper font-jp min-h-screen flex flex-col justify-between px-6 md:px-12 pt-24 pb-10">
       <OpeningBackground />
 
-      {/* 所在を示す小さな標記 */}
       <motion.div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 lg:gap-x-10" {...appear(0.1)}>
         <div className="lg:col-span-2 marginalia">(00)</div>
         <div className="lg:col-span-10 marginalia">Ama-cho, Oki Islands — Shimane, Japan</div>
       </motion.div>
 
-      {/* 名前とテーマ */}
-      <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 lg:gap-x-10 my-16 lg:my-0">
+      <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 lg:gap-x-10 my-14 lg:my-0">
         <div className="lg:col-span-2" />
         <div className="lg:col-span-10">
           <motion.h1
-            className="m-0 text-[34px] sm:text-[44px] md:text-[52px] leading-[1.2] tracking-[0.04em] text-ink font-medium"
+            className="m-0 font-display text-[38px] sm:text-[50px] md:text-[60px] leading-[1.18] tracking-[0.05em] text-ink"
             {...appear(0.2)}
           >
             {profile.nameJa}
@@ -65,7 +63,7 @@ const Opening: React.FC = () => {
             {profile.nameEn}
           </motion.p>
           <motion.p
-            className="mt-10 text-[14px] sm:text-[16px] text-ink/60 tracking-[0.06em] m-0"
+            className="mt-9 font-display text-[16px] sm:text-[19px] text-ink/70 tracking-[0.08em] m-0"
             {...appear(0.5)}
           >
             {profile.theme}
@@ -75,9 +73,7 @@ const Opening: React.FC = () => {
 
       {/* できごとの目盛り */}
       <motion.div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 lg:gap-x-10" {...appear(0.7)}>
-        <div className="lg:col-span-2 marginalia mb-4 lg:mb-0">
-          {timeline.length} Events
-        </div>
+        <div className="lg:col-span-2 marginalia mb-4 lg:mb-0">{timeline.length} Events</div>
 
         <div className="lg:col-span-10">
           {/*
@@ -93,7 +89,6 @@ const Opening: React.FC = () => {
             aria-label={`${FIRST_YEAR}年から${LAST_YEAR}年までの${timeline.length}のできごと`}
             role="img"
           >
-            {/* 年の区切り */}
             {yearLines.map((x, i) => (
               <line
                 key={`y${i}`}
@@ -108,7 +103,6 @@ const Opening: React.FC = () => {
               />
             ))}
 
-            {/* 時間軸 */}
             <motion.line
               x1={PAD_X}
               x2={VIEW_W - PAD_X}
@@ -123,7 +117,6 @@ const Opening: React.FC = () => {
               transition={{ duration: 1.6, delay: 0.8, ease: [0.22, 1, 0.36, 1] }}
             />
 
-            {/* できごと。同じ年のものは年の幅の中で散らしてある */}
             {fractions.map((f, i) => {
               const x = PAD_X + f * usableW;
               return (
@@ -153,20 +146,34 @@ const Opening: React.FC = () => {
         </div>
       </motion.div>
 
-      {/* 読み進める合図 */}
-      <motion.div className="relative z-10 flex justify-end" {...appear(1.4)}>
-        <button
-          type="button"
-          onClick={() => scrollTo('#profile')}
-          className="flex items-center gap-3 bg-transparent border-0 p-0 text-ink/40 hover:text-ink transition-colors duration-500"
-          aria-label="本文へ進む"
-        >
-          <span className="marginalia">Scroll</span>
-          <span className="block w-10 h-px bg-current" />
-        </button>
-      </motion.div>
+      {/* 目次 */}
+      <motion.nav
+        className="relative z-10 grid grid-cols-1 lg:grid-cols-12 lg:gap-x-10 mt-14 lg:mt-0"
+        aria-label="目次"
+        {...appear(1.0)}
+      >
+        <div className="lg:col-span-2 marginalia mb-4 lg:mb-0">Contents</div>
+        <ul className="lg:col-span-10 list-none m-0 p-0 border-t border-ink/15">
+          {sections.map((section) => (
+            <li key={section.path} className="border-b border-ink/15">
+              <Link
+                to={section.path}
+                className="group flex items-baseline gap-4 sm:gap-8 py-4 no-underline"
+              >
+                <span className="marginalia w-8 shrink-0">({section.index})</span>
+                <span className="marginalia hidden sm:block w-20 shrink-0">{section.label}</span>
+                <span className="font-display text-[17px] sm:text-[20px] text-ink flex-1 group-hover:opacity-60 transition-opacity duration-300">
+                  {section.name}
+                </span>
+                <span className="marginalia hidden md:block">{section.meta}</span>
+                <span className="marginalia transition-transform duration-300 group-hover:translate-x-1">→</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </motion.nav>
     </section>
   );
 };
 
-export default Opening;
+export default Index;

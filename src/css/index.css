@@ -73,6 +73,16 @@ body {
    以前は各コンポーネントの dangerouslySetInnerHTML に <style> を
    直接書いていたため、同じ keyframes が重複して描画されていた。 */
 
+/*
+  自前のカーソルを出しているあいだだけ OS のカーソルを隠す。
+  以前は無条件に cursor: none を当てていたため、タッチ機器や
+  reduced-motion で何も見えないまま操作させることになっていた。
+*/
+.has-custom-cursor,
+.has-custom-cursor * {
+  cursor: none;
+}
+
 /* 読書の日記のサムネイル帯。細い、控えめなスクロールバー */
 .diary-strip {
   scrollbar-width: thin;

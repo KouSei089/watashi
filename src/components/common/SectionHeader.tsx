@@ -37,7 +37,7 @@ const SectionHeader: React.FC<SectionHeaderProps> = ({
     <div className="lg:col-span-10">
       <h2
         id={id}
-        className="text-[19px] sm:text-[22px] text-ink tracking-[0.08em] font-medium m-0 scroll-mt-24"
+        className="font-display text-[21px] sm:text-[26px] text-ink tracking-[0.08em] m-0 scroll-mt-24"
       >
         {children}
       </h2>

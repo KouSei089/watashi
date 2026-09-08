@@ -1,47 +1,65 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Switch, Redirect, useLocation } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-import { LenisProvider, useScrollTo } from './lib/lenis';
+import { LenisProvider } from './lib/lenis';
+import { HOME_PATH } from './data/sections';
 
 import Navbar from './components/layout/Navbar';
-import ChapterRail from './components/layout/ChapterRail';
 import Cursor from './components/common/Cursor';
 
-import Home from './pages/Home';
+import Index from './pages/Index';
+import About from './pages/About';
+import History from './pages/History';
+import Diary from './pages/Diary';
 import Travel from './pages/Travel';
 
+/**
+ * 章ごとに独立したページを持つ。
+ *
+ * 以前は 1 本の縦スクロールに統合していたが、表紙と読書の日記が
+ * それぞれ 1 画面で完結する作りになり、スクロールで繋ぐ必然性が薄れた。
+ * スクロールを要するのは「これまでのわたし」の横スクロールだけで、
+ * それはページの中で従来どおり動く。
+ *
+ * GitHub Pages は SPA のルーティングを知らないため、直リンクとリロードは
+ * public/404.html が index.html に引き戻している。
+ */
 const AppContent: React.FC = () => {
   const location = useLocation();
-  const scrollTo = useScrollTo();
 
   useEffect(() => {
-    // ハッシュ付きで開かれたときは、その章まで送る。
-    // pin の分だけ高さが確定するのを待つ必要があるので 1 フレームでは足りない。
-    if (location.hash) {
-      const timeoutId = setTimeout(() => scrollTo(location.hash), 300);
-      return () => clearTimeout(timeoutId);
-    }
-
     // ScrollTrigger は refresh の前後でスクロール位置を控えて復元する。
-    // 先頭から読み始めてほしい場面でその記憶が残っていると、
-    // 読み始める前に途中まで送られてしまう。
+    // 章を移ったら必ず先頭から読ませたいので、その記憶を消してから戻す。
     ScrollTrigger.clearScrollMemory();
     window.scrollTo(0, 0);
-  }, [location.pathname, location.hash, scrollTo]);
+  }, [location.pathname]);
 
   return (
     <div className="bg-paper min-h-screen">
       <Cursor />
       <Navbar />
-      <ChapterRail />
 
       <main>
-        <Switch>
-          <Route exact path="/watashi" component={Home} />
-          <Route path="/watashi/travel" component={Travel} />
-          <Route render={() => <Redirect to="/watashi" />} />
-        </Switch>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.35, ease: 'easeOut' }}
+          >
+            <Switch location={location}>
+              <Route exact path={HOME_PATH} component={Index} />
+              <Route path={`${HOME_PATH}/about`} component={About} />
+              <Route path={`${HOME_PATH}/history`} component={History} />
+              <Route path={`${HOME_PATH}/diary`} component={Diary} />
+              <Route path={`${HOME_PATH}/travel`} component={Travel} />
+              <Route render={() => <Redirect to={HOME_PATH} />} />
+            </Switch>
+          </motion.div>
+        </AnimatePresence>
       </main>
     </div>
   );

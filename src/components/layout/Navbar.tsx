@@ -1,18 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useHistory, useLocation } from 'react-router-dom';
-import { useLenis, useScrollTo } from '../../lib/lenis';
+import { Link, NavLink, useLocation } from 'react-router-dom';
+import { useLenis } from '../../lib/lenis';
 import { NOTE_URL } from '../../data/site';
-
-const HOME_PATH = '/watashi';
-
-// --- 「旅の記録」をコメントアウトしました ---
-// 1ページ構成になったので、遷移ではなく同じページ内の章へ送る
-const menuItems = [
-  { name: 'わたし', hash: '#profile' },
-  { name: 'これまでのわたし', hash: '#history' },
-  // { name: '旅の記録', path: '/watashi/travel' },
-  { name: '読書の日記', hash: '#book-diary' },
-];
+import { sections, HOME_PATH } from '../../data/sections';
 
 const ExternalIcon = () => (
   <svg
@@ -38,8 +28,6 @@ const Navbar: React.FC = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const lenis = useLenis();
-  const scrollTo = useScrollTo();
-  const history = useHistory();
   const location = useLocation();
 
   useEffect(() => {
@@ -58,23 +46,15 @@ const Navbar: React.FC = () => {
     return () => window.removeEventListener('scroll', onScroll);
   }, [lenis]);
 
+  // 章を移ったらメニューを閉じる
+  useEffect(() => setMenuOpen(false), [location.pathname]);
+
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : '';
     return () => {
       document.body.style.overflow = '';
     };
   }, [menuOpen]);
-
-  const goToChapter = (hash: string) => {
-    setMenuOpen(false);
-
-    // 別ページにいるときは本体へ戻す。App 側がハッシュを見て送り届ける。
-    if (location.pathname !== HOME_PATH) {
-      history.push({ pathname: HOME_PATH, hash });
-      return;
-    }
-    scrollTo(hash);
-  };
 
   return (
     <>
@@ -83,35 +63,25 @@ const Navbar: React.FC = () => {
           scrolled || menuOpen ? 'backdrop-blur-md bg-paper/85 border-b border-ink/10' : 'bg-transparent'
         }`}
       >
-        <Link
-          to={HOME_PATH}
-          className="no-underline z-[110]"
-          onClick={(e) => {
-            setMenuOpen(false);
-            if (location.pathname === HOME_PATH) {
-              e.preventDefault();
-              scrollTo(0);
-            }
-          }}
-        >
+        <Link to={HOME_PATH} className="no-underline z-[110]">
           <h1 className="text-ink font-medium m-0 text-[13px] tracking-[0.02em]">
             watashi — izumi haruya
           </h1>
         </Link>
 
-        {/* デスクトップメニュー */}
+        {/* タブ。参考サイトと同じく、いま開いている章は淡く落とす */}
         <div className="hidden md:flex items-center">
           <ul className="flex list-none m-0 p-0 items-center gap-1.5">
-            {menuItems.map((item, i) => (
-              <li key={item.hash} className="flex items-center gap-1.5">
-                <button
-                  type="button"
-                  onClick={() => goToChapter(item.hash)}
-                  className="text-ink bg-transparent border-0 p-0 cursor-pointer text-[13px] rule-underline"
+            {sections.map((section, i) => (
+              <li key={section.path} className="flex items-center gap-1.5">
+                <NavLink
+                  to={section.path}
+                  className="text-ink text-[13px] rule-underline transition-colors duration-300"
+                  activeClassName="!text-ink/35 no-underline pointer-events-none"
                 >
-                  {item.name}
-                </button>
-                {i < menuItems.length - 1 && <span className="text-ink/30 text-[13px]">,</span>}
+                  {section.name}
+                </NavLink>
+                {i < sections.length - 1 && <span className="text-ink/30 text-[13px]">,</span>}
               </li>
             ))}
           </ul>
@@ -144,27 +114,26 @@ const Navbar: React.FC = () => {
       <div className={`fixed inset-0 z-[90] bg-paper transition-all duration-500 ease-in-out md:hidden ${
         menuOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-4'
       }`}>
-        <div className="flex flex-col items-center justify-center h-full space-y-10 font-jp">
-          {menuItems.map((item) => (
-            <button
-              key={item.hash}
-              type="button"
-              onClick={() => goToChapter(item.hash)}
-              className="text-[17px] text-ink bg-transparent border-0 tracking-[0.08em]"
+        <div className="flex flex-col justify-center h-full px-6 gap-1">
+          {sections.map((section) => (
+            <NavLink
+              key={section.path}
+              to={section.path}
+              className="flex items-baseline gap-4 py-4 border-b border-ink/10 no-underline"
+              activeClassName="opacity-35 pointer-events-none"
             >
-              {item.name}
-            </button>
+              <span className="marginalia w-8">({section.index})</span>
+              <span className="font-display text-[19px] text-ink">{section.name}</span>
+            </NavLink>
           ))}
           <a
             href={NOTE_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[13px] text-ink/40 no-underline flex items-center"
-            onClick={() => setMenuOpen(false)}
+            className="mt-8 text-[13px] text-ink/40 no-underline flex items-center"
           >
             note <ExternalIcon />
           </a>
-          <button onClick={() => setMenuOpen(false)} className="marginalia pt-8">Close</button>
         </div>
       </div>
     </>
