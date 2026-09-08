@@ -23,6 +23,10 @@ const dotSize = (count: number) => 9 + count * 3;
  * 中は塗らない。動く背景の上では不透明な円が浮いて見えるうえ、
  * 軸が輪を貫くことで「線に通した粒」として読める。
  *
+ * 同じ年に複数あるとき、行を並べただけでは地の文に見えてしまう。
+ * 1 件ずつ軸から短い枝を引き、あいだに罫線を入れて、
+ * それぞれが独立した記載だと分かるようにしている。
+ *
  * 軸と点の基準を揃えるため、余白は ol ではなく li に持たせている。
  * ol に padding を置くと、ol 基準の軸線と li 基準の点とで
  * padding のぶんだけ横位置がずれる。
@@ -107,13 +111,20 @@ const Timeline: React.FC = () => {
 
                 {hasEvents && (
                   <Reveal>
-                    <motion.ul className="list-none m-0 p-0 pb-6" variants={revealItem}>
-                      {titles.map((title) => (
+                    <motion.ul className="list-none m-0 p-0 pb-8" variants={revealItem}>
+                      {titles.map((title, i) => (
                         <li
                           key={title}
-                          className="font-display text-[16px] sm:text-[19px] text-ink leading-[1.7] tracking-[0.03em]"
+                          className={`relative py-2.5 ${i > 0 ? 'border-t border-ink/10' : ''}`}
                         >
-                          {title}
+                          {/* 軸から伸びる枝。1 件ずつが軸に繋がって見える */}
+                          <span
+                            className="absolute -left-6 sm:-left-7 top-[1.15em] w-4 sm:w-5 h-px bg-ink/25"
+                            aria-hidden="true"
+                          />
+                          <span className="font-display text-[16px] sm:text-[19px] text-ink leading-[1.5] tracking-[0.03em]">
+                            {title}
+                          </span>
                         </li>
                       ))}
                     </motion.ul>
