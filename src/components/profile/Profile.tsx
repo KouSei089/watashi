@@ -10,13 +10,12 @@ import { NOTE_URL, READS_URL, PROFILE_PHOTOS } from '../../data/site';
  *
  * 写真を主役にする。以前はぼかした 1 枚を小さく置いていたが、
  * 白い画面に何も無いようにしか見えなかった。ぼかしをやめ、大きく見せる。
- * 「シャッターを押すのがすきです」と書いている人のサイトとして筋が通る。
  *
  * 写真は src/data/site.ts の PROFILE_PHOTOS に足すだけでよく、
  * 1 枚でも複数枚でも成立する。奇数枚のときは最後の 1 枚が横幅いっぱいになる。
  *
- * 本文は 11px から 15/17px へ。<br> 区切りの一段落に潰れていた
- * 「すきなもの」は 1 行ずつ独立させ、スクロールで順に現れる。
+ * 文章は地の文のまま。「すきなもの」を一行ずつ大きく見せる案も試したが、
+ * 強調せず続けて読ませる元のかたちに戻した。
  */
 const Profile: React.FC = () => {
   const [lead, ...rest] = PROFILE_PHOTOS;
@@ -40,26 +39,39 @@ const Profile: React.FC = () => {
         </motion.figure>
       )}
 
-      <div className="max-w-3xl mx-auto px-6 sm:px-8 pt-20 pb-24">
+      <div className="max-w-3xl mx-auto px-6 sm:px-8 pt-20 pb-16">
         <Reveal>
           <motion.div variants={revealItem}>
             <SectionTitle id="profile" className="mb-14">わたし</SectionTitle>
           </motion.div>
 
-          <motion.div
-            className="max-w-2xl text-[15px] sm:text-[17px] text-gray-700 leading-[2.1] tracking-[0.02em]"
+          <motion.p
+            className="max-w-2xl text-[14px] sm:text-[16px] text-gray-600 leading-[2.1] tracking-[0.02em]"
             variants={revealItem}
           >
-            <p className="text-black mb-8">{profile.lead}</p>
-            <p className="mb-6">{profile.bio}</p>
-            <p>{profile.themeLine}</p>
-          </motion.div>
+            <strong className="block mb-5 text-black text-[15px] sm:text-[17px] font-medium">
+              {profile.lead}
+            </strong>
+            {profile.bio}
+            <br className="hidden sm:block" />
+            {profile.themeLine}
+            <br />
+            <br />
+            {profile.likesIntro}
+            <br />
+            {likes.map((like) => (
+              <React.Fragment key={like}>
+                {like}
+                <br />
+              </React.Fragment>
+            ))}
+          </motion.p>
         </Reveal>
       </div>
 
       {/* 残りの写真。無ければ何も出ない */}
       {rest.length > 0 && (
-        <div className="max-w-6xl mx-auto px-0 sm:px-8 mb-24 grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
+        <div className="max-w-6xl mx-auto px-0 sm:px-8 mb-20 grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
           {rest.map((photo, i) => (
             <Reveal key={photo.src}>
               <motion.figure
@@ -80,33 +92,8 @@ const Profile: React.FC = () => {
       )}
 
       <div className="max-w-3xl mx-auto px-6 sm:px-8 pb-24">
-        <div className="mb-14 max-w-2xl">
-          <Reveal>
-            <motion.p className="text-[13px] sm:text-sm text-gray-400 tracking-[0.15em]" variants={revealItem}>
-              {profile.likesIntro}
-            </motion.p>
-          </Reveal>
-        </div>
-
-        <ul className="list-none m-0 p-0 max-w-2xl">
-          {likes.map((like) => (
-            <li key={like.lead} className="mb-16 sm:mb-20 last:mb-0">
-              <Reveal>
-                <motion.div variants={revealItem}>
-                  <p className="text-[18px] sm:text-[21px] text-black leading-[1.7] tracking-[0.04em] mb-3">
-                    {like.lead}
-                  </p>
-                  <p className="text-[14px] sm:text-[16px] text-gray-500 leading-[2] tracking-[0.02em]">
-                    {like.detail}
-                  </p>
-                </motion.div>
-              </Reveal>
-            </li>
-          ))}
-        </ul>
-
         <Reveal>
-          <motion.div className="mt-28 flex gap-8" variants={revealItem}>
+          <motion.div className="flex gap-8" variants={revealItem}>
             <a href={NOTE_URL} target="_blank" rel="noopener noreferrer" className="wavy-underline text-lg">
               note <span className="text-[10px] align-super">↗</span>
             </a>
