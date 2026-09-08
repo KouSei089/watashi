@@ -1,4 +1,5 @@
 import React from 'react';
+import Opening from '../components/sections/Opening';
 import Profile from '../components/profile/Profile';
 import Timeline from '../components/sections/Timeline';
 import EyecatchGrid from '../components/features/EyecatchGrid';
@@ -21,6 +22,7 @@ const Home: React.FC = () => (
   // 常に 0 のまま（＝スクロール連動の演出が一切効かない）になる。
   // 横のはみ出しは body 側で止めている。
   <div className="bg-paper w-full font-jp">
+    <Opening />
     <Profile />
     <Timeline />
     <EyecatchGrid />
