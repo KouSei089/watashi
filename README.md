@@ -1,43 +1,57 @@
 # watashi - izumi haruya
 
-個人のポートフォリオ・読書日記・旅の記録などをまとめたWebアプリケーションです。
-スクロールそのものを主役に据えた、1ページ構成のサイトです。
+個人のポートフォリオと読書日記をまとめた Web サイトです。
 
 ## サイトURL
 https://kousei089.github.io/watashi/
 
 ## 構成
 
-導入からフッターまでが 1 本のスクロールにつながっています。
+章ごとに独立したページを持ちます。
 
-| 章 | アンカー | 中身 |
+| パス | 章 | 中身 |
 | --- | --- | --- |
-| 導入 | — | スクロールに連れて主題の像のぼけが晴れる |
-| わたし | `#profile` | プロフィール |
-| これまでのわたし | `#history` | 横スクロールの年表（GSAP ScrollTrigger で pin） |
-| 読書の日記 | `#book-diary` | 読書記録のグリッド |
+| `/watashi` | 表紙 | 名前・テーマ・できごとの目盛り・目次 |
+| `/watashi/about` | わたし | プロフィール、すきなものの目盛り、写真 |
+| `/watashi/history` | これまでのわたし | 縦の時間軸に並べた年表 |
+| `/watashi/diary` | 読書の日記 | 105件の索引と、書いた日の目盛り |
+| `/watashi/contact` | おといあわせ | 連絡先と所在 |
+| `/watashi/travel` | 旅の記録 | 日本地図（**現在どこからもリンクしていない**） |
 
-`/watashi/travel` に日本地図の「旅の記録」が別ページとして残っています
-（現在ナビゲーションからは外しています）。
+章の定義は `src/data/sections.ts` の 1 か所にまとめてあり、
+ナビ・表紙の目次・奥付・ルーティングがすべてそこを見ています。
 
-## スクロール設計
+## 設計の考え方
 
-- **Lenis** — 慣性スクロール。`src/lib/lenis.tsx` の `LenisProvider` が唯一の
-  インスタンスを持ち、`useScrollTo()` から章移動に使う。
-  生の `window.addEventListener('scroll')` は使わず、Lenis の `scroll` に相乗りする。
-- **年表の時間軸** — カードの横位置を「順番」ではなく「年の隔たり」で決めている。
-  空いた年は間延びし、できごとが重なった年は密集する。
-- **読書グリッド** — スクロールの速さに応じて格子がわずかに傾く（最大 1.2 度）。
-- **章立てインジケータ** — 右端の縦の目盛りで現在地を示す。
-- **prefers-reduced-motion** — OS 側で視差効果を減らす設定なら、Lenis も pin も
-  傾きも無効化し、年表は縦並びのリストになる。
+**図法はひとつだけ。** 「値を、実際の位置に打つ」という作図を、
+章ごとに違うデータで繰り返しています。装飾ではなく、図そのものが情報です。
+
+- 表紙 — 16 のできごとを、その年の位置に（`TickRule`）
+- これまでのわたし — 年を、経過した長さぶんの間隔で。できごとの無い年も 1 行取る
+- 読書の日記 — 105 件を、書いた日の位置に。軸の下に月と年の刻み
+
+**書体は二層。** 見出しと名前は明朝（Zen Old Mincho）、本文とラベルは
+ゴシック（Inter + Zen Kaku Gothic New）。欧文の Inter に和文グリフは無いので、
+日本語は自動的に Zen Kaku Gothic New に落ちます。
+
+**背景。** 大きくぼかした色の面を 4 枚重ね、それぞれ別の道筋で漂わせています
+（`PageBackground`）。章ごとに色が変わり、配置は共通です（`src/data/palettes.ts`）。
+canvas にノイズを描いて陰影を付ける実装も試しましたが、艶のある質感になり、
+このサイトのマットな持ち味と合わなかったため戻しています。
+
+**スクロール。** Lenis による慣性スクロール（`src/lib/lenis.tsx`）。
+生の `window.addEventListener('scroll')` は使わず、Lenis の `scroll` に相乗りします。
+
+**prefers-reduced-motion** を尊重します。有効な場合は Lenis も背景の動きも
+自前のカーソルも止まり、OS のカーソルに任せます。
 
 ## 技術スタック
-- **Frontend**: React / react-router-dom / TypeScript
-- **Styling**: Tailwind CSS
-- **Animations**: Framer Motion, GSAP + ScrollTrigger
-- **Smooth Scroll**: Lenis
-- **Deployment**: GitHub Pages (`gh-pages`)
+- React / react-router-dom / TypeScript
+- Tailwind CSS
+- Framer Motion
+- Lenis（慣性スクロール）
+- d3（`/watashi/travel` の日本地図のみ）
+- GitHub Pages (`gh-pages`)
 
 ## 開発
 
@@ -50,12 +64,28 @@ npm run build
 `package.json` の `overrides` で `react-scripts` の typescript peer を上書きしています。
 これが無いと `--legacy-peer-deps` が必要になり、ajv の解決が壊れてビルドできません。
 
-## デプロイ手順
-1. 作業用ブランチで変更内容を `add`, `commit`, `push` する。
-2. GitHub上でPull Requestを作成し、`master`ブランチへマージする。
-3. ローカルの `master` にて `npm run deploy` を実行する。
-   （内部で `npm run build` が実行され、自動的に `gh-pages` ブランチへプッシュされます）
-4. 反映されるまで数分待ちます。
+## データの持ち方
+
+- `src/data/eyecatchData.ts` — 読書日記の一覧（**手作業で更新**）
+- `src/data/timeline.ts` — 年表
+- `src/data/profile.ts` — 「わたし」の文章
+- `src/data/site.ts` — 写真、外部リンク、連絡先
+- `src/data/palettes.ts` — 章ごとの背景色
+
+読書日記の一覧は手で管理しているため、note の実際の記事数とずれます
+（2026年9月時点で、掲載 105 件に対し note には 216 件）。
+
+note の画像は 1280x669 で配信されますが、格子では 191px 幅で見せるため、
+`?width=` を付けた `srcset` を渡してブラウザに選ばせています。
+そのまま貼ると 105 枚で 13.4MB になります。
+
+## デプロイ
+
+1. 作業用ブランチで `add`, `commit`, `push`
+2. GitHub 上で Pull Request を作成し `master` へマージ
+3. ローカルの `master` で `npm run deploy`
+4. 反映まで数分待つ
 
 `public/404.html` は GitHub Pages が SPA のルーティングを知らないための受け皿です。
-`/watashi/travel` などへの直リンクやリロードを `index.html` に引き戻しています。削除しないでください。
+`/watashi/diary` などへの直リンクやリロードを `index.html` に引き戻しています。
+**削除しないでください。**

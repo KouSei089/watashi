@@ -28,6 +28,18 @@ const parseEntry = (item: BookItem): Entry => {
 
 const pad = (n: number) => String(n).padStart(3, '0');
 
+/*
+  note の画像は 1280x669 で配信される。格子では 191px 幅で見せるので、
+  そのまま貼ると必要な 7 倍近い画素を送ることになり、105 枚で 13.4MB になる。
+  note の CDN は ?width= に対応しているので、複数の幅を srcset で渡して
+  ブラウザに選ばせる（1x なら 320w=12KB、2x なら 480w=24KB）。
+*/
+const IMAGE_WIDTHS = [320, 480, 640];
+const srcSetFor = (url: string) =>
+  IMAGE_WIDTHS.map((w) => `${url}?width=${w} ${w}w`).join(', ');
+/** 格子の列数に応じた表示幅。6列/4列/2列 */
+const IMAGE_SIZES = '(min-width: 1024px) 17vw, (min-width: 640px) 24vw, 48vw';
+
 /**
  * 読書の日記。
  *
@@ -183,7 +195,7 @@ const DiaryIndex: React.FC = () => {
           読書の日記
         </SectionHeader>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 lg:gap-x-10 mt-16 pb-3 border-b border-ink/15">
+        <div className="grid grid-cols-1 lg:grid-cols-12 lg:gap-x-10 mt-16 pb-3 border-b border-ink/22">
           <div className="lg:col-span-2 marginalia">{entries.length} Entries</div>
           <div className="lg:col-span-10 flex flex-wrap gap-x-6 gap-y-1 mt-2 lg:mt-0">
             {years.map(([year, count]) => (
@@ -261,7 +273,7 @@ const DiaryIndex: React.FC = () => {
       <div ref={gridRef} className="w-full px-6 pb-24 pt-10">
         {grouped.map(([year, items]) => (
           <section key={year} id={`diary-${year}`} className="mt-16 first:mt-0 scroll-mt-28">
-            <div className="flex items-baseline gap-4 pb-3 mb-5 border-b border-ink/15">
+            <div className="flex items-baseline gap-4 pb-3 mb-5 border-b border-ink/22">
               <span className="font-display text-[19px] sm:text-[22px] text-ink leading-none">{year}</span>
               <span className="marginalia">{items.length} entries</span>
             </div>
@@ -286,9 +298,12 @@ const DiaryIndex: React.FC = () => {
                     }`}
                   >
                     <img
-                      src={entry.eyecatch}
+                      src={`${entry.eyecatch}?width=${IMAGE_WIDTHS[0]}`}
+                      srcSet={srcSetFor(entry.eyecatch)}
+                      sizes={IMAGE_SIZES}
                       alt={entry.name}
                       loading="lazy"
+                      decoding="async"
                       className={`w-full h-full object-cover transition-transform duration-700 ease-out will-change-transform ${
                         active === index ? 'scale-105' : ''
                       }`}

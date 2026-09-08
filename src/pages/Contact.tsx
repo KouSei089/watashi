@@ -53,7 +53,7 @@ const Contact: React.FC = () => (
         </div>
 
         {/* 所在。表紙が右端に立てる標記と同じ種類の情報 */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 lg:gap-x-10 mt-24 pt-6 border-t border-ink/15">
+        <div className="grid grid-cols-1 lg:grid-cols-12 lg:gap-x-10 mt-24 pt-6 border-t border-ink/22">
           <div className="lg:col-span-2 marginalia mb-3 lg:mb-0">Location</div>
           <div className="lg:col-span-10 flex flex-wrap gap-x-10 gap-y-2">
             <span className="font-display text-[16px] sm:text-[19px] text-ink">島根県隠岐郡海士町</span>

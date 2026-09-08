@@ -30,9 +30,9 @@ const Footer: React.FC = () => {
 
         {/* 表紙の目次と同じ並び */}
         <nav className="lg:col-span-6" aria-label="目次">
-          <ul className="list-none m-0 p-0 border-t border-ink/15">
+          <ul className="list-none m-0 p-0 border-t border-ink/22">
             {[...sections, { index: '04', path: CONTACT_PATH, label: 'Contact', name: 'おといあわせ' }].map((s) => (
-              <li key={s.path} className="border-b border-ink/15">
+              <li key={s.path} className="border-b border-ink/22">
                 <Link to={s.path} className="group flex items-baseline gap-4 py-3 no-underline">
                   <span className="marginalia w-8 shrink-0">({s.index})</span>
                   <span className="marginalia w-20 shrink-0 hidden sm:block">{s.label}</span>

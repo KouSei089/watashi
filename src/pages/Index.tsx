@@ -174,9 +174,9 @@ const Index: React.FC = () => {
         {...appear(1.0)}
       >
         <div className="lg:col-span-2 marginalia mb-4 lg:mb-0">Contents</div>
-        <ul className="lg:col-span-10 list-none m-0 p-0 border-t border-ink/15">
+        <ul className="lg:col-span-10 list-none m-0 p-0 border-t border-ink/22">
           {sections.map((section) => (
-            <li key={section.path} className="border-b border-ink/15">
+            <li key={section.path} className="border-b border-ink/22">
               <Link
                 to={section.path}
                 className="group flex items-baseline gap-4 sm:gap-8 py-4 no-underline"

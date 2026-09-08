@@ -37,9 +37,14 @@ body {
   以前は 10px に 0.18em の字間を空けていたが、参考サイトの実測は
   12〜13px・字間 normal〜わずかに負・太さ 500 だった。
   字間を大きく空けるのは別の語彙で、密度のある編集的な組みからは浮く。
+
+  濃さは ink/45 だと紙（#F6F6F4）に対して 2.99:1 で、WCAG AA が
+  小さい文字に求める 4.5:1 を下回っていた。サイト中のラベル・日付・
+  番号がすべてこの様式なので、ここだけは基準を満たす必要がある。
+  ink/60 で 4.79:1。
 */
 .marginalia {
-  @apply text-[11px] tracking-[0.02em] text-ink/45 font-medium;
+  @apply text-[11px] tracking-[0.02em] text-ink/60 font-medium;
   line-height: 1.35;
   font-variant-numeric: tabular-nums;
 }
