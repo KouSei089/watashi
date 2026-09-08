@@ -12,6 +12,10 @@ interface TickRuleProps {
   fractions: number[];
   /** 目盛りより薄い、区切りの位置。0..1 */
   dividers?: number[];
+  /** 軸の下に刻む細かい目盛り。0..1。月など */
+  gradations?: number[];
+  /** 軸の下に刻む大きな目盛りと、その見出し。年など */
+  milestones?: { fraction: number; label: string }[];
   /** 左端と右端に添える文字 */
   ends?: [string, string];
   /** 各目盛りの下に置く見出し */
@@ -35,12 +39,20 @@ interface TickRuleProps {
  * onHover を渡すと、目盛りが触れる対象になる。
  * 線そのものは 1px で掴めないので、当たり判定だけ透明な帯で広げている。
  *
+ * gradations と milestones は軸の下に刻む時間の目盛り。
+ * 点の粗密だけでは「どれくらいの間が空いたか」が読めないため、
+ * 下に等間隔の刻みを置いて、間隔そのものを時間として読めるようにする。
+ * 見出しは SVG ではなく HTML で置く。preserveAspectRatio="none" は
+ * 横だけ伸ばすので、SVG の中の文字は引き伸ばされてしまう。
+ *
  * preserveAspectRatio="none" で横だけ伸ばし、高さは固定する。
  * auto にすると狭い画面で目盛りが潰れて読めなくなる。
  */
 const TickRule: React.FC<TickRuleProps> = ({
   fractions,
   dividers = [],
+  gradations = [],
+  milestones = [],
   ends,
   labels,
   activeIndex = null,
@@ -117,6 +129,42 @@ const TickRule: React.FC<TickRuleProps> = ({
           );
         })}
 
+        {/* 軸の下の細かい刻み（月） */}
+        {gradations.map((g, i) => {
+          const x = PAD_X + g * usableW;
+          return (
+            <line
+              key={`g${i}`}
+              x1={x}
+              x2={x}
+              y1={BASELINE_Y}
+              y2={BASELINE_Y + 3}
+              stroke="currentColor"
+              strokeWidth="1"
+              vectorEffect="non-scaling-stroke"
+              className="text-ink/15"
+            />
+          );
+        })}
+
+        {/* 軸の下の大きな刻み（年） */}
+        {milestones.map((m) => {
+          const x = PAD_X + m.fraction * usableW;
+          return (
+            <line
+              key={`m${m.label}`}
+              x1={x}
+              x2={x}
+              y1={BASELINE_Y}
+              y2={BASELINE_Y + 8}
+              stroke="currentColor"
+              strokeWidth="1"
+              vectorEffect="non-scaling-stroke"
+              className="text-ink/35"
+            />
+          );
+        })}
+
         {/*
           当たり判定。1px の線は掴めないので、透明な帯を重ねている。
           幅は隣との間隔ではなく一定にして、密なところでも取りこぼさない。
@@ -140,8 +188,22 @@ const TickRule: React.FC<TickRuleProps> = ({
           })}
       </svg>
 
+      {milestones.length > 0 && (
+        <div className="relative h-4 mt-1">
+          {milestones.map((m) => (
+            <span
+              key={m.label}
+              className="marginalia !text-ink/60 absolute -translate-x-1/2 whitespace-nowrap tabular-nums"
+              style={{ left: `${((PAD_X + m.fraction * usableW) / VIEW_W) * 100}%` }}
+            >
+              {m.label}
+            </span>
+          ))}
+        </div>
+      )}
+
       {ends && (
-        <div className="flex justify-between mt-3">
+        <div className="flex justify-between mt-1">
           <span className="marginalia">{ends[0]}</span>
           <span className="marginalia">{ends[1]}</span>
         </div>

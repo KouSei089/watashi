@@ -80,11 +80,42 @@ const DiaryIndex: React.FC = () => {
     const min = Math.min(...days);
     const max = Math.max(...days);
     const span = max - min || 1;
+    const toFraction = (t: number) => (t - min) / span;
+
+    /*
+      軸の下に月と年の刻みを置く。点の粗密だけでは
+      「どれくらいの間が空いたか」が読めない。
+      等間隔の刻みが下にあると、点と点の隙間が
+      そのまま何ヶ月ぶんかとして読める。
+    */
+    const gradations: number[] = [];
+    const milestones: { fraction: number; label: string }[] = [];
+    const start = new Date(min);
+    const cursor = new Date(start.getFullYear(), start.getMonth(), 1);
+    while (cursor.getTime() <= max) {
+      const f = toFraction(cursor.getTime());
+      if (f >= 0 && f <= 1) {
+        if (cursor.getMonth() === 0) {
+          milestones.push({ fraction: f, label: String(cursor.getFullYear()) });
+        } else {
+          gradations.push(f);
+        }
+      }
+      cursor.setMonth(cursor.getMonth() + 1);
+    }
+
+    // 前の記録から何日空いたか。古い順に見て差を取る
+    const sortedAsc = [...days].sort((a, b) => a - b);
+    const gapByTime = new Map<number, number>();
+    sortedAsc.forEach((d, i) => {
+      if (i > 0) gapByTime.set(d, Math.round((d - sortedAsc[i - 1]) / 86400000));
+    });
+
     return {
-      fractions: days.map((d) => (d - min) / span),
-      dividers: Array.from(new Set(entries.map((e) => e.year)))
-        .map((y) => (new Date(`${y}-01-01`).getTime() - min) / span)
-        .filter((f) => f >= 0 && f <= 1),
+      fractions: days.map(toFraction),
+      gradations,
+      milestones,
+      gaps: days.map((d) => gapByTime.get(d) ?? null),
       first: entries[entries.length - 1].created_at,
       last: entries[0].created_at,
     };
@@ -169,7 +200,8 @@ const DiaryIndex: React.FC = () => {
           <div className="lg:col-span-10">
             <TickRule
               fractions={rhythm.fractions}
-              dividers={rhythm.dividers}
+              gradations={rhythm.gradations}
+              milestones={rhythm.milestones}
               ends={[rhythm.first, rhythm.last]}
               activeIndex={active}
               onHover={setActive}
@@ -177,10 +209,13 @@ const DiaryIndex: React.FC = () => {
               title={`${rhythm.first} から ${rhythm.last} までの ${entries.length} 件`}
             />
             {/* いま指している 1 件。図の下に文字で出す */}
-            <div className="h-5 mt-2">
+            <div className="h-5 mt-3">
               {activeEntry ? (
                 <span className="marginalia !text-ink">
                   {pad((active ?? 0) + 1)} — {activeEntry.created_at} — {activeEntry.title}
+                  {active !== null && rhythm.gaps[active] !== null && (
+                    <span className="!text-ink/40"> ／ 前回から{rhythm.gaps[active]}日</span>
+                  )}
                 </span>
               ) : (
                 <span className="marginalia">目盛りにふれると、その日の記録が出ます</span>
