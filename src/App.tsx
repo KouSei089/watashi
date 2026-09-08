@@ -6,6 +6,7 @@ import { LenisProvider, useScrollTo } from './lib/lenis';
 import Navbar from './components/layout/Navbar';
 import ChapterRail from './components/layout/ChapterRail';
 import Cursor from './components/common/Cursor';
+import VariantSwitcher from './components/common/VariantSwitcher';
 
 import Home from './pages/Home';
 import Travel from './pages/Travel';
@@ -29,6 +30,7 @@ const AppContent: React.FC = () => {
       <Cursor />
       <Navbar />
       <ChapterRail />
+      <VariantSwitcher />
 
       <main>
         <Switch>

@@ -1,5 +1,5 @@
 import React from 'react';
-import Profile from '../components/features/Profile';
+import Profile from '../components/profile';
 import Timeline from '../components/sections/Timeline';
 import EyecatchGrid from '../components/features/EyecatchGrid';
 import Footer from '../components/layout/Footer';
