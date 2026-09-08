@@ -32,3 +32,4 @@ export const sections = [
 ] as const;
 
 export const HOME_PATH = '/watashi';
+export const CONTACT_PATH = '/watashi/contact';

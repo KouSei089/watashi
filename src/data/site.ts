@@ -13,9 +13,11 @@ export const MAIN_VISUAL_URL =
  * photos-original/ に退避し、ここでは Web 用に縮小したものを参照している。
  */
 export const PROFILE_PHOTOS: { src: string; alt: string }[] = [
-  { src: '/watashi/photos/room.jpg', alt: '海の見える窓辺の机と本棚' },
-  { src: '/watashi/photos/bookshelf.jpg', alt: '本の詰まった棚' },
-  { src: '/watashi/photos/bay.jpg', alt: '船の浮かぶ入江と対岸の山' },
+  { src: '/watashi/photos/photobook.jpg', alt: '書店に平積みされた写真集。表紙に赤い傘' },
+  { src: '/watashi/photos/lighttrails.jpg', alt: '流れる光の軌跡' },
+  { src: '/watashi/photos/platform.jpg', alt: '傷ついたガラス越しに見えるホームの灯り' },
+  { src: '/watashi/photos/playground.jpg', alt: '公園の遊具' },
+  { src: '/watashi/photos/moon.jpg', alt: '月の出た夕暮れの町' },
 ];
 
 export const NOTE_URL = 'https://note.com/izuha0';

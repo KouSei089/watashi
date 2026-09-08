@@ -13,6 +13,7 @@ import Index from './pages/Index';
 import About from './pages/About';
 import History from './pages/History';
 import Diary from './pages/Diary';
+import Contact from './pages/Contact';
 import Travel from './pages/Travel';
 
 /**
@@ -55,6 +56,7 @@ const AppContent: React.FC = () => {
               <Route path={`${HOME_PATH}/about`} component={About} />
               <Route path={`${HOME_PATH}/history`} component={History} />
               <Route path={`${HOME_PATH}/diary`} component={Diary} />
+              <Route path={`${HOME_PATH}/contact`} component={Contact} />
               <Route path={`${HOME_PATH}/travel`} component={Travel} />
               <Route render={() => <Redirect to={HOME_PATH} />} />
             </Switch>

@@ -119,7 +119,7 @@ const DiaryIndex: React.FC = () => {
                   onClick={() => setIndex(i)}
                   aria-label={`${entry.kind} ${entry.title}`}
                   aria-current={i === index ? 'true' : undefined}
-                  className={`block shrink-0 w-16 lg:w-full aspect-[4/3] mb-0 lg:mb-1.5 overflow-hidden border-0 p-0 bg-transparent transition-opacity duration-300 ${
+                  className={`block shrink-0 w-16 lg:w-full aspect-[1280/669] mb-0 lg:mb-1.5 overflow-hidden border-0 p-0 bg-transparent transition-opacity duration-300 ${
                     i === index ? 'opacity-100' : 'opacity-35 hover:opacity-70'
                   }`}
                 >
@@ -148,10 +148,15 @@ const DiaryIndex: React.FC = () => {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.4, ease: 'easeOut' }}
               >
+                {/*
+                  比率を 4:3 に固定していたが、note の画像は 1280x669（1.91:1）で、
+                  両端を 3 割ほど切り落としたうえに拡大されて粗く見えていた。
+                  比率は強制せず、写真そのままの形で置く。
+                */}
                 <img
                   src={current.eyecatch}
                   alt={current.name}
-                  className="w-full aspect-[4/3] object-cover"
+                  className="w-full h-auto"
                 />
               </motion.a>
             </AnimatePresence>

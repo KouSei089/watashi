@@ -2,7 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useLenis } from '../../lib/lenis';
 import { NOTE_URL } from '../../data/site';
-import { sections, HOME_PATH } from '../../data/sections';
+import { sections, HOME_PATH, CONTACT_PATH } from '../../data/sections';
+
+// ナビに並べる項目。Contact は表紙の目次には出さず、ここと奥付だけに置く。
+const tabs = [...sections.map((s) => ({ path: s.path, name: s.name, index: s.index })), { path: CONTACT_PATH, name: 'おといあわせ', index: '04' }];
 
 const ExternalIcon = () => (
   <svg
@@ -72,7 +75,7 @@ const Navbar: React.FC = () => {
         {/* タブ。参考サイトと同じく、いま開いている章は淡く落とす */}
         <div className="hidden md:flex items-center">
           <ul className="flex list-none m-0 p-0 items-center gap-1.5">
-            {sections.map((section, i) => (
+            {tabs.map((section, i) => (
               <li key={section.path} className="flex items-center gap-1.5">
                 <NavLink
                   to={section.path}
@@ -81,7 +84,7 @@ const Navbar: React.FC = () => {
                 >
                   {section.name}
                 </NavLink>
-                {i < sections.length - 1 && <span className="text-ink/30 text-[13px]">,</span>}
+                {i < tabs.length - 1 && <span className="text-ink/30 text-[13px]">,</span>}
               </li>
             ))}
           </ul>
@@ -115,7 +118,7 @@ const Navbar: React.FC = () => {
         menuOpen ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-4'
       }`}>
         <div className="flex flex-col justify-center h-full px-6 gap-1">
-          {sections.map((section) => (
+          {tabs.map((section) => (
             <NavLink
               key={section.path}
               to={section.path}

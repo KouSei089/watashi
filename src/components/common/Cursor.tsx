@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion, useMotionValue, useSpring, useReducedMotion } from 'framer-motion';
 
-const ARM = 9; // 十字の腕の長さ
+const ARM = 10; // 十字の腕の長さ
 const HOVER_SCALE = 1.9;
 
 const isCoarsePointer = () =>
@@ -46,7 +46,8 @@ const Cursor: React.FC = () => {
       x.set(e.clientX);
       y.set(e.clientY);
       setVisible(true);
-      setHovered(!!(e.target as Element)?.closest?.(targets));
+      const target = e.target as Element | null;
+      setHovered(!!target?.closest?.(targets));
     };
     const onLeave = () => setVisible(false);
 
@@ -62,14 +63,20 @@ const Cursor: React.FC = () => {
     scale.set(hovered ? HOVER_SCALE : 1);
   }, [hovered, scale]);
 
-  // 出さないときは OS のカーソルをそのまま使う
+  /*
+    OS のカーソルを隠すのは、自前の十字が実際に描かれてから。
+    描画前や、何らかの理由で出せていないときにまで隠すと、
+    何も見えないまま操作させることになる。
+  */
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled || !visible) return;
     document.documentElement.classList.add('has-custom-cursor');
     return () => document.documentElement.classList.remove('has-custom-cursor');
-  }, [enabled]);
+  }, [enabled, visible]);
 
   if (!enabled) return null;
+
+  const stroke = hovered ? 'rgba(17,17,17,0.85)' : 'rgba(17,17,17,0.5)';
 
   return (
     <motion.svg
@@ -77,6 +84,15 @@ const Cursor: React.FC = () => {
       width={ARM * 2}
       height={ARM * 2}
       viewBox={`0 0 ${ARM * 2} ${ARM * 2}`}
+      /*
+        opacity は style ではなく animate で渡す。
+        MotionValue を含む style に生の opacity を混ぜると
+        framer-motion が初期値のまま握り続け、state を更新しても
+        反映されない（十字が透明のまま出てこない）。
+      */
+      animate={{ opacity: visible ? 1 : 0 }}
+      transition={{ duration: 0.25, ease: 'easeOut' }}
+      initial={{ opacity: 0 }}
       style={{
         position: 'fixed',
         top: 0,
@@ -88,28 +104,10 @@ const Cursor: React.FC = () => {
         scale,
         pointerEvents: 'none',
         zIndex: 9999,
-        opacity: visible ? 1 : 0,
-        transition: 'opacity 0.25s ease',
       }}
     >
-      <line
-        x1={0}
-        y1={ARM}
-        x2={ARM * 2}
-        y2={ARM}
-        stroke="currentColor"
-        strokeWidth="1"
-        className={hovered ? 'text-ink/70' : 'text-ink/35'}
-      />
-      <line
-        x1={ARM}
-        y1={0}
-        x2={ARM}
-        y2={ARM * 2}
-        stroke="currentColor"
-        strokeWidth="1"
-        className={hovered ? 'text-ink/70' : 'text-ink/35'}
-      />
+      <line x1={0} y1={ARM} x2={ARM * 2} y2={ARM} stroke={stroke} strokeWidth="1" />
+      <line x1={ARM} y1={0} x2={ARM} y2={ARM * 2} stroke={stroke} strokeWidth="1" />
     </motion.svg>
   );
 };
