@@ -31,8 +31,9 @@ const parseEntry = (item: BookItem): Entry => {
  * 105 件を一望できる格子に戻している。並んでいること自体が、
  * 2 年半ぶんの記録の厚みになる。
  *
- * 罫線は 1px の隙間から背景色を覗かせて作っている。各セルに border を
- * 引くと端で二重になり、格子の線幅が揃わない。
+ * 隙間なく敷き詰めると密すぎて、背景の色も見えなくなる。
+ * 写真のあいだを空けて、そこから背景が覗くようにしている。
+ * 罫線の格子はやめた。線で仕切ると背景と切り離されてしまう。
  */
 const DiaryIndex: React.FC = () => {
   const entries = useMemo(
@@ -79,14 +80,14 @@ const DiaryIndex: React.FC = () => {
       </div>
 
       <div className="w-full px-6 pb-24">
-        <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-8 gap-px bg-ink/12">
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
           {entries.map((entry) => (
             <a
               key={entry.noteUrl}
               href={entry.noteUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="diary-cell group relative block aspect-[1280/669] overflow-hidden bg-paper"
+              className="diary-cell group relative block aspect-[1280/669] overflow-hidden"
               title={`${entry.kind}｜${entry.title}（${entry.created_at}）`}
             >
               <img

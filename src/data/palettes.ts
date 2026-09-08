@@ -4,20 +4,24 @@
  * 4 色を大きくぼかして重ね、ゆっくり漂わせる。
  * 紙面が #F6F6F4 で文字が濃色なので、どれも明度は高く保つ。
  * 濃い色を置くと本文が負ける。
+ *
+ * 並び順は blobLayout の 4 枚に対応する。前の 2 つが大きい面なので、
+ * ここに章のメイン色を置き、後ろの 2 つに別の色相を差す。
+ * 同じ色相を 4 枚重ねると単調になり、表紙だけが豊かに見えていた。
  */
 export type Palette = readonly [string, string, string, string];
 
 export const palettes: Record<string, Palette> = {
   // 表紙。写真から取った色（海・対岸の山・室内の木・影）
   index: ['#8CB4C1', '#B4C9A8', '#E2C9A0', '#ADA7C6'],
-  // わたし。灰
-  about: ['#B3B4B0', '#C9C7C1', '#9EA09B', '#D4D1CA'],
-  // これまでのわたし。青
-  history: ['#8CA8CA', '#A9BFD6', '#7789AE', '#C4D0E1'],
-  // 読書の日記。黄
-  diary: ['#E3C888', '#EFDDAE', '#D3B466', '#F1E7CA'],
-  // おといあわせ。緑
-  contact: ['#A4BE9A', '#BFD1B2', '#8AA67F', '#CEDCC3'],
+  // わたし。灰を主に、淡い青と薔薇色を差す
+  about: ['#B3B4B0', '#C7C4BC', '#B4C4CC', '#CCBFC6'],
+  // これまでのわたし。青を主に、若草と砂色を差す
+  history: ['#8CA8CA', '#A3BFD2', '#B6C8AE', '#D5C6AC'],
+  // 読書の日記。黄を主に、赤みと淡い橄欖を差す
+  diary: ['#E3C888', '#EEDCA9', '#DBB9A2', '#BEC9AC'],
+  // おといあわせ。緑を主に、青緑と砂色を差す
+  contact: ['#A4BE9A', '#BCD0B0', '#A2BEC6', '#D8CBAC'],
 };
 
 /**
