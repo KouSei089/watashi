@@ -30,10 +30,15 @@ const Profile: React.FC = () => {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1] }}
         >
+          {/*
+            高さを vh で固定すると 3:2 の写真が 2.2:1 の帯に切り取られ、
+            撮られた構図（上の梁、手前のテーブル）が落ちてしまう。
+            写真そのままの比率で置く。
+          */}
           <img
             src={lead.src}
             alt={lead.alt}
-            className="w-full h-[52vh] sm:h-[68vh] object-cover select-none"
+            className="w-full aspect-[3/2] object-cover select-none"
             draggable={false}
           />
         </motion.figure>
@@ -81,7 +86,7 @@ const Profile: React.FC = () => {
                 <img
                   src={photo.src}
                   alt={photo.alt}
-                  className="w-full h-[38vh] sm:h-[46vh] object-cover select-none"
+                  className="w-full aspect-[3/2] object-cover select-none"
                   draggable={false}
                   loading="lazy"
                 />
