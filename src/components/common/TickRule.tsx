@@ -93,6 +93,14 @@ const TickRule: React.FC<TickRuleProps> = ({
           );
         })}
 
+        {/*
+          軸は端まで引く。pathLength で引く演出は使えない。
+          pathLength は破線の長さを viewBox の座標で決めるのに、
+          non-scaling-stroke は破線を画面の実寸で描く。
+          preserveAspectRatio="none" で横に伸びているぶんだけ
+          軸が短く描かれ、右端が途切れて見える。
+          端の座標そのものを動かせば、伸ばし方によらず端まで届く。
+        */}
         <motion.line
           x1={PAD_X}
           x2={VIEW_W - PAD_X}
@@ -102,8 +110,8 @@ const TickRule: React.FC<TickRuleProps> = ({
           strokeWidth="1"
           vectorEffect="non-scaling-stroke"
           className="text-ink/25"
-          initial={reduceMotion ? undefined : { pathLength: 0 }}
-          animate={reduceMotion ? undefined : { pathLength: 1 }}
+          initial={reduceMotion ? undefined : { x2: PAD_X }}
+          animate={reduceMotion ? undefined : { x2: VIEW_W - PAD_X }}
           transition={{ duration: 1.4, delay, ease: [0.22, 1, 0.36, 1] }}
         />
 
