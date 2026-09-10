@@ -133,8 +133,14 @@ const Index: React.FC = () => {
               strokeWidth="1"
               vectorEffect="non-scaling-stroke"
               className="text-ink/25"
-              initial={reduceMotion ? undefined : { pathLength: 0 }}
-              animate={reduceMotion ? undefined : { pathLength: 1 }}
+              /*
+                pathLength は non-scaling-stroke と噛み合わない。
+                破線の長さが viewBox の座標で決まるのに、線は画面の
+                実寸で描かれるため、横に伸ばしたぶん右端が途切れる。
+                端の座標そのものを動かす。TickRule も同じ。
+              */
+              initial={reduceMotion ? undefined : { x2: PAD_X }}
+              animate={reduceMotion ? undefined : { x2: VIEW_W - PAD_X }}
               transition={{ duration: 1.6, delay: 0.8, ease: [0.22, 1, 0.36, 1] }}
             />
 
